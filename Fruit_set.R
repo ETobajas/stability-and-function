@@ -119,8 +119,91 @@ excel_focal <- excel_focal[!(excel_focal$Orden == "Neuroptera"),]
 
 levels(factor(excel_focal$Orden))
 
+# Remove Lepidoptera
+excel_focal <- excel_focal[!(excel_focal$Orden == "Lepidoptera"),]
+levels(factor(excel_focal$Orden))
+
+
+# remove wasp, kleptoparasite, ants (hymenoptera: bees and megascolia) 
+levels(factor(excel_focal$Pollinator_genus))
+
+w<-c("Bembix","Cerceris","Chrysididae","Chrysis","Chrysura","Coelioxys", "Colpa","Corynis",
+     "Dolichovespula","Eodymerus","Eumenes","Gorytes","Hormiga","Ichneumonidae","Lestica",
+     "Macrophya","Megalodontes","Oxybelus","Pemphredon","Philantus","Podalonia","Polistes",
+     "Sphecodes","Tachysphex","Thyreus","Vespula")
+
+
+excel_focal = excel_focal %>% filter(!Pollinator_genus %in% w)
+
+# remove vanessa - (lepidoptera not hymenoptera)
+excel_focal <- excel_focal[!(excel_focal$Pollinator_genus == "Vanessa"),]
+
+
+#checking Hymenoptera
+hym= excel_focal %>% filter(Orden %in% "Hymenoptera")
+levels(factor(hym$Pollinator_genus))
+
+
+# correct species/families within orden (excel_focal)
+excel_focal$Orden = ifelse(excel_focal$Pollinator_genus == "Bombilidae", "Diptera", excel_focal$Orden)
+excel_focal$Orden = ifelse(excel_focal$Pollinator_genus == "Parageron", "Diptera", excel_focal$Orden)
+excel_focal$Orden = ifelse(excel_focal$Pollinator_genus == "Heliotaurus", "Coleoptera", excel_focal$Orden)
+
+excel_focal$Pollinator_genus[excel_focal$Pollinator_genus=="Xilocopa"] <- "Xylocopa"
+
+
+#checking Diptera
+dip= excel_focal %>% filter(Orden %in% "Diptera")
+levels(factor(dip$Pollinator_genus))
+
+
+# remove Callophrys - (lepidoptera not diptera)
+excel_focal <- excel_focal[!(excel_focal$Pollinator_genus == "Callophrys"),]
+
+# correct species/families within orders (excel_focal)
+excel_focal$Orden = ifelse(excel_focal$Pollinator_genus == "Xylocopa", "Hymenoptera", excel_focal$Orden)
+excel_focal$Orden = ifelse(excel_focal$Pollinator_genus == "Psylothrix", "Coleoptera", excel_focal$Orden)
+
+excel_focal$Pollinator_genus[excel_focal$Pollinator_genus=="Bombilidae"] <- "Bombyliidae"
+excel_focal$Pollinator_genus[excel_focal$Pollinator_genus=="Bombillidae"] <- "Bombyliidae"
+excel_focal$Pollinator_genus[excel_focal$Pollinator_genus=="Bombilius"] <- "Bombylius"
+excel_focal$Pollinator_genus[excel_focal$Pollinator_genus=="Rhyncomya"] <- "Rhyncomyia"
+excel_focal$Pollinator_genus[excel_focal$Pollinator_genus=="Sirfidae"] <- "Syrphidae"
+excel_focal$Pollinator_genus[excel_focal$Pollinator_genus=="Sirphidae"] <- "Syrphidae"
+
+
+# remove all that is not Bombilidos, sirfidos and rhyncomyia (Diptera)
+d<-c("Asilidae","Asilido","Bibio","Bibionido", "Dasypogon","Dilophus","Diptero",
+     "Empis","Lucilia","Miltogramma","Mosca","Musca","Myopa","Sarcophaga","Stenorrhina",
+     "Stomorhina","Stratyiomis")
+
+excel_focal = excel_focal %>% filter(!Pollinator_genus %in% d)
+
+
+#checking Coleoptera
+cole= excel_focal %>% filter(Orden %in% "Coleoptera")
+levels(factor(cole$Pollinator_genus))
+
+# correct species/families within orders (excel_focal)
+excel_focal$Orden = ifelse(excel_focal$Pollinator_genus == "Lasioglossum", "Hymenoptera", excel_focal$Orden)
+
+excel_focal$Pollinator_genus[excel_focal$Pollinator_genus=="Psylothrix"] <- "Psilothrix"
+excel_focal$Pollinator_genus[excel_focal$Pollinator_genus=="Chasmaptoterus"] <- "Chasmatopterus"
+excel_focal$Pollinator_genus[excel_focal$Pollinator_genus=="Chryptocephalus"] <- "Cryptocephalus"
+
+# remove Riphiphoridae - (parasite)
+excel_focal <- excel_focal[!(excel_focal$Pollinator_genus == "Riphiphoridae"),]
+
+
+levels(factor(excel_focal$Pollinator_genus))
+
+
+
 
 # Plant species #
+
+levels(factor(excel_focal$Plant_genus))
+
 #combine Plant_genus and Plant_species columns
 excel_focal $ Plant_sp <- paste (excel_focal$Plant_genus, excel_focal$Plant_species, sep = " ")
 
