@@ -528,7 +528,7 @@ to <- mutate_all(to, ~replace(., is.na(.), 0))
 write.csv(to, "Frequency-Fruit.csv") 
 write_xlsx(to, "C:/Rfuncion/Frequency-Fruit.xlsx")
 
-
+############
 ## species richness ##
 
 #combine Pollinator_genus and Pollinator_species columns
