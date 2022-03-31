@@ -1,6 +1,6 @@
 
 getwd()
-setwd("C:/Rfuncion")
+setwd("C:/Users/estef/git/stability-and-function")
 list.files()
 
 library(readxl)
@@ -9,6 +9,7 @@ library(dplyr)
 library(reshape2)
 library(tidyr)
 library(writexl)
+library (BiodiversityR)
 
 
 
@@ -28,6 +29,7 @@ excel_fruit <- excel_fruit[!(excel_fruit$Site_ID == "El Hongo"),]
 data.frame(table(excel_fruit$Site_ID))
 
 # modified "urbanizacion" by "Urbanizaciones"
+
 excel_fruit$Site_ID[excel_fruit$Site_ID=="Urbanizacion"] <- "Urbanizaciones"
 
 # 16 site and 4 years
@@ -108,6 +110,7 @@ excel_fruit$plant_id = ifelse(excel_fruit$Plant_ID=="AF4" |excel_fruit$Plant_ID=
                                 excel_fruit$Plant_ID== "LS4"|excel_fruit$Plant_ID=="TF4","D", excel_fruit$plant_id)
 
 
+
 levels(factor(excel_fruit$plant_id))
 
 # calculated the fruit proportion (mean) per year, site, plant species and plant individual
@@ -117,12 +120,6 @@ Fruit_set<-aggregate(Fruit_proportion ~ Year+Site_ID+Plant_sp+plant_id, data = e
 #order the rows
 Fruit_set<-arrange(Fruit_set,Year,Site_ID, Plant_sp)
 Fruit_set<-arrange(Fruit_set,Site_ID, Plant_sp)
-
-
-# Export dataframe to csv and excell 
-write.csv(Fruit_set, "my_fruitset.csv") 
-
-write_xlsx(Fruit_set, "C:/Rfuncion/my_fruitset.xlsx")
 
 
 ##########################
@@ -258,8 +255,6 @@ reprod_success<-arrange(reprod_success,Year,Site_ID, Plant_sp)
 reprod_success<-arrange(reprod_success,Site_ID, Plant_sp)
 
 
-write_xlsx(reprod_success, "C:/Rfuncion/reproductive_success.xlsx")
-
 ##################
 
 # frequency of species plant per site
@@ -283,7 +278,6 @@ reprod_success1 = reprod_success %>% filter(Plant_sp %in% pl)
 # remove 0 in fruit, seed number and seed weight
 reprod_success1<-reprod_success1[!apply(reprod_success1[,5:7] == 0, 1, all), ]
 
-write_xlsx(reprod_success1, "C:/Rfuncion/reproductive_success1.xlsx")
 
 ###############
 
@@ -367,8 +361,8 @@ excel_focal$Pollinator_genus[excel_focal$Pollinator_genus=="Xilocopa"] <- "Xyloc
 
 
 #checking Diptera
-dip= excel_focal %>% filter(Orden %in% "Diptera")
-levels(factor(dip$Pollinator_genus))
+Dipt= excel_focal %>% filter(Orden %in% "Diptera")
+levels(factor(dipt$Pollinator_genus))
 
 
 # remove Callophrys - (lepidoptera not diptera)
@@ -482,6 +476,9 @@ excel_focal$plant_id = ifelse(excel_focal$Plant_individual=="AFE" |excel_focal$P
 
 # Pollinators ##
 
+# remove NA in frequency
+excel_focal<-excel_focal%>% drop_na (Frequency)
+
 ## pollinator frequency (Total (sum)) per plant individual, species plants, site and year
 Pol_frequency<-aggregate(Frequency ~ Year+Site_ID+Plant_sp+plant_id, data = excel_focal, FUN = sum)
 
@@ -524,13 +521,110 @@ to<-arrange(to,Site_ID, Plant_sp)
 to <- mutate_all(to, ~replace(., is.na(.), 0))
 
 
-# Export dataframe to csv and excell 
-write.csv(to, "Frequency-Fruit.csv") 
-write_xlsx(to, "C:/Rfuncion/Frequency-Fruit.xlsx")
-
 ############
 ## species richness ##
 
 #combine Pollinator_genus and Pollinator_species columns
 excel_focal $ Pollinator_sp <- paste (excel_focal$Pollinator_genus, excel_focal$Pollinator_species, sep = " ")
 
+# correct pollinator species (excel_focal)
+levels(factor(excel_focal$Pollinator_sp))
+
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Andrena hispanica"] <- "Andrena hispania"
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Andrena nigroaenaea"] <- "Andrena nigroaenea"
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Andrena ovatula ?"] <- "Andrena ovatula"
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Andrena sp"] <- "Andrena sp."
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Anthaxia sp"] <- "Anthaxia sp."
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Anthophora aetivalis"] <- "Anthophora aestivalis"
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Anthophora sp"] <- "Anthophora sp."
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Anthrenus sp"] <- "Anthrenus sp."
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Apis melifera"] <- "Apis mellifera"
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Bombylius sp"] <- "Bombylius sp."
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Ceratina cuburbitina"] <- "Ceratina cucurbitina"
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Ceratina sp"] <- "Ceratina sp."
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Dasypoda crasiccornis"] <- "Dasypoda crassicornis"
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Dasypoda sp"] <- "Dasypoda sp."
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Eucera elongulata"] <- "Eucera elongatula"
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Eucera sp"] <- "Eucera sp."
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Heliotaurus roficolis"] <- "Heliotaurus ruficollis"
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Heliotaurus rufficolis"] <- "Heliotaurus ruficollis"
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Lasioglossum albocintum"] <- "Lasioglossum albocinctum"
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Lasioglossum sp"] <- "Lasioglossum sp."
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Malachius sp"] <- "Malachius sp."
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Merodon sp"] <- "Merodon sp."
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Parageron sp"] <- "Parageron sp."
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Psilothrix viridicoeruleus"] <- "Psilothrix viridicoerulea"
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Syrphidae NA"] <- "Syrphidae sp."
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Bombyliidae NA"] <- "Bombyliidae"
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Coleoptero NA"] <- "Coleoptero"
+excel_focal$Pollinator_sp[excel_focal$Pollinator_sp=="Dasypoda NA"] <- "Dasypoda sp."
+
+
+# calculating richness
+focal<-data.frame(excel_focal[,c(1,5,29,30,31)])
+
+focal1 <- dcast(focal, formula = Site_ID + Year +Plant_sp+plant_id ~ Pollinator_sp)
+
+focal1$richness<-specnumber(focal1[ , 5:129])
+
+
+r<-data.frame(focal1[,c(1,2,3,4,130)])
+
+to<-merge(x=r,y=to,by=c("Year","Site_ID", "Plant_sp","plant_id"),all.x=F, all.y=T)
+
+#order the rows
+to<-arrange(to,Year,Site_ID, Plant_sp)
+to<-arrange(to,Site_ID, Plant_sp)
+
+
+################
+### species richness contributing to 80% of total ###
+
+plant_polli<-data.frame(excel_focal[,c(29,31)])
+
+plant_polli1 <- dcast(plant_polli, formula = Pollinator_sp ~ Plant_sp)
+
+# calculated the abundance like number of times that one pollinator species interaction 
+# with any flower species (count the interaction frequency, not sum)
+plant_polli1$abun<-specnumber(plant_polli1[ , 2:10])
+
+# ordered according to abundance (normal over 1), in descending order
+# Total abundance
+sum(plant_polli1$abun) #304
+
+plant_polli1$abun2<-plant_polli1$abun*(1/304)
+
+plant_polli1 <- arrange(plant_polli1, -abun2)
+
+# sum up to 0.8 (culumate sum)
+plant_polli1$abu_acum<-cumsum(plant_polli1$abun2) # hasta fila 66 = 0.80592105
+
+# calculating species richness contributing to 80% of total
+plant_polli1<-plant_polli1[-c(67:125),]
+
+pol08 <- plant_polli1$Pollinator_sp
+
+excel_focal1 = excel_focal %>% filter(Pollinator_sp %in% pol08)
+levels(factor(excel_focal1$Pollinator_sp))
+
+
+focal08<-data.frame(excel_focal1[,c(1,5,29,30,31)])
+
+focal1_08 <- dcast(focal08, formula = Site_ID + Year +Plant_sp+plant_id ~ Pollinator_sp)
+
+focal1_08$richness08<-specnumber(focal1_08[ , 5:70])
+
+r08<-data.frame(focal1_08[,c(1,2,3,4,71)])
+
+to<-merge(x=r08,y=to,by=c("Year","Site_ID", "Plant_sp","plant_id"),all.x=F, all.y=T)
+
+#order the rows
+to<-arrange(to,Year,Site_ID, Plant_sp)
+to<-arrange(to,Site_ID, Plant_sp)
+
+to <- mutate_at(to,"richness08", ~replace(., is.na(.), 0))
+
+
+
+write_xlsx(to, "C:/Users/estef/git/stability-and-function/Frequency-Fruit.xlsx")
+write.csv(to, "C:/Users/estef/git/stability-and-function/Frequency-Fruit.csv")
