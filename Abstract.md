@@ -9,17 +9,26 @@ It is known that yield stability of pollinator-dependent crops benefits from an 
 In the current study, we investigate whether the plant reproductive success is affected by the stability of pollinator communities. In doing so, we analysed the relationship between fruit set and the seed set of X wild plants in 16 plots and the stability of pollinator communities (estimated as the inverse of the variation coefficient of visitation frequency) throughout four years. We also evaluated whether the synchrony and the species richness operate both directly, affecting plant reproductive success, and indirectly, via stability [he cambiado un poco la redaccion a ver si asi se entiende mejor]() 
 We hypothesized that a more stable pollinator community with higher species richness and lower synchrony will increase the reproductive success of the plants. We could also expect that the most important determinant of stability will be the direct negative effect of synchrony and that the species richness will directly promote the reproductive success of plants.
 
-# Analysis
+# Methods-Analysis
 
-Plant reproductive success: we used the fruit set i.e., the proportion of fruit per species plant (average per species) and the seed set i.e., the average number of seeds per fruit and the average seed weight per fruit for each plot and year. We explored the correlation between these last two variables. [quizas tambien estabilidad del fruit y del seed??]()
+Within each site (plot), 3-4 individuals per plant species (X total plant species) were marked. In 2015-2016, for each individual plant, the number of fruits per branch was recorded (at least 3 branches). The number of seeds per fruit and branch was counted and the weight per seed was obtained. In 2017-2018, the number of fruits per individual was registered and the number of seeds per individual (for at least 3 fruits) were counted. Also, the weight per seed was obtained.
 
-Stability of the pollinator community: we estimated the inverse of the variation coefficient of visitation frequency per site (16 plots) and year (4 years).
+For each site (plot) and year, the fruit set was estimated as the average proportion of fruit per individual and plant species. The seed set was calculated as the average number of seed per fruit and the average seed weigh per fruit (for each individual and plant species). We explored the correlation between these last two variables.
+In addition, for each site (plot) and year, the total frequency of pollinators and the frequency for each pollinator order individually (Hymenoptera, Diptera and Coleoptera) were calculated per individual and plant species. Also, the number of pollinator species and the number of pollinator species contributing to 80% of total biomass were quantified per individual and plant species.
 
-Synchrony: We examined the synchrony using the Loreau and de Mazancourt (2008) φ index, the Gross et al (2014) η index and the weighted form of  η  index (Blüthgen et al. 2016), and the log of variance ratio (log VR) (Lepš et al. 2018).
+We assessed whether the fruit set and seed set are affected by the pollinator frequency and pollinator richness. We compared four models, 1) total pollinator frequency and pollinator richness, 2) total pollinator frequency and number of pollinator species contributing to 80% of total biomass, 3) frequency of Hymenoptera, Diptera, Coleoptera and pollinator richness, 4) frequency of Hymenoptera, Diptera, Coleoptera and number of pollinator species contributing to 80% of total biomass. Year and species plant were included as a random factor in all models. Models were compared using the Akaike Information Criterion (AIC)
 
-Species richness: we quantified the number of species in each plot, the number of species present all years (4 years) and the number of species contributing to 90% of total biomass. We explored the correlation between these variables.
+# Stability analysis
 
-We applied structural equation modelling (SEM) to test the relative importance of different variables as direct and indirect drivers of the plant reproductive success
+We estimated the stability of the pollinator community as the inverse of the variation coefficient of visitation frequency (mean/SD) per site (16 plots) and year (4 years). We also calculated stability separately for Hymenoptera, Diptera and Coleoptera, and for variables fruit set and seed set.
+
+In addition, we quantified the number of species in each site (plot), the number of species present all years (4 years) and the number of species contributing to 80% of total biomass. We explored the correlation between these variables.
+
+We examined the synchrony using the Loreau and de Mazancourt (2008) φ index, the Gross et al (2014) η index and the weighted form of  η  index (Blüthgen et al., 2016), and the log of variance ratio (log VR) (Lepš et al., 2018).
+
+We analysed pollinator stability and richness and synchrony. We also assessed whether the fruit and seed stability were related to the pollinator stability. Finally, we applied structural equation modelling (SEM) to test the relative importance of different variables as direct and indirect drivers of the plant reproductive success
+
+
 
 Figure: 1) Graphical representation of the structural equation model (SEM) results; 2) relationships among stability, species richness and species asynchrony.
 
