@@ -56,8 +56,6 @@ excel_fruit <- mutate_at(excel_fruit, c("Fruit_Yes", "Fruit_No"), ~replace(., is
 # add column Fruit_Total (Fruit_Yes + Fruit_No)
 excel_fruit$Fruit_Total = rowSums (excel_fruit[ , 9:10])
 
-# remove when fruit yes=0 and fruit no=0 (Total is 0)
-#excel_fruit<-excel_fruit[!apply(excel_fruit[,9:10] == 0, 1, all), ]
 
 # Fruit proportion (Fruit yes / Fruit total)
 excel_fruit<-excel_fruit %>% mutate(Fruit_proportion = Fruit_Yes/Fruit_Total)
@@ -178,9 +176,6 @@ str(excel_seed)
 # NA = not fruit or fruit preyed (remove)
 excel_seed <- mutate_at(excel_seed, c("seed_number", "Seed_weight"), ~replace(., is.na(.), 0))
 
-# NA = not fruit or fruit preyed (remove)
-#excel_seed<-excel_seed%>% drop_na (seed_number | Seed_weight)
-
 
 # Seed weight #
 
@@ -283,10 +278,6 @@ pl<-c("Asphodelus fistulosus","Cistus crispus","Cistus ladanifer","Cistus salvii
 
 
 reprod_success1 = reprod_success %>% filter(Plant_sp %in% pl)
-
-
-# remove 0 in fruit, seed number and seed weight
-#reprod_success1<-reprod_success1[!apply(reprod_success1[,5:7] == 0, 1, all), ]
 
 
 ###############
