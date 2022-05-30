@@ -6,10 +6,14 @@ list.files()
 library(readxl)
 library(haven)
 library(dplyr)
+#install.packages("reshape2")
 library(reshape2)
 library(tidyr)
+#install.packages("writexl")
 library(writexl)
-library (BiodiversityR)
+#install.packages("BiodiversityR")
+#library (BiodiversityR)
+
 
 
 
@@ -117,6 +121,13 @@ levels(factor(excel_fruit$plant_id))
 
 # calculated the fruit proportion (mean) per year, site, plant species and plant individual
 Fruit_set<-aggregate(Fruit_proportion ~ Year+Site_ID+Plant_sp+plant_id, data = excel_fruit, FUN = mean)
+Fruit_yes<-aggregate(Fruit_Yes ~ Year+Site_ID+Plant_sp+plant_id, data = excel_fruit, FUN = sum)
+Fruit_no<-aggregate(Fruit_No ~ Year+Site_ID+Plant_sp+plant_id, data = excel_fruit, FUN = sum)
+Fruit_total<-aggregate(Fruit_Total ~ Year+Site_ID+Plant_sp+plant_id, data = excel_fruit, FUN = sum)
+
+Fruit_set<-merge(x=Fruit_set,y=Fruit_yes,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=T)
+Fruit_set<-merge(x=Fruit_set,y=Fruit_no,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=T)
+Fruit_set<-merge(x=Fruit_set,y=Fruit_total,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=T)
 
 
 #order the rows
@@ -159,22 +170,19 @@ levels(factor(excel_seed$Plant_sp))
 excel_seed <- excel_seed[!(excel_seed$Plant_sp == "Astragalus lusitanicus"),]
 
 
-# Seed number #
-
+# Seed number (utilizar columna seed no seed number) #
+str(excel_seed)
 # now column seed number is chr no num
 # assign value of seed column when seed number column is "all"
-excel_seed<-excel_seed %>% mutate(seed_number = ifelse(seed_number =="all", Seeds, seed_number))
-excel_seed<-excel_seed %>% mutate(seed_number = ifelse(seed_number =="All", Seeds, seed_number))
+#excel_seed<-excel_seed %>% mutate(seed_number = ifelse(seed_number =="all", Seeds, seed_number))
+#excel_seed<-excel_seed %>% mutate(seed_number = ifelse(seed_number =="All", Seeds, seed_number))
 
 # change seed number as numeric
-excel_seed$seed_number<-as.numeric(excel_seed$seed_number)
-
-str(excel_seed)
+#excel_seed$seed_number<-as.numeric(excel_seed$seed_number)
 
 
-# Replace NA in "seed_number" and Seed_weightcolumns
-# NA = not fruit or fruit preyed (remove)
-excel_seed <- mutate_at(excel_seed, c("seed_number", "Seed_weight"), ~replace(., is.na(.), 0))
+# Replace NA in "seed" and Seed_weight columns (NA = not fruit or fruit preyed (remove))
+excel_seed <- mutate_at(excel_seed, c("Seeds", "Seed_weight"), ~replace(., is.na(.), 0))
 
 
 # Seed weight #
@@ -182,7 +190,7 @@ excel_seed <- mutate_at(excel_seed, c("seed_number", "Seed_weight"), ~replace(.,
 #remove line 1133 value of the seed weight is 2145
 excel_seed<-excel_seed[-1133,]
 
-# seed weight= 0 -> NOtes:preyed (remove)
+# seed weight= 0 -> NOtes:preyed or not fruit (remove)
 excel_seed<-excel_seed[!apply(excel_seed[,10] == 0, 1, all), ]
 
 
@@ -236,7 +244,7 @@ excel_seed <- mutate_at(excel_seed,"plant_id", ~replace(., is.na(.), "A"))
 
 # calculated the seed number(mean) per year, site, plant species and plant individual
 # mean seed number per fruit in plant individual per plant species
-seed_num<-aggregate(seed_number ~ Year+Site_ID+Plant_sp+plant_id, data = excel_seed, FUN = mean)
+seed_num<-aggregate(Seeds ~ Year+Site_ID+Plant_sp+plant_id, data = excel_seed, FUN = mean)
 
 # calculated the seed weight(mean) per year, site, plant species and plant individual
 # mean seed weight per fruit in plant individual per plant species
@@ -248,12 +256,9 @@ seed_set<-merge(x = seed_num, y = seed_we)
 seed_set<-arrange(seed_set,Year,Site_ID, Plant_sp)
 seed_set<-arrange(seed_set,Site_ID, Plant_sp)
 
-# joined fruit set and seed set
-reprod_success<-merge(x=Fruit_set,y=seed_set,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=T)
+# joined fruit set and seed set 
+reprod_success<-merge(x=Fruit_set,y=seed_set,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=F)
 
-reprod_success <- mutate_at(reprod_success,"Fruit_proportion", ~replace(., is.na(.), 0))
-reprod_success <- mutate_at(reprod_success,"seed_number", ~replace(., is.na(.), 0))
-reprod_success <- mutate_at(reprod_success,"Seed_weight", ~replace(., is.na(.), 0))
 
 #order the rows
 reprod_success<-arrange(reprod_success,Year,Site_ID, Plant_sp)
@@ -475,24 +480,42 @@ excel_focal$plant_id = ifelse(excel_focal$Plant_individual=="AFE" |excel_focal$P
 
 
 
-# Pollinators ##
+# Flower abundance
+str(excel_focal)
+colnames(excel_focal)[28] <- "flower_abundance"
 
-# remove NA in frequency
-excel_focal<-excel_focal%>% drop_na (Frequency)
+# change flower_abundance as numeric
+excel_focal$flower_abundance<-as.numeric(excel_focal$flower_abundance)
+
+sum(is.na(excel_focal$flower_abundance))# 101 de 1369 son cero (eliminar
+excel_focal <- excel_focal[!is.na(excel_focal$flower_abundance),]
+
+flower_abun<-aggregate(flower_abundance ~ Year+Site_ID+Plant_sp+plant_id, data = excel_focal, FUN = sum)
+
+
+# pollinator frequency ##
 
 ## pollinator frequency (Total (sum)) per plant individual, species plants, site and year
 Pol_frequency<-aggregate(Frequency ~ Year+Site_ID+Plant_sp+plant_id, data = excel_focal, FUN = sum)
 
-#order the rows
-Pol_frequency<-arrange(Pol_frequency,Year,Site_ID, Plant_sp)
-Pol_frequency<-arrange(Pol_frequency,Site_ID, Plant_sp)
+
+#link flower_abun and Pol_frequency
+visitation<-merge(x=flower_abun,y=Pol_frequency,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=T)
+
+sum(is.na(visitation$flower_abundance))
 
 
-#link Pol_frequency and reproductive success1 (plants at least in 4 sites)
-to<-merge(x=Pol_frequency,y=reprod_success1,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=T)
+
+# frequency/ flower abundance
+visitation<-visitation %>% mutate(visitatio_rate = Frequency/flower_abundance)
+
+
+
+#link prueb and reproductive success1 (plants at least in 4 sites)
+to<-merge(x=visitation,y=reprod_success1,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=T)
 
 # Replace NA in "Frequency","Fruit_proportion", "seed_number" and "Seed_weight columns
-to <- mutate_at(to, c("Frequency", "Fruit_proportion","seed_number", "Seed_weight"), ~replace(., is.na(.), 0))
+#to <- mutate_at(to, c("Frequency", "Fruit_proportion","seed_number", "Seed_weight"), ~replace(., is.na(.), 0))
 
 to<-arrange(to,Year,Site_ID, Plant_sp)
 to<-arrange(to,Site_ID, Plant_sp)
@@ -502,24 +525,40 @@ to<-arrange(to,Site_ID, Plant_sp)
 Hym<-aggregate(Frequency ~ Year+Site_ID+Plant_sp+plant_id, excel_focal[excel_focal$Orden %in% c("Hymenoptera"),], sum)
 names(Hym)[names(Hym) == "Frequency"] <- "Hym_freq"
 
-to<-merge(x=Hym,y=to,by=c("Year","Site_ID", "Plant_sp","plant_id"),all.x=F, all.y=T)
+#link flower_abun and Hymenptera
+Hym_visitation<-merge(x=flower_abun,y=Hym,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=T)
+Hym_visitation<-Hym_visitation %>% mutate(Hym_visit = Hym_freq/flower_abundance)
+
+Hym_visitation <- select(Hym_visitation, -flower_abundance)
+
+to<-merge(x=Hym_visitation,y=to,by=c("Year","Site_ID", "Plant_sp","plant_id"),all.x=F, all.y=T)
 
 # Replace NA in "Hym_freq" column
-to <- mutate_at(to, c("Hym_freq"), ~replace(., is.na(.), 0))
+#to <- mutate_at(to, c("Hym_freq"), ~replace(., is.na(.), 0))
 
 
 # Diptera frequency
 dip<-aggregate(Frequency ~ Year+Site_ID+Plant_sp+plant_id, excel_focal[excel_focal$Orden %in% c("Diptera"),], sum)
 names(dip)[names(dip) == "Frequency"] <- "Dip_freq"
 
-to<-merge(x=dip,y=to,by=c("Year","Site_ID", "Plant_sp","plant_id"),all.x=F, all.y=T)
+#link flower_abun and diptera
+Dip_visitation<-merge(x=flower_abun,y=dip,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=T)
+Dip_visitation<-Dip_visitation %>% mutate(Dip_visit = Dip_freq/flower_abundance)
+
+Dip_visitation <- select(Dip_visitation, -flower_abundance)
+to<-merge(x=Dip_visitation,y=to,by=c("Year","Site_ID", "Plant_sp","plant_id"),all.x=F, all.y=T)
 
 
 # Coleoptera frequency
 coleop<-aggregate(Frequency ~ Year+Site_ID+Plant_sp+plant_id, excel_focal[excel_focal$Orden %in% c("Coleoptera"),], sum)
 names(coleop)[names(coleop) == "Frequency"] <- "Coleop_freq"
 
-to<-merge(x=coleop,y=to,by=c("Year","Site_ID", "Plant_sp","plant_id"),all.x=F, all.y=T)
+#link flower_abun and coleoptera
+Cole_visitation<-merge(x=flower_abun,y=coleop,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=T)
+Cole_visitation<-Cole_visitation %>% mutate(Coleop_visit = Coleop_freq/flower_abundance)
+
+Cole_visitation <- select(Cole_visitation, -flower_abundance)
+to<-merge(x=Cole_visitation,y=to,by=c("Year","Site_ID", "Plant_sp","plant_id"),all.x=F, all.y=T)
 
 to<-arrange(to,Year,Site_ID, Plant_sp)
 to<-arrange(to,Site_ID, Plant_sp)
@@ -572,10 +611,10 @@ focal<-data.frame(excel_focal[,c(1,5,29,30,31)])
 
 focal1 <- dcast(focal, formula = Site_ID + Year +Plant_sp+plant_id ~ Pollinator_sp)
 
-focal1$richness<-specnumber(focal1[ , 5:128])
+focal1$richness<-specnumber(focal1[ , 5:129])
 
 
-r<-data.frame(focal1[,c(1,2,3,4,129)])
+r<-data.frame(focal1[,c(1,2,3,4,130)])
 
 to<-merge(x=r,y=to,by=c("Year","Site_ID", "Plant_sp","plant_id"),all.x=F, all.y=T)
 
@@ -600,17 +639,20 @@ plant_polli1$abun<-specnumber(plant_polli1[ , 2:10])
 
 # ordered according to abundance (normal over 1), in descending order
 # Total abundance
-sum(plant_polli1$abun) #303
+sum(plant_polli1$abun) #293
 
-plant_polli1$abun2<-plant_polli1$abun*(1/303)
+plant_polli1$abun2<-plant_polli1$abun*(1/293)
 
 plant_polli1 <- arrange(plant_polli1, -abun2)
 
 # sum up to 0.8 (culumate sum)
-plant_polli1$abu_acum<-cumsum(plant_polli1$abun2) # hasta fila 66 = 0.8085809
+plant_polli1$abu_acum<-cumsum(plant_polli1$abun2) # hasta fila 63 = 0.7883959 con abun=2
+
+# a partir de fila 63, abun=1 (habria que añadir 3 observaciones mas para o.8)
+# para evitar dar mas importancia a unas especies que a otras con la misma abun, no las añado
 
 # calculating species richness contributing to 80% of total
-plant_polli1<-plant_polli1[-c(67:124),]
+plant_polli1<-plant_polli1[-c(64:125),]
 
 pol08 <- plant_polli1$Pollinator_sp
 
@@ -622,9 +664,9 @@ focal08<-data.frame(excel_focal1[,c(1,5,29,30,31)])
 
 focal1_08 <- dcast(focal08, formula = Site_ID + Year +Plant_sp+plant_id ~ Pollinator_sp)
 
-focal1_08$richness08<-specnumber(focal1_08[ , 5:70])
+focal1_08$richness08<-specnumber(focal1_08[ , 5:67])
 
-r08<-data.frame(focal1_08[,c(1,2,3,4,71)])
+r08<-data.frame(focal1_08[,c(1,2,3,4,68)])
 
 to<-merge(x=r08,y=to,by=c("Year","Site_ID", "Plant_sp","plant_id"),all.x=F, all.y=T)
 
@@ -636,5 +678,5 @@ to <- mutate_at(to,"richness08", ~replace(., is.na(.), 0))
 
 
 
-write_xlsx(to, "C:/Users/estef/git/stability-and-function/Data/Frequency-Fruit.xlsx")
-write.csv(to, "C:/Users/estef/git/stability-and-function/Data/Frequency-Fruit.csv")
+write_xlsx(to, "C:/Users/estef/git/stability-and-function/Data/Pollinator-Plant.xlsx")
+write.csv(to, "C:/Users/estef/git/stability-and-function/Data/Pollinator-Plant.csv")
