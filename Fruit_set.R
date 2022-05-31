@@ -53,9 +53,10 @@ levels(factor(excel_fruit$Plant_sp))
 plant_site<-data.frame(table( excel_fruit$Plant_sp,excel_fruit$Site_ID))
 plant_site
 
+
 # Replace NA in "Fruit_Yes" and "Fruit_No" columns
 excel_fruit <- mutate_at(excel_fruit, c("Fruit_Yes", "Fruit_No"), ~replace(., is.na(.), 0))
-
+table(excel_fruit$Fruit_Yes, excel_fruit$Fruit_No)
 
 # add column Fruit_Total (Fruit_Yes + Fruit_No)
 excel_fruit$Fruit_Total = rowSums (excel_fruit[ , 9:10])
@@ -121,10 +122,12 @@ levels(factor(excel_fruit$plant_id))
 
 # calculated the fruit proportion (mean) per year, site, plant species and plant individual
 Fruit_set<-aggregate(Fruit_proportion ~ Year+Site_ID+Plant_sp+plant_id, data = excel_fruit, FUN = mean)
+# aggregated fruit yes, fruit no and fruit total (sum)
 Fruit_yes<-aggregate(Fruit_Yes ~ Year+Site_ID+Plant_sp+plant_id, data = excel_fruit, FUN = sum)
 Fruit_no<-aggregate(Fruit_No ~ Year+Site_ID+Plant_sp+plant_id, data = excel_fruit, FUN = sum)
 Fruit_total<-aggregate(Fruit_Total ~ Year+Site_ID+Plant_sp+plant_id, data = excel_fruit, FUN = sum)
 
+# join fruit set with fruit yes, fruit no and fruit total
 Fruit_set<-merge(x=Fruit_set,y=Fruit_yes,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=T)
 Fruit_set<-merge(x=Fruit_set,y=Fruit_no,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=T)
 Fruit_set<-merge(x=Fruit_set,y=Fruit_total,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=T)
@@ -181,7 +184,7 @@ str(excel_seed)
 #excel_seed$seed_number<-as.numeric(excel_seed$seed_number)
 
 
-# Replace NA in "seed" and Seed_weight columns (NA = not fruit or fruit preyed (remove))
+# Replace NA in "seed" and Seed_weight columns 
 excel_seed <- mutate_at(excel_seed, c("Seeds", "Seed_weight"), ~replace(., is.na(.), 0))
 
 
@@ -505,17 +508,20 @@ visitation<-merge(x=flower_abun,y=Pol_frequency,by=c("Year","Site_ID", "Plant_sp
 sum(is.na(visitation$flower_abundance))
 
 
-
 # frequency/ flower abundance
 visitation<-visitation %>% mutate(visitatio_rate = Frequency/flower_abundance)
 
 
-
-#link prueb and reproductive success1 (plants at least in 4 sites)
+#link visitation and reproductive success1 (plants at least in 4 sites)
 to<-merge(x=visitation,y=reprod_success1,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=T)
+
+# solo unido las observaciones que tienen polinizador y exito reproductor
+to_fa<-merge(x=visitation,y=reprod_success1,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=F, all.y=F)
+
 
 # Replace NA in "Frequency","Fruit_proportion", "seed_number" and "Seed_weight columns
 #to <- mutate_at(to, c("Frequency", "Fruit_proportion","seed_number", "Seed_weight"), ~replace(., is.na(.), 0))
+
 
 to<-arrange(to,Year,Site_ID, Plant_sp)
 to<-arrange(to,Site_ID, Plant_sp)
@@ -525,7 +531,7 @@ to<-arrange(to,Site_ID, Plant_sp)
 Hym<-aggregate(Frequency ~ Year+Site_ID+Plant_sp+plant_id, excel_focal[excel_focal$Orden %in% c("Hymenoptera"),], sum)
 names(Hym)[names(Hym) == "Frequency"] <- "Hym_freq"
 
-#link flower_abun and Hymenptera
+#link flower_abun and Hymenoptera
 Hym_visitation<-merge(x=flower_abun,y=Hym,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=T)
 Hym_visitation<-Hym_visitation %>% mutate(Hym_visit = Hym_freq/flower_abundance)
 
