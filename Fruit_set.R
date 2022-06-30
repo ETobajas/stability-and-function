@@ -33,7 +33,6 @@ excel_fruit <- excel_fruit[!(excel_fruit$Site_ID == "El Hongo"),]
 data.frame(table(excel_fruit$Site_ID))
 
 # modified "urbanizacion" by "Urbanizaciones"
-
 excel_fruit$Site_ID[excel_fruit$Site_ID=="Urbanizacion"] <- "Urbanizaciones"
 
 # remove "Cotito de Santa Teresa", not data in 2016
@@ -41,14 +40,17 @@ excel_fruit$Site_ID[excel_fruit$Site_ID=="Urbanizacion"] <- "Urbanizaciones"
 excel_fruit <- excel_fruit[!(excel_fruit$Site_ID == "Cotito de Santa Teresa"),]
 excel_fruit <- excel_fruit[!(excel_fruit$Site_ID == "Las mulas"),]
 
+# remove "El pinar", only sampled in 2015
+excel_fruit <- excel_fruit[!(excel_fruit$Site_ID == "El pinar"),]
 
-# 14 site and 4 years
+# 13 site and 4 years
 levels(factor(excel_fruit$Site_ID))
 levels(factor(excel_fruit$Year)) 
 
 
-# remove "Lavandula NA"
-excel_fruit <- excel_fruit[!(excel_fruit$Plant_sp == "Lavandula NA"),]
+# modified "Lavandula NA" by "Lavandula pedunculata" (comprobado en beefun)
+excel_fruit$Plant_sp[excel_fruit$Plant_sp=="Lavandula NA"] <- "Lavandula pedunculata"
+
 
 # Remove Astragalus lusitanicus in fruit set (no present in focal)
 excel_fruit <- excel_fruit[!(excel_fruit$Plant_sp == "Astragalus lusitanicus"),]
@@ -104,42 +106,37 @@ excel_fruit$plant_id = ifelse(excel_fruit$Plant_ID=="AF4" |excel_fruit$Plant_ID=
 
 
 levels(factor(excel_fruit$plant_id))
-# Replace NA in "Fruit_Yes" and "Fruit_No" columns
-excel_fruit <- mutate_at(excel_fruit, c("Fruit_Yes", "Fruit_No"), ~replace(., is.na(.), 0))
-
-# Cuando Fruit preyed es mayor que fruit yes, incluir el valor de Fruit preyed en fruit yes
-excel_fruit <- mutate_at(excel_fruit, c("Fruit_preyed"), ~replace(., is.na(.), 0))
-index <- excel_fruit$Fruit_Yes<excel_fruit$Fruit_preyed
-
-excel_fruit$Fruit_Yes[index] <- (excel_fruit$Fruit_preyed[index] ) 
 
 
+# cambiar fruit dispersed a numerico
+str(excel_fruit)
+excel_fruit$Fruit_dispersed= as.numeric(excel_fruit$Fruit_dispersed)
 
 
-# sum fruit yes and fruit no per individual plant 
+# sum fruit yes,fruit no, fruit preyed and fruit dispersed per individual plant 
 #(2015 and 2016 fruit is counted by branch, 2017-2018 no)
 #thus each individual plant in 2015-2016 has a number of fruit yes and fruit no (same that 2017-2018)
 Fruit1<-aggregate(Fruit_Yes ~ Year+Site_ID+Plant_sp+plant_id, data = excel_fruit, FUN = sum)
 Fruit2<-aggregate(Fruit_No ~ Year+Site_ID+Plant_sp+plant_id, data = excel_fruit, FUN = sum)
-# sumar fruit preyed por individuo y especie, año y sitio
 Fruit3<-aggregate(Fruit_preyed ~ Year+Site_ID+Plant_sp+plant_id, data = excel_fruit, FUN = sum)
+Fruit4<-aggregate(Fruit_dispersed ~ Year+Site_ID+Plant_sp+plant_id, data = excel_fruit, FUN = sum)
+
 
 #unir datos
 Fruit<-merge(x=Fruit1,y=Fruit2,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=T)
 Fruit<-merge(x=Fruit,y=Fruit3,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=T)
+Fruit<-merge(x=Fruit,y=Fruit4,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=T)
+
+# fruit formada= Fruit yes + fruit preyed + fruit dispersed
+Fruit$Fruit_formado = rowSums (Fruit[ , c(5,7,8)],na.rm = TRUE)
+
+# add column Fruit_Total (Fruit_formado + Fruit_No)
+Fruit$Fruit_total = rowSums (Fruit[ , c(6,9)],na.rm = TRUE)
 
 
-# add column Fruit_Total (Fruit_Yes + Fruit_No)
-Fruit$Fruit_Total = rowSums (Fruit[ , 5:6])
-
-# remove fruit yes and fruit no = 0.
-# se eliminan 5 observaciones (cuando no se tenia en cuenta fruit preyed se eliminaban 27)
-Fruit<-Fruit[!apply(Fruit[,5:8] == 0, 1, all), ]
-
-
-# Fruit proportion (Fruit yes / Fruit total)
+# Fruit proportion (Fruit formados / Fruit total)
 # fruit proportion per individual plant and species plant in site and year
-Fruit<-Fruit %>% mutate(Fruit_proportion = Fruit_Yes/Fruit_Total)
+Fruit<-Fruit %>% mutate(Fruit_proportion = Fruit_formado/Fruit_total)
 
 
 #order the rows
@@ -171,7 +168,10 @@ excel_seed$Site_ID[excel_seed$Site_ID=="El Pozo"] <- "El pozo"
 excel_seed <- excel_seed[!(excel_seed$Site_ID == "Cotito de Santa Teresa"),]
 excel_seed <- excel_seed[!(excel_seed$Site_ID == "Las mulas"),]
 
-# 14 site and 4 years
+# remove "El pinar", only sampled in 2015
+excel_seed <- excel_seed[!(excel_seed$Site_ID == "El pinar"),]
+
+# 13 site and 4 years
 levels(factor(excel_seed$Site_ID))
 levels(factor(excel_seed$Year))
 
@@ -255,9 +255,12 @@ seed_set<-merge(x=seed_numb,y=seed_weight,by=c("Year","Site_ID", "Plant_sp","pla
 
 # join fruit and seed (hay observaciones que tienen fruto pero no semilla). Se eliminan aquellas que aunque tienen semilla no tienen fruto
 reprod_success<-merge(x=Fruit,y=seed_set,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=T, all.y=F)
+
 # join fruit and seed only plant id coinciding
 reprod_success0<-merge(x=Fruit,y=seed_set,by=c("Year","Site_ID", "Plant_sp","plant_id" ),all.x=F, all.y=F)
 
+
+#write_xlsx(reprod_success, "C:/Users/estef/git/stability-and-function/Data/trial.xlsx")
 
 #sum(is.na(reprod_success$Seeds))
 
@@ -329,6 +332,9 @@ excel_focal$Site_ID[excel_focal$Site_ID=="La_rocina"] <- "La Rocina"
 # remove "Las mulas", not data (fruit, seed) in 2018
 excel_focal <- excel_focal[!(excel_focal$Site_ID == "Cotito de Santa Teresa"),]
 excel_focal <- excel_focal[!(excel_focal$Site_ID == "Las mulas"),]
+
+# remove "El pinar", only sampled in 2015
+excel_focal <- excel_focal[!(excel_focal$Site_ID == "El pinar"),]
 
 levels(factor(excel_focal$Site_ID))
 
@@ -726,3 +732,7 @@ total<-arrange(total,Site_ID, Plant_sp)
 
 write_xlsx(total, "C:/Users/estef/git/stability-and-function/Data/Pollinator-Plant-new.xlsx")
 write.csv(total, "C:/Users/estef/git/stability-and-function/Data/Pollinator-Plant-new.csv")
+
+
+write_xlsx(reprod_success, "C:/Users/estef/git/stability-and-function/Data/trial.xlsx")
+write_xlsx(visitation, "C:/Users/estef/git/stability-and-function/Data/trial2.xlsx")
