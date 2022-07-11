@@ -1,0 +1,75 @@
+
+---
+title: "Summary of models"
+output: pdf_document
+date: '2022-07-08'
+---
+
+
+Summary of models for seed numbers per plant species
+
+# Richness
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
+library(knitr)
+library(dplyr)
+library(kableExtra)
+library(tidyverse)
+#install.packages("broom.mixed")
+library(broom.mixed)
+library(broom)
+#install.packages("lmerTest")
+library(lmerTest)
+
+Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") #402 observaciones
+Pollinator_Plant<-Pollinator_Plant[,-1]
+
+
+
+#Species out
+spp_out <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  summarise(Unique_Id = n_distinct(Site_ID)) %>%
+  filter(Unique_Id == 1) %>%
+  select(Plant_gen_sp) %>% pull(Plant_gen_sp)
+
+
+#Data with species in more than 1 site
+Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+
+#Models _ Seed numbers 
+# richness
+ta_seed<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~richness+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+opts <- options(knitr.kable.NA = "")
+
+ta_seed<-ta_seed %>%
+  select(-effect, -group)  %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+  
+ta_seed<-filter(ta_seed, !term == "sd__(Intercept)" & !term =="sd__Observation")
+
+
+ta_seed %>% 
+kable(booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
+column_spec(7, bold = ifelse(ta_seed$p.value < 0.05, T, F) )
+
+
+```
+
+
+
+\newpage
+visitation rate
+
+```{r, echo=FALSE}
+load(".RData")
+opts <- options(knitr.kable.NA = "")
+knitr::kable(ta_seed2, digits = 4)
+```
+
+
