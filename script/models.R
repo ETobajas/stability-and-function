@@ -10,7 +10,7 @@ library(dplyr)
 
 
 
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") #402 observaciones
+Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") #400 observaciones
 str(Pollinator_Plant)
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
@@ -32,8 +32,6 @@ Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 a<-Pollinator_Plant %>% select(Plant_gen_sp,fruit_proportion, Seeds,Seed_weight,richness,visitatio_rate,Frequency)
 a <- mutate_all(a, ~replace(., is.na(.), 0))
 
-#by(a[,2:7], a$Plant_gen_sp, cor)
-
 a_cor <- a %>%
   group_by(Plant_gen_sp) %>%
   do(cormat = cor(select(., -matches("Plant_gen_sp")))) 
@@ -51,13 +49,38 @@ names(list_1) <- v
 str(list_1)
 data2 <- do.call(rbind.data.frame, list_1)
 
-data2 %>%
+corre<-data2 %>%
 mutate(newcolum = rownames(data2))%>%
 separate(newcolum, into=c('species', 'rows'), extra = "merge", sep = "\\.")%>%
 select(species, rows,everything())  %>%
 remove_rownames() %>%
   mutate(species = replace(species, duplicated(species), ""))
 
+
+#corrplot 
+a %>%
+  group_by(Plant_gen_sp) %>%
+  group_map(~ corrplot::corrplot(cor(select(.x, where(is.numeric)),
+  use = "complete.obs"),method="number",type="upper",
+  tl.cex=0.8,title = first(.x$Plant_gen_sp)), .keep = TRUE)
+   
+
+library(tidyverse)
+library(patchwork)
+library(ggcorrplot)
+
+df_with_plots <- a %>%
+  group_by(Plant_gen_sp) %>%
+  nest() %>%
+  mutate(plot = map(data, function(.x) {
+    .x  %>%
+      cor() %>%
+      ggcorrplot::ggcorrplot()
+  }))
+
+plots1 <- map2(df_with_plots$plot, df_with_plots$Plant_gen_sp, ~(.x + labs(title = .y)))
+
+plots1[[1]] + plots1[[2]] + plots1[[2]] + plots1[[2]]
 
 
 
@@ -82,6 +105,13 @@ ta_seed2<-Pollinator_Plant %>%
   summarise(broom.mixed::tidy(model)) %>%
   ungroup()
 
+# Frequency
+ta_seed3<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~Frequency+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
 
 #Models _ Seed weight 
 
@@ -100,6 +130,13 @@ ta_weight<-Pollinator_Plant %>%
 ta_weight2<-Pollinator_Plant %>%
   nest_by(Plant_gen_sp) %>%
   mutate(model = list(lmer(Seed_weight~visitatio_rate+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+# frequency
+ta_weight3<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seed_weight~Frequency+(1|Site_ID),data))) %>%
   summarise(broom.mixed::tidy(model)) %>%
   ungroup()
 
@@ -128,6 +165,13 @@ ta_f2<-Pollinator_Plant %>%
   summarise(broom.mixed::tidy(model)) %>%
   ungroup()
 
+
+# frequency
+ta_f3<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~Frequency + (1|Site_ID),family=binomial,data)))%>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
 
 
 
