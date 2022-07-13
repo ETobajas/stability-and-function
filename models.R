@@ -66,9 +66,7 @@ a %>%
    
 
 library(tidyverse)
-install.packages("patchwork")
 library(patchwork)
-install.packages("ggcorrplot")
 library(ggcorrplot)
 
 df_with_plots <- a %>%
