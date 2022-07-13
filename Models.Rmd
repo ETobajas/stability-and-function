@@ -3,12 +3,13 @@
 title: "Summary of models"
 output: pdf_document
 date: '2022-07-08'
+
 ---
 
 
 # Correlation
 
-```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="80%"}
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="80%", fig.align='left'}
 library(tidyverse)
 #install.packages("broom.mixed")
 library(broom.mixed)
@@ -59,17 +60,74 @@ remove_rownames() %>%
 
 corre %>% 
    kable(booktabs = TRUE,digits =  4,longtable = T,linesep = c("","","","","","\\addlinespace"),align = "llcccccc") %>%
-  kable_styling(font_size = 9,full_width = F)
+  kable_styling(font_size = 9,full_width = F, position="left")
 
 ```
 
 \newpage
 
+```{r, echo=FALSE, warning=FALSE,message=FALSE, figures-side, out.width="100%",fig.fullwidth=TRUE}
+
+library(tidyverse)
+#install.packages("broom.mixed")
+library(broom.mixed)
+library(broom)
+#install.packages("lmerTest")
+library(lmerTest)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(patchwork)
+library(ggcorrplot)
+
+Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") #402 observaciones
+Pollinator_Plant<-Pollinator_Plant[,-1]
+
+
+#Species out
+spp_out <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  summarise(Unique_Id = n_distinct(Site_ID)) %>%
+  filter(Unique_Id == 1) %>%
+  select(Plant_gen_sp) %>% pull(Plant_gen_sp)
+
+
+#Data with species in more than 1 site
+Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+
+# correlation
+a<-Pollinator_Plant %>% select(Plant_gen_sp,fruit_proportion, Seeds,Seed_weight,richness,visitatio_rate,Frequency)
+a <- mutate_all(a, ~replace(., is.na(.), 0))
+
+
+df_with_plots <- a %>%
+  group_by(Plant_gen_sp) %>%
+  nest() %>%
+  mutate(plot = map(data, function(.x) {
+    .x  %>%
+      cor() %>%
+      ggcorrplot::ggcorrplot()
+  }))
+
+plots1 <- map2(df_with_plots$plot, df_with_plots$Plant_gen_sp, ~(.x + labs(title = .y)))
+
+plots1[[1]] + plots1[[2]] + plots1[[2]] + plots1[[2]]
+
+```
+
+
+
+
+\clearpage
+
 # Fruit proportion
 
-Summary of models for fruit proportion per plant species
 
-**Richness**
+Summary of models for fruit proportion per plant species. Binomial cbind(fruit_formado, Fruit_No). Site_ID as factor random
+
+## Richness
+
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
 library(knitr)
@@ -82,7 +140,7 @@ library(broom)
 #install.packages("lmerTest")
 library(lmerTest)
 
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") #402 observaciones
+Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -114,17 +172,19 @@ ta_f<-filter(ta_f, !term == "sd__(Intercept)")
 
 
 ta_f %>% 
-    kable(booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
-column_spec(6, bold = ifelse(ta_f$p.value < 0.05, T, F) )
+    kable("latex",booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
+column_spec(6, bold = ifelse(ta_f$p.value < 0.05, T, F) )%>%
+  kable_styling(position="center", latex_option="hold_position")
 
 ```
 
 \newpage
-**Visitation rate**
+
+## Visitation rate
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
 
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") #402 observaciones
+Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -156,18 +216,67 @@ ta_f2<-filter(ta_f2, !term == "sd__(Intercept)")
 
 
 ta_f2 %>% 
-kable(booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
-column_spec(6, bold = ifelse(ta_f2$p.value < 0.05, T, F) )
+kable("latex",booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
+column_spec(6, bold = ifelse(ta_f2$p.value < 0.05, T, F) )%>%
+  kable_styling(position="center", latex_option="hold_position")
 
 ```
 
 \newpage
 
+## Frequency
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
+
+Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<-Pollinator_Plant[,-1]
+
+#Species out
+spp_out <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  summarise(Unique_Id = n_distinct(Site_ID)) %>%
+  filter(Unique_Id == 1) %>%
+  select(Plant_gen_sp) %>% pull(Plant_gen_sp)
+
+
+#Data with species in more than 1 site
+Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+
+# frequency
+ta_f3<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~Frequency + (1|Site_ID),family=binomial,data)))%>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+opts <- options(knitr.kable.NA = "")
+
+ta_f3<-ta_f3 %>%
+  select(-effect, -group)  %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+  
+ta_f3<-filter(ta_f3, !term == "sd__(Intercept)")
+
+
+ta_f3 %>% 
+kable("latex",booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
+column_spec(6, bold = ifelse(ta_f3$p.value < 0.05, T, F) )%>%
+  kable_styling(position="center", latex_option="hold_position")
+
+```
+
+
+
+
+\newpage
+
 # Seed numbers
 
-Summary of models for seed numbers per plant species
+Summary of models for seed numbers per plant species (LMM). Site_ID as factor random
 
-**Richness**
+## Richness
+
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
 
 Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") #402 observaciones
@@ -203,15 +312,16 @@ ta_seed<-filter(ta_seed, !term == "sd__(Intercept)" & !term =="sd__Observation")
 
 
 ta_seed %>% 
-kable(booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
-column_spec(7, bold = ifelse(ta_seed$p.value < 0.05, T, F) )
+kable("latex", booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
+column_spec(7, bold = ifelse(ta_seed$p.value < 0.05, T, F) )%>%
+  kable_styling(position="center", latex_option="hold_position")
 
 ```
 
 
 
 \newpage
-**Visitation rate**
+## Visitation rate
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
 Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
@@ -245,17 +355,61 @@ ta_seed2<-filter(ta_seed2, !term == "sd__(Intercept)" & !term =="sd__Observation
 
 
 ta_seed2 %>% 
-kable(booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
-column_spec(7, bold = ifelse(ta_seed2$p.value < 0.05, T, F) )
+kable("latex", booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
+column_spec(7, bold = ifelse(ta_seed2$p.value < 0.05, T, F) )%>%
+  kable_styling(position="center", latex_option="hold_position")
 ```
+
+\newpage
+## Visitation rate
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
+Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<-Pollinator_Plant[,-1]
+
+#Species out
+spp_out <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  summarise(Unique_Id = n_distinct(Site_ID)) %>%
+  filter(Unique_Id == 1) %>%
+  select(Plant_gen_sp) %>% pull(Plant_gen_sp)
+
+
+#Data with species in more than 1 site
+Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+# Frequency
+ta_seed3<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~Frequency+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+opts <- options(knitr.kable.NA = "")
+
+ta_seed3<-ta_seed3 %>%
+  select(-effect, -group)  %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+  
+ta_seed3<-filter(ta_seed3, !term == "sd__(Intercept)" & !term =="sd__Observation")
+
+
+ta_seed3 %>% 
+kable("latex", booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
+column_spec(7, bold = ifelse(ta_seed3$p.value < 0.05, T, F) )%>%
+  kable_styling(position="center", latex_option="hold_position")
+
+```
+
+
 
 \newpage
 
 # Seed weight
 
-Summary of models for seed weight per plant species
+Summary of models for seed weight per plant species (LMM). Site_ID as factor random
 
-**Richness**
+## Richness
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
 Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
@@ -289,14 +443,15 @@ ta_weight<-ta_weight %>%
 ta_weight<-filter(ta_weight, !term == "sd__(Intercept)" & !term =="sd__Observation")
 
 ta_weight %>% 
-kable(booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
-column_spec(7, bold = ifelse(ta_weight$p.value < 0.05, T, F) )
+kable("latex",booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
+column_spec(7, bold = ifelse(ta_weight$p.value < 0.05, T, F) )%>%
+  kable_styling(position="center", latex_option="hold_position")
 
 ```
 
 \newpage
 
-**Visitation rate**
+## Visitation rate
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
 Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
@@ -330,8 +485,51 @@ ta_weight2<-ta_weight2 %>%
 ta_weight2<-filter(ta_weight2, !term == "sd__(Intercept)" & !term =="sd__Observation")
 
 ta_weight2 %>% 
-kable(booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
-column_spec(7, bold = ifelse(ta_weight2$p.value < 0.05, T, F) )
+kable("latex", booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
+column_spec(7, bold = ifelse(ta_weight2$p.value < 0.05, T, F) )%>%
+  kable_styling(position="center", latex_option="hold_position")
+
+```
+
+\newpage
+
+## Frequency
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
+Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<-Pollinator_Plant[,-1]
+
+#Species out
+spp_out <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  summarise(Unique_Id = n_distinct(Site_ID)) %>%
+  filter(Unique_Id == 1) %>%
+  select(Plant_gen_sp) %>% pull(Plant_gen_sp)
+
+
+#Data with species in more than 1 site
+Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+#Models _ Seed weight 
+# frequency
+ta_weight3<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seed_weight~Frequency+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+opts <- options(knitr.kable.NA = "")
+
+ta_weight3<-ta_weight3 %>%
+  select(-effect, -group)  %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+  
+ta_weight3<-filter(ta_weight3, !term == "sd__(Intercept)" & !term =="sd__Observation")
+
+ta_weight3 %>% 
+kable("latex", booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
+column_spec(7, bold = ifelse(ta_weight3$p.value < 0.05, T, F) )%>%
+  kable_styling(position="center", latex_option="hold_position")
 
 ```
 
