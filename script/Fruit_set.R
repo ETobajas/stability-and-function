@@ -417,8 +417,8 @@ levels(factor(cole$Pollinator_genus))
 
 # remove Anthrenus
 focal<-subset(focal, Pollinator_genus != 'Anthrenus' | is.na(Orden))
-sum(is.na(focal$Orden))
 
+sum(is.na(focal$Orden)) # 702 obser con pollinator sp NANA
 
 
 # Plant species #
@@ -426,11 +426,12 @@ sum(is.na(focal$Orden))
 # Plant species in focal #
 levels(factor(focal$Plant_gen_sp))
 
-#select plant species in focal present in reproductive success (todas:19 especies)
-levels(factor(reprod_success0$Plant_gen_sp)) 
+#select plant species in focal present in reproductive success (todas:18 especies)
+# reproductive success with data of fruit and seed
+levels(factor(reprod_success$Plant_gen_sp)) 
 
 plant<-c("Anchusa azurea","Asphodelus fistulosus","Cistus crispus","Cistus ladanifer","Cistus libanotis",
-      "Cistus monspeliensis","Cistus salviifolius","Erica ciliaris","Erophaca baetica","Halimium calycinum",
+      "Cistus monspeliensis","Cistus salviifolius","Erophaca baetica","Halimium calycinum",
       "Halimium halimifolium","Lavandula pedunculata","Lavandula stoechas","Phlomis purpurea","Retama sphaerocarpa",
       "Salvia rosmarinus","Spartium junceum","Teucrium fruticans","Ulex australis")
 
@@ -503,8 +504,11 @@ Pol_frequency<-aggregate(Frequency ~ Year+Site_ID+Plant_gen_sp+plant_id, data = 
 #link flower_abun and Pol_frequency (dejando individuos que tienen flores pero no visitas)
 visitation<-merge(x=flower_abun,y=Pol_frequency,by=c("Year","Site_ID", "Plant_gen_sp","plant_id" ),all.x=T, all.y=F)
 
-sum(is.na(visitation$Frequency)) # 45 observ no tienen visitas polinizador
+sum(is.na(visitation$Frequency)) # 45 observ (plant id) no tienen visitas polinizador
 
+
+visitation<-visitation%>%
+   filter(!Flower_abundance==0) # eliminar 4 observaciones con flower abundance=0
 
 # frequency/ flower abundance
 visitation<-visitation %>% mutate(visitatio_rate = Frequency/Flower_abundance)
@@ -580,13 +584,13 @@ plant_polli1 <- dcast(plant_polli, formula = Pollinator_gen_sp ~ Plant_gen_sp)
 
 # calculated the abundance like number of times that one pollinator species interaction 
 # with any flower species (count the interaction frequency, not sum)
-plant_polli1$abun<-specnumber(plant_polli1[ , 2:19])
+plant_polli1$abun<-specnumber(plant_polli1[ , 2:18])
 
 # ordered according to abundance (normal over 1), in descending order
 # Total abundance
-sum(plant_polli1$abun) #455
+sum(plant_polli1$abun) #451
 
-plant_polli1$abun2<-plant_polli1$abun*(1/455)
+plant_polli1$abun2<-plant_polli1$abun*(1/451)
 
 plant_polli1 <- arrange(plant_polli1, -abun2)
 
