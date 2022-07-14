@@ -9,11 +9,9 @@ library(lmerTest)
 library(dplyr)
 
 
-
 Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") #400 observaciones
 str(Pollinator_Plant)
 Pollinator_Plant<-Pollinator_Plant[,-1]
-
 
 
 #Species out
@@ -65,7 +63,6 @@ a %>%
   tl.cex=0.8,title = first(.x$Plant_gen_sp)), .keep = TRUE)
    
 
-library(tidyverse)
 library(patchwork)
 library(ggcorrplot)
 
@@ -75,14 +72,22 @@ df_with_plots <- a %>%
   mutate(plot = map(data, function(.x) {
     .x  %>%
       cor() %>%
-      ggcorrplot::ggcorrplot()
+      ggcorrplot::ggcorrplot(show.diag = F, type="lower",lab=TRUE)
   }))
 
 plots1 <- map2(df_with_plots$plot, df_with_plots$Plant_gen_sp, ~(.x + labs(title = .y)))
 
-plots1[[1]] + plots1[[2]] + plots1[[2]] + plots1[[2]]
+install.packages("ggpubr")
+library(ggpubr)
+
+plots1[[1]] + plots1[[2]] + plots1[[3]] + plots1[[4]]+plots1[[5]]+plots1[[6]]+plots1[[7]]+
+  plots1[[8]]+plots1[[9]]+plots1[[10]]+plots1[[11]]+plots1[[12]]
 
 
+ggarrange(plots1[[1]], plots1[[2]], plots1[[3]], plots1[[4]], ncol=2, nrow=2, common.legend = TRUE, legend="bottom")
+
+
+#df_with_plots$plot %>% wrap_plots(ncol = 2)
 
 #Models _ Seed numbers 
 
@@ -174,7 +179,81 @@ ta_f3<-Pollinator_Plant %>%
   ungroup()
 
 
+#########
+# Lavandula species together (L.peduncalata (49 obs) and L.stoechas (24 obs))
+
+lavan_tog=Pollinator_Plant %>%
+  mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
+
+#seed number
+# richness
+ta_seed_la<-lavan_tog %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~richness+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+
+# visistation rate
+ta_seed2_la<-lavan_tog %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~visitatio_rate+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+# Frequency
+ta_seed3_la<-lavan_tog %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~Frequency+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+
+## seed weight
+# richnes
+ta_weight_la<-lavan_tog %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seed_weight~richness+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+# visistation rate
+ta_weight2_la<-lavan_tog %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seed_weight~visitatio_rate+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+# frequency
+ta_weight3_la<-lavan_tog %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seed_weight~Frequency+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+
+## Fruit proportion
+
+# richnes
+ta_f_la<-lavan_tog %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~richness + (1|Site_ID),family=binomial,data)))%>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
 
 
 
+# visistation rate
+ta_f2_la<-lavan_tog %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~visitatio_rate + (1|Site_ID),family=binomial,data)))%>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
 
+
+# frequency
+ta_f3_la<-lavan_tog %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~Frequency + (1|Site_ID),family=binomial,data)))%>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
