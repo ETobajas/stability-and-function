@@ -154,6 +154,9 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
+
 #Models _ fruit proportion 
 # richnes
 ta_f<-Pollinator_Plant %>%
@@ -198,6 +201,8 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
 
 # visistation rate
 ta_f2<-Pollinator_Plant %>%
@@ -241,6 +246,9 @@ spp_out <- Pollinator_Plant %>%
 
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
 
 #Models _ fruit proportion 
 # hymenoptera visitation
@@ -287,6 +295,8 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
 
 # frequency
 ta_f3<-Pollinator_Plant %>%
@@ -336,6 +346,8 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
 
 #Models _ Seed numbers 
 # richness
@@ -381,6 +393,9 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
+
 # visitation rate
 ta_seed2<-Pollinator_Plant %>%
   nest_by(Plant_gen_sp) %>%
@@ -419,6 +434,9 @@ spp_out <- Pollinator_Plant %>%
 
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
 
 # hymenoptera visitation
 ta_seed4<-Pollinator_Plant %>%
@@ -463,6 +481,9 @@ spp_out <- Pollinator_Plant %>%
 
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
 
 # Frequency
 ta_seed3<-Pollinator_Plant %>%
@@ -512,6 +533,9 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
+
 #Models _ Seed weight 
 # richnes
 ta_weight<-Pollinator_Plant %>%
@@ -554,6 +578,9 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
+
 #Models _ Seed weight 
 # visistation rate
 ta_weight2<-Pollinator_Plant %>%
@@ -594,6 +621,9 @@ spp_out <- Pollinator_Plant %>%
 
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
 
 #Models _ Seed weight 
 # Hymenoptera visitation
@@ -638,6 +668,9 @@ spp_out <- Pollinator_Plant %>%
 
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
 
 #Models _ Seed weight 
 # frequency
@@ -685,6 +718,9 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
+
 lavan_tog=Pollinator_Plant %>%
   mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
 
@@ -730,6 +766,8 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
 
 lavan_tog=Pollinator_Plant %>%
   mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
@@ -776,6 +814,8 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
 
 lavan_tog=Pollinator_Plant %>%
   mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
@@ -825,6 +865,8 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
 
 lavan_tog=Pollinator_Plant %>%
   mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
@@ -871,6 +913,9 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
+
 lavan_tog=Pollinator_Plant %>%
   mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
 
@@ -916,6 +961,9 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
+
 lavan_tog=Pollinator_Plant %>%
   mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
 
@@ -960,6 +1008,9 @@ spp_out <- Pollinator_Plant %>%
 
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
 
 lavan_tog=Pollinator_Plant %>%
   mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
@@ -1010,6 +1061,9 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
+
 lavan_tog=Pollinator_Plant %>%
   mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
 
@@ -1056,6 +1110,9 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
+
 lavan_tog=Pollinator_Plant %>%
   mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
 
@@ -1100,6 +1157,9 @@ spp_out <- Pollinator_Plant %>%
 
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
 
 lavan_tog=Pollinator_Plant %>%
   mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
@@ -1146,6 +1206,9 @@ spp_out <- Pollinator_Plant %>%
 
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
 
 lavan_tog=Pollinator_Plant %>%
   mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
@@ -1194,6 +1257,12 @@ spp_out <- Pollinator_Plant %>%
 
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
+
+lavan_tog=Pollinator_Plant %>%
+  mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
 
 
 # frequency
