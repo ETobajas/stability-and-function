@@ -77,7 +77,7 @@ df_with_plots <- a %>%
 
 plots1 <- map2(df_with_plots$plot, df_with_plots$Plant_gen_sp, ~(.x + labs(title = .y)))
 
-install.packages("ggpubr")
+
 library(ggpubr)
 
 plots1[[1]] + plots1[[2]] + plots1[[3]] + plots1[[4]]+plots1[[5]]+plots1[[6]]+plots1[[7]]+
@@ -117,6 +117,12 @@ ta_seed3<-Pollinator_Plant %>%
   summarise(broom.mixed::tidy(model)) %>%
   ungroup()
 
+# hymenoptera visitation
+ta_seed4<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~Hym_visit+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
 
 #Models _ Seed weight 
 
@@ -145,6 +151,13 @@ ta_weight3<-Pollinator_Plant %>%
   summarise(broom.mixed::tidy(model)) %>%
   ungroup()
 
+
+# Hymenoptera visitation
+ta_weight4<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seed_weight~Hym_visit+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
 
 #Models _ fruit proportion 
 
@@ -178,6 +191,12 @@ ta_f3<-Pollinator_Plant %>%
   summarise(broom.mixed::tidy(model)) %>%
   ungroup()
 
+# hymenoptera visitation
+ta_f4<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~Hym_visit + (1|Site_ID),family=binomial,data)))%>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
 
 #########
 # Lavandula species together (L.peduncalata (49 obs) and L.stoechas (24 obs))
@@ -208,6 +227,13 @@ ta_seed3_la<-lavan_tog %>%
   summarise(broom.mixed::tidy(model)) %>%
   ungroup()
 
+# hymenoptera visitation
+ta_seed4_la<-lavan_tog %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~Hym_visit+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
 
 ## seed weight
 # richnes
@@ -221,6 +247,13 @@ ta_weight_la<-lavan_tog %>%
 ta_weight2_la<-lavan_tog %>%
   nest_by(Plant_gen_sp) %>%
   mutate(model = list(lmer(Seed_weight~visitatio_rate+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+# hymenoptera visitation
+ta_weight4_la<-lavan_tog %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seed_weight~Hym_visit+(1|Site_ID),data))) %>%
   summarise(broom.mixed::tidy(model)) %>%
   ungroup()
 
@@ -247,6 +280,14 @@ ta_f_la<-lavan_tog %>%
 ta_f2_la<-lavan_tog %>%
   nest_by(Plant_gen_sp) %>%
   mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~visitatio_rate + (1|Site_ID),family=binomial,data)))%>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+
+# hymenoptera visitation
+ta_f4_la<-lavan_tog %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~Hym_visit + (1|Site_ID),family=binomial,data)))%>%
   summarise(broom.mixed::tidy(model)) %>%
   ungroup()
 
