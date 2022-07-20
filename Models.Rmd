@@ -139,15 +139,6 @@ Summary of models for fruit proportion per plant species. Binomial cbind(fruit_f
 
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-library(knitr)
-library(dplyr)
-library(kableExtra)
-library(tidyverse)
-#install.packages("broom.mixed")
-library(broom.mixed)
-library(broom)
-#install.packages("lmerTest")
-library(lmerTest)
 
 Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
@@ -233,6 +224,51 @@ column_spec(6, bold = ifelse(ta_f2$p.value < 0.05, T, F) )%>%
 
 \newpage
 
+## Hymenoptera visitation
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
+
+Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<-Pollinator_Plant[,-1]
+
+#Species out
+spp_out <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  summarise(Unique_Id = n_distinct(Site_ID)) %>%
+  filter(Unique_Id == 1) %>%
+  select(Plant_gen_sp) %>% pull(Plant_gen_sp)
+
+
+#Data with species in more than 1 site
+Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+#Models _ fruit proportion 
+# hymenoptera visitation
+ta_f4<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~Hym_visit + (1|Site_ID),family=binomial,data)))%>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+opts <- options(knitr.kable.NA = "")
+
+ta_f4<-ta_f4 %>%
+  select(-effect, -group)  %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+  
+ta_f4<-filter(ta_f4, !term == "sd__(Intercept)")
+
+
+ta_f4 %>% 
+    kable("latex",booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
+column_spec(6, bold = ifelse(ta_f4$p.value < 0.05, T, F) )%>%
+  kable_styling(position="center", latex_option="hold_position")
+
+```
+
+
+\newpage
+
 ## Frequency
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
@@ -274,8 +310,6 @@ column_spec(6, bold = ifelse(ta_f3$p.value < 0.05, T, F) )%>%
   kable_styling(position="center", latex_option="hold_position")
 
 ```
-
-
 
 
 \newpage
@@ -368,6 +402,49 @@ kable("latex", booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>
 column_spec(7, bold = ifelse(ta_seed2$p.value < 0.05, T, F) )%>%
   kable_styling(position="center", latex_option="hold_position")
 ```
+
+\newpage
+## Hymenoptera visitation
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
+Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<-Pollinator_Plant[,-1]
+
+#Species out
+spp_out <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  summarise(Unique_Id = n_distinct(Site_ID)) %>%
+  filter(Unique_Id == 1) %>%
+  select(Plant_gen_sp) %>% pull(Plant_gen_sp)
+
+
+#Data with species in more than 1 site
+Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+# hymenoptera visitation
+ta_seed4<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~Hym_visit+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+
+opts <- options(knitr.kable.NA = "")
+
+ta_seed4<-ta_seed4 %>%
+  select(-effect, -group)  %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+  
+ta_seed4<-filter(ta_seed4, !term == "sd__(Intercept)" & !term =="sd__Observation")
+
+
+ta_seed4 %>% 
+kable("latex", booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
+column_spec(7, bold = ifelse(ta_seed4$p.value < 0.05, T, F) )%>%
+  kable_styling(position="center", latex_option="hold_position")
+
+```
+
+
 
 \newpage
 ## Frequency
@@ -502,6 +579,49 @@ column_spec(7, bold = ifelse(ta_weight2$p.value < 0.05, T, F) )%>%
 
 \newpage
 
+## Hymenoptera visitation
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
+Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<-Pollinator_Plant[,-1]
+
+#Species out
+spp_out <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  summarise(Unique_Id = n_distinct(Site_ID)) %>%
+  filter(Unique_Id == 1) %>%
+  select(Plant_gen_sp) %>% pull(Plant_gen_sp)
+
+
+#Data with species in more than 1 site
+Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+#Models _ Seed weight 
+# Hymenoptera visitation
+ta_weight4<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seed_weight~Hym_visit+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+opts <- options(knitr.kable.NA = "")
+
+ta_weight4<-ta_weight4 %>%
+  select(-effect, -group)  %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+  
+ta_weight4<-filter(ta_weight4, !term == "sd__(Intercept)" & !term =="sd__Observation")
+
+ta_weight4 %>% 
+kable("latex", booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
+column_spec(7, bold = ifelse(ta_weight4$p.value < 0.05, T, F) )%>%
+  kable_styling(position="center", latex_option="hold_position")
+
+```
+
+
+
+\newpage
+
 ## Frequency
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
@@ -564,7 +684,6 @@ spp_out <- Pollinator_Plant %>%
 
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
-
 
 lavan_tog=Pollinator_Plant %>%
   mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
@@ -640,6 +759,55 @@ column_spec(6, bold = ifelse(ta_f2_la$p.value < 0.05, T, F) )%>%
 
 \newpage
 
+## Fruit proportion - hymenoptera visitation
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
+Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<-Pollinator_Plant[,-1]
+
+#Species out
+spp_out <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  summarise(Unique_Id = n_distinct(Site_ID)) %>%
+  filter(Unique_Id == 1) %>%
+  select(Plant_gen_sp) %>% pull(Plant_gen_sp)
+
+
+#Data with species in more than 1 site
+Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+
+lavan_tog=Pollinator_Plant %>%
+  mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
+
+# hymenoptera visitation
+ta_f4_la<-lavan_tog %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~Hym_visit + (1|Site_ID),family=binomial,data)))%>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+
+opts <- options(knitr.kable.NA = "")
+
+ta_f4_la<-ta_f4_la %>%
+  select(-effect, -group)  %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+  
+ta_f4_la<-filter(ta_f4_la, !term == "sd__(Intercept)")
+
+
+ta_f4_la %>% 
+    kable("latex",booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
+column_spec(6, bold = ifelse(ta_f4_la$p.value < 0.05, T, F) )%>%
+  kable_styling(position="center", latex_option="hold_position")
+
+```
+
+
+
+\newpage
+
 ## Fruit proportion - frequency
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
@@ -703,6 +871,9 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
+lavan_tog=Pollinator_Plant %>%
+  mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
+
 # richness
 ta_seed_la<-lavan_tog %>%
   nest_by(Plant_gen_sp) %>%
@@ -745,6 +916,8 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
+lavan_tog=Pollinator_Plant %>%
+  mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
 
 # visistation rate
 ta_seed2_la<-lavan_tog %>%
@@ -771,6 +944,55 @@ column_spec(7, bold = ifelse(ta_seed2_la$p.value < 0.05, T, F) )%>%
 
 \newpage
 
+## Seed number - hymenoptera visitation
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
+Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<-Pollinator_Plant[,-1]
+
+#Species out
+spp_out <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  summarise(Unique_Id = n_distinct(Site_ID)) %>%
+  filter(Unique_Id == 1) %>%
+  select(Plant_gen_sp) %>% pull(Plant_gen_sp)
+
+
+#Data with species in more than 1 site
+Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+lavan_tog=Pollinator_Plant %>%
+  mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
+
+
+# hymenoptera visitation
+ta_seed4_la<-lavan_tog %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~Hym_visit+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+opts <- options(knitr.kable.NA = "")
+
+ta_seed4_la<-ta_seed4_la %>%
+  select(-effect, -group)  %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+  
+ta_seed4_la<-filter(ta_seed4_la, !term == "sd__(Intercept)" & !term =="sd__Observation")
+
+
+ta_seed4_la %>% 
+kable("latex", booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
+column_spec(7, bold = ifelse(ta_seed4_la$p.value < 0.05, T, F) )%>%
+  kable_styling(position="center", latex_option="hold_position")
+
+
+```
+
+
+
+\newpage
+
 ## Seed number - frequency
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
@@ -787,6 +1009,9 @@ spp_out <- Pollinator_Plant %>%
 
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+lavan_tog=Pollinator_Plant %>%
+  mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
 
 
 # Frequency
@@ -831,6 +1056,8 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
+lavan_tog=Pollinator_Plant %>%
+  mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
 
 # richnes
 ta_weight_la<-lavan_tog %>%
@@ -874,6 +1101,9 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
+lavan_tog=Pollinator_Plant %>%
+  mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
+
 
 # visistation rate
 ta_weight2_la<-lavan_tog %>%
@@ -897,6 +1127,54 @@ column_spec(7, bold = ifelse(ta_weight2_la$p.value < 0.05, T, F) )%>%
   kable_styling(position="center", latex_option="hold_position")
 
 ```
+
+\newpage
+
+## Seed weight - hymenoptera visitation
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
+Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<-Pollinator_Plant[,-1]
+
+#Species out
+spp_out <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  summarise(Unique_Id = n_distinct(Site_ID)) %>%
+  filter(Unique_Id == 1) %>%
+  select(Plant_gen_sp) %>% pull(Plant_gen_sp)
+
+
+#Data with species in more than 1 site
+Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+lavan_tog=Pollinator_Plant %>%
+  mutate(Plant_gen_sp = recode(Plant_gen_sp, "Lavandula pedunculata" = "Lavandula","Lavandula stoechas" = "Lavandula"))
+
+
+# hymenoptera visitation
+ta_weight4_la<-lavan_tog %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seed_weight~Hym_visit+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+opts <- options(knitr.kable.NA = "")
+
+ta_weight4_la<-ta_weight4_la %>%
+  select(-effect, -group)  %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+  
+ta_weight4_la<-filter(ta_weight4_la, !term == "sd__(Intercept)" & !term =="sd__Observation")
+
+
+ta_weight4_la %>% 
+kable("latex", booktabs = TRUE,digits =  4, linesep = c("","\\addlinespace")) %>% 
+column_spec(7, bold = ifelse(ta_weight4_la$p.value < 0.05, T, F) )%>%
+  kable_styling(position="center", latex_option="hold_position")
+
+```
+
+
 
 \newpage
 
