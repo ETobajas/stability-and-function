@@ -89,6 +89,11 @@ ggarrange(plots1[[1]], plots1[[2]], plots1[[3]], plots1[[4]], ncol=2, nrow=2, co
 
 #df_with_plots$plot %>% wrap_plots(ncol = 2)
 
+
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
+
+
 #Models _ Seed numbers 
 
 require("lattice")
