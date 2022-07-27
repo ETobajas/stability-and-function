@@ -1,0 +1,73 @@
+---
+title: "Stability"
+output: pdf_document
+date: '2022-07-27'
+---
+
+
+```{r,echo=FALSE, warning=FALSE,message=FALSE, out.width="80%", fig.align='left'}
+library(tidyverse)
+#install.packages("broom.mixed")
+library(broom.mixed)
+library(broom)
+#install.packages("lmerTest")
+library(lmerTest)
+library(dplyr)
+library(kableExtra)
+
+
+Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") #400 observaciones
+Pollinator_Plant<-Pollinator_Plant[,-1]
+
+
+#Species out
+spp_out <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  summarise(Unique_Id = n_distinct(Site_ID)) %>%
+  filter(Unique_Id == 1) %>%
+  select(Plant_gen_sp) %>% pull(Plant_gen_sp)
+
+
+#Data with species in more than 1 site
+Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+# replace NAs by 0
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
+
+# fruit proportion stability for each plant species per site
+cv_1Fruit<-Pollinator_Plant %>%
+  group_by(Plant_gen_sp,Site_ID) %>%
+  summarise_at(vars(fruit_proportion),cv_1 <- function(x, ...) {
+    ( mean(x, ...)/sd(x, ...) )
+  })
+
+# seed number stability for each plant species per site
+cv_1Seed<-Pollinator_Plant %>%
+  group_by(Plant_gen_sp,Site_ID) %>%
+  summarise_at(vars(Seeds),cv_1 <- function(x, ...) {
+    ( mean(x, ...)/sd(x, ...) )
+  })
+
+#visitation rate stability for each plant species per site (all pollinators)
+cv_1pollinator<-Pollinator_Plant %>%
+  group_by(Plant_gen_sp,Site_ID) %>%
+  summarise_at(vars(visitatio_rate),cv_1 <- function(x, ...) {
+    ( mean(x, ...)/sd(x, ...) )
+  })
+
+
+#  pollinator richness for each plant species per site
+S<-aggregate(richness ~ Plant_gen_sp+Site_ID, data = Pollinator_Plant,FUN = sum)
+
+
+# join tables 
+full=full_join(cv_1Fruit, cv_1Seed, by = c('Plant_gen_sp', 'Site_ID'))%>%
+  full_join (., cv_1pollinator, by=c('Plant_gen_sp', 'Site_ID')) %>%
+  full_join (., S, by=c('Plant_gen_sp', 'Site_ID'))%>%
+  rename(cv_1_fruit=fruit_proportion, cv_1_seed=Seeds, cv_1_visitation=visitatio_rate)
+
+full %>% 
+    kable("latex",booktabs = TRUE,longtable = T,linesep = "")
+```
+
+
