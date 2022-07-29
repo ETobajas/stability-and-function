@@ -27,7 +27,7 @@ library(dplyr)
 library(knitr)
 library(kableExtra)
 
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 
@@ -88,7 +88,7 @@ library(patchwork)
 library(ggcorrplot)
 library(ggpubr)
 
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -140,7 +140,7 @@ Summary of models for fruit proportion per plant species. Binomial cbind(fruit_f
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
 
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -187,7 +187,7 @@ column_spec(6, bold = ifelse(ta_f$p.value < 0.05, T, F) )%>%
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
 
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -233,7 +233,7 @@ column_spec(6, bold = ifelse(ta_f2$p.value < 0.05, T, F) )%>%
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
 
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -281,7 +281,7 @@ column_spec(6, bold = ifelse(ta_f4$p.value < 0.05, T, F) )%>%
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
 
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -332,7 +332,7 @@ Summary of models for seed numbers per plant species (LMM). Site_ID as factor ra
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
 
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") #402 observaciones
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") #402 observaciones
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -379,7 +379,7 @@ column_spec(7, bold = ifelse(ta_seed$p.value < 0.05, T, F) )%>%
 ## Visitation rate
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -421,7 +421,7 @@ column_spec(7, bold = ifelse(ta_seed2$p.value < 0.05, T, F) )%>%
 \newpage
 ## Hymenoptera visitation
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -468,7 +468,7 @@ column_spec(7, bold = ifelse(ta_seed4$p.value < 0.05, T, F) )%>%
 ## Frequency
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -519,7 +519,7 @@ Summary of models for seed weight per plant species (LMM). Site_ID as factor ran
 ## Richness
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -564,7 +564,7 @@ column_spec(7, bold = ifelse(ta_weight$p.value < 0.05, T, F) )%>%
 ## Visitation rate
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -608,7 +608,7 @@ column_spec(7, bold = ifelse(ta_weight2$p.value < 0.05, T, F) )%>%
 
 ## Hymenoptera visitation
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -655,7 +655,7 @@ column_spec(7, bold = ifelse(ta_weight4$p.value < 0.05, T, F) )%>%
 ## Frequency
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -704,7 +704,7 @@ column_spec(7, bold = ifelse(ta_weight3$p.value < 0.05, T, F) )%>%
 ## Fruit proportion - richness
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -752,7 +752,7 @@ column_spec(6, bold = ifelse(ta_f_la$p.value < 0.05, T, F) )%>%
 ## Fruit proportion - visitation rate
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -800,7 +800,7 @@ column_spec(6, bold = ifelse(ta_f2_la$p.value < 0.05, T, F) )%>%
 ## Fruit proportion - hymenoptera visitation
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -851,7 +851,7 @@ column_spec(6, bold = ifelse(ta_f4_la$p.value < 0.05, T, F) )%>%
 ## Fruit proportion - frequency
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -899,7 +899,7 @@ column_spec(6, bold = ifelse(ta_f3_la$p.value < 0.05, T, F) )%>%
 ## Seed number - richness
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -947,7 +947,7 @@ column_spec(7, bold = ifelse(ta_seed_la$p.value < 0.05, T, F) )%>%
 ## Seed number - visitation rate
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -995,7 +995,7 @@ column_spec(7, bold = ifelse(ta_seed2_la$p.value < 0.05, T, F) )%>%
 ## Seed number - hymenoptera visitation
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -1047,7 +1047,7 @@ column_spec(7, bold = ifelse(ta_seed4_la$p.value < 0.05, T, F) )%>%
 ## Seed number - frequency
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -1096,7 +1096,7 @@ column_spec(7, bold = ifelse(ta_seed3_la$p.value < 0.05, T, F) )%>%
 ## Seed weight - richness
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -1144,7 +1144,7 @@ column_spec(7, bold = ifelse(ta_weight_la$p.value < 0.05, T, F) )%>%
 ## Seed weight - visitation rate
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -1193,7 +1193,7 @@ column_spec(7, bold = ifelse(ta_weight2_la$p.value < 0.05, T, F) )%>%
 ## Seed weight - hymenoptera visitation
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
@@ -1244,7 +1244,7 @@ column_spec(7, bold = ifelse(ta_weight4_la$p.value < 0.05, T, F) )%>%
 ## Seed weight - frequency
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") 
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 #Species out
