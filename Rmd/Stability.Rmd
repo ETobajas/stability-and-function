@@ -16,7 +16,7 @@ library(dplyr)
 library(kableExtra)
 
 
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") #400 observaciones
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") #400 observaciones
 Pollinator_Plant<-Pollinator_Plant[,-1]
 
 
