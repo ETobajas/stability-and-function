@@ -510,7 +510,7 @@ sta_seed.1$plots[[7]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lav
 
 plots_rich <- full_2 %>%
   group_by(Plant_gen_sp) %>%
-  group_map(~ ggplot(.) + aes(x=log_VR, y=S_total) + 
+  group_map(~ ggplot(.) + aes(y=log_VR, x=S_total) + 
               geom_point() + ggtitle(.y[[1]]))
 
 plots_rich[[1]]+plots_rich[[2]]+plots_rich[[3]]+plots_rich[[4]]
@@ -519,13 +519,13 @@ plots_rich[[5]]+plots_rich[[6]]+plots_rich[[7]]
 #model
 rich<-full_2 %>%
   nest_by(Plant_gen_sp) %>%
-  mutate(mod = list(lm(S_total~log_VR,data))) %>%
+  mutate(mod = list(lm(log_VR ~S_total,data))) %>%
   summarize(tidy(mod))%>%
   ungroup()
 
 rich_glance<-full_2 %>%
   nest_by(Plant_gen_sp) %>%
-  mutate(mod = list(lm(S_total~log_VR,data))) %>%
+  mutate(mod = list(lm(log_VR ~S_total,data))) %>%
   summarize(glance(mod))%>%
   ungroup()
 
@@ -533,7 +533,7 @@ rich_glance<-full_2 %>%
 #checking residuals
 rich_resid<-full_2 %>%
   nest_by(Plant_gen_sp) %>%
-  mutate(model = list(lm(S_total~log_VR,data)))%>%
+  mutate(model = list(lm(log_VR ~S_total,data)))%>%
   mutate(plots = list(performance::check_model(model))) %>%
   ungroup()
 
@@ -548,123 +548,186 @@ plot(rich_resid$plots[[7]]) # Lavandula stoechas
 # model plot
 rich.1 <- full_2 %>%
   nest_by(Plant_gen_sp) %>%
-  mutate(mod = list(lm(S_total~log_VR,data))) %>%
-  mutate(mod1 = list(ggeffects::ggpredict(mod, terms = "log_VR"))) %>%
+  mutate(mod = list(lm(log_VR ~S_total,data))) %>%
+  mutate(mod1 = list(ggeffects::ggpredict(mod, terms = "S_total"))) %>%
   mutate(plots = list(ggplot(mod1, aes(x, predicted)) + geom_line() +
                         geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2)))
 
 
-rich.1$plots[[1]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus crispus"), aes(x =  log_VR, y = S_total))+ 
-  labs(x = "log_VR",y="total richness",subtitle = "C.crispus")+theme_classic()
+rich.1$plots[[1]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Cistus crispus")), aes(x =  S_total, y = log_VR))+ 
+  labs(y = "log_VR",x="total richness",subtitle = "C.crispus")+theme_classic()
 
-rich.1$plots[[2]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(x =  log_VR, y = S_total))+ 
-  labs(x = "log_VR",y="total richness",subtitle = "C.ladanifer")+  theme_classic()
+rich.1$plots[[2]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(x =  S_total, y = log_VR))+ 
+  labs(y = "log_VR",x="total richness",subtitle = "C.ladanifer")+  theme_classic()
 
-rich.1$plots[[3]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(x =  log_VR, y = S_total))+ 
-  labs(x = "log_VR",y="total richness",subtitle = "C.salviifolius")+  theme_classic()
+rich.1$plots[[3]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(x =  S_total, y = log_VR))+ 
+  labs(y = "log_VR",x="total richness",subtitle = "C.salviifolius")+  theme_classic()
 
-rich.1$plots[[4]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Halimium calycinum"), aes(x =  log_VR, y = S_total))+ 
-  labs(x = "log_VR",y="total richness",subtitle = "H.calycinum")+  theme_classic()
+rich.1$plots[[4]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Halimium calycinum"), aes(x =  S_total, y = log_VR))+ 
+  labs(y = "log_VR",x="total richness",subtitle = "H.calycinum")+scale_x_continuous(limits = c(4, 7))+  theme_classic()
 
-rich.1$plots[[5]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Halimium halimifolium"), aes(x =  log_VR, y = S_total))+ 
-  labs(x = "log_VR",y="total richness",subtitle = "H.halimifolium")+  theme_classic()
+rich.1$plots[[5]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Halimium halimifolium"), aes(x =  S_total, y = log_VR))+ 
+  labs(y = "log_VR",x="total richness",subtitle = "H.halimifolium")+  theme_classic()
 
-rich.1$plots[[6]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(x =  log_VR, y = S_total))+ 
-  labs(x = "log_VR",y="total richness",subtitle = "L.pedunculata")+  theme_classic()
+rich.1$plots[[6]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(x =  S_total, y = log_VR))+ 
+  labs(y = "log_VR",x="total richness",subtitle = "L.pedunculata")+  theme_classic()
 
-rich.1$plots[[7]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandula stoechas"), aes(x =  log_VR, y = S_total))+ 
-  labs(x = "log_VR",y="total richness",subtitle = "L.stoechas")+  theme_classic()
+rich.1$plots[[7]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandula stoechas"), aes(x =  S_total, y = log_VR))+ 
+  labs(y = "log_VR",x="total richness",subtitle = "L.stoechas")+  theme_classic()
 
 
 # total richnes ~ L& M index
+
+plots_rich2 <- full_2 %>%
+  group_by(Plant_gen_sp) %>%
+  group_map(~ ggplot(.) + aes(y=syncLM, x=S_total) + 
+              geom_point() + ggtitle(.y[[1]]))
+
+plots_rich2[[1]]+plots_rich2[[2]]+plots_rich2[[3]]+plots_rich2[[4]]
+plots_rich2[[5]]+plots_rich2[[6]]+plots_rich2[[7]]
+
+#model
 rich2<-full_2 %>%
   nest_by(Plant_gen_sp) %>%
-  mutate(mod = list(lm(S_total~syncLM,data))) %>%
+  mutate(mod = list(lm(syncLM ~ S_total,data))) %>%
   summarize(tidy(mod))%>%
   ungroup()
 
 
 rich2_glance<-full_2 %>%
   nest_by(Plant_gen_sp) %>%
-  mutate(mod = list(lm(S_total~syncLM,data))) %>%
+  mutate(mod = list(lm(syncLM ~ S_total,data))) %>%
   summarize(glance(mod))%>%
   ungroup()
 
+#checking residuals
+rich2_resid<-full_2 %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lm(syncLM ~ S_total,data)))%>%
+  mutate(plots = list(performance::check_model(model))) %>%
+  ungroup()
+
+plot(rich2_resid$plots[[1]]) # Cistus crispus
+plot(rich2_resid$plots[[2]]) # Cistus ladanifer
+plot(rich2_resid$plots[[3]]) # Cistus salviifolius
+plot(rich2_resid$plots[[4]]) # Halimium calycinum
+plot(rich2_resid$plots[[5]]) # Halimium halimifolium
+plot(rich2_resid$plots[[6]]) # Lavandula pedunculata
+plot(rich2_resid$plots[[7]]) # Lavandula stoechas
+
+#model plot
 rich.2 <- full_2 %>%
   nest_by(Plant_gen_sp) %>%
-  mutate(mod = list(lm(S_total~syncLM,data))) %>%
-  mutate(mod1 = list(ggeffects::ggpredict(mod, terms = "syncLM"))) %>%
+  mutate(mod = list(lm(syncLM ~ S_total,data))) %>%
+  mutate(mod1 = list(ggeffects::ggpredict(mod, terms = "S_total"))) %>%
   mutate(plots = list(ggplot(mod1, aes(x, predicted)) + geom_line() +
                         geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2)))
 
 
-rich.2$plots[[1]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus crispus"), aes(x =  syncLM, y = S_total))+ 
-  labs(x = "syncLM",y="total richness",subtitle = "C.crispus")+theme_classic()
+rich.2$plots[[1]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Cistus crispus")), aes(y =  syncLM, x = S_total))+ 
+  labs(y = "syncLM",x="total richness",subtitle = "C.crispus")+theme_classic()
 
-rich.2$plots[[2]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(x =  syncLM, y = S_total))+ 
-  labs(x = "syncLM",y="total richness",subtitle = "C.ladanifer")+  theme_classic()
+rich.2$plots[[2]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(y =  syncLM, x = S_total))+ 
+  labs(y = "syncLM",x="total richness",subtitle = "C.ladanifer")+  theme_classic()
 
-rich.2$plots[[3]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(x =  syncLM, y = S_total))+ 
-  labs(x = "syncLM",y="total richness",subtitle = "C.salviifolius")+  theme_classic()
+rich.2$plots[[3]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(y =  syncLM, x = S_total))+ 
+  labs(y = "syncLM",x="total richness",subtitle = "C.salviifolius")+  theme_classic()
 
-rich.2$plots[[4]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Halimium calycinum"), aes(x =  syncLM, y = S_total))+ 
-  labs(x = "syncLM",y="total richness",subtitle = "H.calycinum")+  theme_classic()
+rich.2$plots[[4]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Halimium calycinum"), aes(y =  syncLM, x = S_total))+ 
+  labs(y = "syncLM",x="total richness",subtitle = "H.calycinum")+  theme_classic()
 
-rich.2$plots[[5]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Halimium halimifolium"), aes(x =  syncLM, y = S_total))+ 
-  labs(x = "syncLM",y="total richness",subtitle = "H.halimifolium")+  theme_classic()
+rich.2$plots[[5]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Halimium halimifolium")), aes(y =  syncLM, x = S_total))+ 
+  labs(y = "syncLM",x="total richness",subtitle = "H.halimifolium")+  theme_classic()
 
-rich.2$plots[[6]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(x =  syncLM, y = S_total))+ 
-  labs(x = "syncLM",y="total richness",subtitle = "L.pedunculata")+  theme_classic()
+rich.2$plots[[6]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(y =  syncLM, x = S_total))+ 
+  labs(y = "syncLM",x="total richness",subtitle = "L.pedunculata")+  theme_classic()
 
-rich.2$plots[[7]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandula stoechas"), aes(x =  syncLM, y = S_total))+ 
-  labs(x = "syncLM",y="total richness",subtitle = "L.stoechas")+  theme_classic()
+rich.2$plots[[7]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandula stoechas"), aes(y =  syncLM, x = S_total))+ 
+  labs(y = "syncLM",x="total richness",subtitle = "L.stoechas")+ scale_x_continuous(limits = c(5, 13))+ theme_classic()
 
 
 # mean richness ~ logVR
+
+plots_rich3 <- full_2 %>%
+  group_by(Plant_gen_sp) %>%
+  group_map(~ ggplot(.) + aes(y=log_VR, x=S_mean) + 
+              geom_point() + ggtitle(.y[[1]]))
+
+plots_rich3[[1]]+plots_rich3[[2]]+plots_rich3[[3]]+plots_rich3[[4]]
+plots_rich3[[5]]+plots_rich3[[6]]+plots_rich3[[7]]
+
+
+#model
 rich3<-full_2 %>%
   nest_by(Plant_gen_sp) %>%
-  mutate(mod = list(lm(S_mean~log_VR,data))) %>%
+  mutate(mod = list(lm(log_VR ~S_mean,data))) %>%
   summarize(tidy(mod))%>%
   ungroup()
 
 rich3_glance<-full_2 %>%
   nest_by(Plant_gen_sp) %>%
-  mutate(mod = list(lm(S_mean~log_VR,data))) %>%
+  mutate(mod = list(lm(log_VR ~S_mean,data))) %>%
   summarize(glance(mod))%>%
   ungroup()
 
+#checking residuals
+rich3_resid<-full_2 %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lm(log_VR ~S_mean,data)))%>%
+  mutate(plots = list(performance::check_model(model))) %>%
+  ungroup()
+
+plot(rich3_resid$plots[[1]]) # Cistus crispus
+plot(rich3_resid$plots[[2]]) # Cistus ladanifer
+plot(rich3_resid$plots[[3]]) # Cistus salviifolius
+plot(rich3_resid$plots[[4]]) # Halimium calycinum
+plot(rich3_resid$plots[[5]]) # Halimium halimifolium
+plot(rich3_resid$plots[[6]]) # Lavandula pedunculata
+plot(rich3_resid$plots[[7]]) # Lavandula stoechas
+
+#model plot
 rich.3 <- full_2 %>%
   nest_by(Plant_gen_sp) %>%
-  mutate(mod = list(lm(S_mean~log_VR,data))) %>%
-  mutate(mod1 = list(ggeffects::ggpredict(mod, terms = "log_VR"))) %>%
+  mutate(mod = list(lm(log_VR ~S_mean,data))) %>%
+  mutate(mod1 = list(ggeffects::ggpredict(mod, terms = "S_mean"))) %>%
   mutate(plots = list(ggplot(mod1, aes(x, predicted)) + geom_line() +
                         geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2)))
 
 
-rich.3$plots[[1]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus crispus"), aes(x =  log_VR, y = S_mean))+ 
-  labs(x = "log_VR",y="S_mean",subtitle = "C.crispus")+theme_classic()
+rich.3$plots[[1]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus crispus"), aes(y =  log_VR, x = S_mean))+ 
+  labs(y = "log_VR",x="S_mean",subtitle = "C.crispus")+theme_classic()
 
-rich.3$plots[[2]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(x =  log_VR, y = S_mean))+ 
-  labs(x = "log_VR",y="S_mean",subtitle = "C.ladanifer")+  theme_classic()
+rich.3$plots[[2]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(y =  log_VR, x = S_mean))+ 
+  labs(y = "log_VR",x="S_mean",subtitle = "C.ladanifer")+scale_x_continuous(limits = c(4, 11))+  theme_classic()
 
-rich.3$plots[[3]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(x =  log_VR, y = S_mean))+ 
-  labs(x = "log_VR",y="S_mean",subtitle = "C.salviifolius")+  theme_classic()
+rich.3$plots[[3]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(y =  log_VR, x = S_mean))+ 
+  labs(y = "log_VR",x="S_mean",subtitle = "C.salviifolius")+ scale_x_continuous(limits = c(3, 12))+  theme_classic()
 
-rich.3$plots[[4]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Halimium calycinum"), aes(x =  log_VR, y = S_mean))+ 
-  labs(x = "log_VR",y="S_mean",subtitle = "H.calycinum")+  theme_classic()
+rich.3$plots[[4]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Halimium calycinum"), aes(y =  log_VR, x = S_mean))+ 
+  labs(y = "log_VR",x="S_mean",subtitle = "H.calycinum")+ scale_x_continuous(limits = c(2, 5.5))+  theme_classic()
 
-rich.3$plots[[5]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Halimium halimifolium"), aes(x =  log_VR, y = S_mean))+ 
-  labs(x = "log_VR",y="S_mean",subtitle = "H.halimifolium")+  theme_classic()
+rich.3$plots[[5]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Halimium halimifolium"), aes(y =  log_VR, x = S_mean))+ 
+  labs(y = "log_VR",x="S_mean",subtitle = "H.halimifolium")+  theme_classic()
 
-rich.3$plots[[6]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(x =  log_VR, y = S_mean))+ 
-  labs(x = "log_VR",y="S_mean",subtitle = "L.pedunculata")+  theme_classic()
+rich.3$plots[[6]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(y =  log_VR, x = S_mean))+ 
+  labs(y = "log_VR",x="S_mean",subtitle = "L.pedunculata")+  theme_classic()
 
-rich.3$plots[[7]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandula stoechas"), aes(x =  log_VR, y = S_mean))+ 
-  labs(x = "log_VR",y="S_mean",subtitle = "L.stoechas")+  theme_classic()
+rich.3$plots[[7]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandula stoechas"), aes(y =  log_VR, x = S_mean))+ 
+  labs(y = "log_VR",x="S_mean",subtitle = "L.stoechas")+  theme_classic()
 
 
 
 # mean richness ~ L& M index
+
+plots_rich4 <- full_2 %>%
+  group_by(Plant_gen_sp) %>%
+  group_map(~ ggplot(.) + aes(x=syncLM, y=S_mean) + 
+              geom_point() + ggtitle(.y[[1]]))
+
+plots_rich4[[1]]+plots_rich4[[2]]+plots_rich4[[3]]+plots_rich4[[4]]
+plots_rich4[[5]]+plots_rich4[[6]]+plots_rich4[[7]]
+
+#model
 rich4<-full_2 %>%
   nest_by(Plant_gen_sp) %>%
   mutate(mod = list(lm(S_mean~syncLM,data))) %>%
@@ -677,6 +740,23 @@ rich4_glance<-full_2 %>%
   summarize(glance(mod))%>%
   ungroup()
 
+#checking residuals
+rich4_resid<-full_2 %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lm(S_mean~syncLM,data)))%>%
+  mutate(plots = list(performance::check_model(model))) %>%
+  ungroup()
+
+plot(rich4_resid$plots[[1]]) # Cistus crispus
+plot(rich4_resid$plots[[2]]) # Cistus ladanifer
+plot(rich4_resid$plots[[3]]) # Cistus salviifolius
+plot(rich4_resid$plots[[4]]) # Halimium calycinum
+plot(rich4_resid$plots[[5]]) # Halimium halimifolium
+plot(rich4_resid$plots[[6]]) # Lavandula pedunculata
+plot(rich4_resid$plots[[7]]) # Lavandula stoechas
+
+
+#model plot
 rich.4 <- full_2 %>%
   nest_by(Plant_gen_sp) %>%
   mutate(mod = list(lm(S_mean~syncLM,data))) %>%
@@ -712,6 +792,16 @@ rich.4$plots[[7]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandu
 # Stability of visitation rate is affected by richness and synchrony
 
 #model 1: total richness + log VR
+
+plots_sta_polli <- full_2 %>%
+  group_by(Plant_gen_sp) %>%
+  group_map(~ ggplot(.) + aes(x=S_total, y=cv_1_visitation, size=log_VR) + 
+              geom_point() + ggtitle(.y[[1]]))
+
+plots_sta_polli[[1]]+plots_sta_polli[[2]]+plots_sta_polli[[3]]+plots_sta_polli[[4]]
+plots_sta_polli[[5]]+plots_sta_polli[[6]]+plots_sta_polli[[7]]
+
+
 sta_polli<-full_2 %>%
   nest_by(Plant_gen_sp) %>%
   mutate(mod = list(lm(cv_1_visitation~S_total+log_VR,data))) %>%
