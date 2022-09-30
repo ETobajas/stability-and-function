@@ -109,7 +109,7 @@ levels(factor(fruit$plant_id))
 
 # sum fruit yes,fruit no, fruit preyed and fruit dispersed per individual plant 
 #(2015 and 2016 fruit is counted by branch, 2017-2018 no)
-#thus each individual plant in 2015-2016 has a number of fruit yes and fruit no (same that 2017-2018)
+
 fruit_yes<-aggregate(Fruit_Yes ~ Year+Site_ID+Plant_gen_sp+plant_id, data = fruit,FUN = sum)
 fruit_no<-aggregate(Fruit_No ~ Year+Site_ID+Plant_gen_sp+plant_id, data = fruit, FUN = sum)
 fruit_preyed<-aggregate(Fruit_preyed ~ Year+Site_ID+Plant_gen_sp+plant_id, data = fruit, FUN = sum)
@@ -393,11 +393,11 @@ levels(factor(focal$Orden))
 hym= focal %>% filter(Orden %in% "Hymenoptera")
 levels(factor(hym$Pollinator_genus))
 
-h<-c("Bembix","Chrysididae","Chrysis","Formiciidae","Megalodontes","Pemphredon","Philantus",
+hyme<-c("Bembix","Chrysididae","Chrysis","Formiciidae","Megalodontes","Pemphredon","Philantus",
      "Polistes","Sphecodes","Tachysphex","Thyreus","Vespula")
 
 
-focal = focal %>% filter(!Pollinator_genus %in% h)
+focal = focal %>% filter(!Pollinator_genus %in% hyme)
 
 
 #Diptera
@@ -405,10 +405,10 @@ Dipt= focal %>% filter(Orden %in% "Diptera")
 levels(factor(Dipt$Pollinator_genus))
 
 # remove all that is not Bombilidos, sirfidos and rhyncomyia (Diptera)
-d<-c("Bibio","Bibionidae", "Dasypogon","Dilophus","Empis","Lucilia","Sarcophaga",
+dip<-c("Bibio","Bibionidae", "Dasypogon","Dilophus","Empis","Lucilia","Sarcophaga",
      "Stomorhina","Stratyiomis")
 
-focal = focal %>% filter(!Pollinator_genus %in% d)
+focal = focal %>% filter(!Pollinator_genus %in% dip)
 
 
 #Coleoptera
@@ -491,6 +491,9 @@ focal$plant_id = ifelse(focal$Plant_individual=="AFE" |focal$Plant_individual== 
 
 levels(factor(focal$plant_id))
 
+write.csv(focal, "C:/Users/estef/git/stability-and-function/Data/focal.csv")
+
+
 # Flower abundance
 #calcular media de flores por individuo y sp
 flower_abun<-aggregate(Flower_abundance ~ Year+Site_ID+Plant_gen_sp+plant_id, data = focal, FUN = mean)
@@ -514,6 +517,26 @@ visitation<-visitation%>%
 visitation<-visitation %>% mutate(visitatio_rate = Frequency/Flower_abundance)
 
 
+# Apis mellifera frequency (solo A.mellifera)
+Apis<-aggregate(Frequency ~ Year+Site_ID+Plant_gen_sp+plant_id, focal[focal$Pollinator_gen_sp %in% c("Apis mellifera"),], sum)
+names(Apis)[names(Apis) == "Frequency"] <- "Apis_freq"
+
+# A. mellifera visitation rate
+visitation<-merge(x=visitation,y=Apis,by=c("Year","Site_ID", "Plant_gen_sp","plant_id" ),all.x=T, all.y=F)
+visitation<-visitation %>% mutate(Apis_visit_rate = Apis_freq/Flower_abundance)
+
+
+# pollinator sin apis mellifera
+
+# pollinator frequency (sin A. mellifera)
+no_apis<-aggregate(Frequency ~ Year+Site_ID+Plant_gen_sp+plant_id, focal[!focal$Pollinator_gen_sp %in% c("Apis mellifera"),], sum)
+names(no_apis)[names(no_apis) == "Frequency"] <- "no_apis_freq"
+
+# visitation rate of pollinator (sin A. mellifera)
+visitation<-merge(x=visitation,y=no_apis,by=c("Year","Site_ID", "Plant_gen_sp","plant_id" ),all.x=T, all.y=F)
+visitation<-visitation %>% mutate(No_Apis_visit_rate = no_apis_freq/Flower_abundance)
+
+
 # Hymenoptera frequency
 Hym<-aggregate(Frequency ~ Year+Site_ID+Plant_gen_sp+plant_id, focal[focal$Orden %in% c("Hymenoptera"),], sum)
 names(Hym)[names(Hym) == "Frequency"] <- "Hym_freq"
@@ -521,6 +544,11 @@ names(Hym)[names(Hym) == "Frequency"] <- "Hym_freq"
 # hymenoptera visitation
 visitation<-merge(x=visitation,y=Hym,by=c("Year","Site_ID", "Plant_gen_sp","plant_id" ),all.x=T, all.y=F)
 visitation<-visitation %>% mutate(Hym_visit = Hym_freq/Flower_abundance)
+
+
+# hymenoptera sin A. mellifera
+
+
 
 
 # Diptera frequency
@@ -580,6 +608,8 @@ focal_0 <- focal[!(focal$Pollinator_gen_sp == "NA NA"),] #eliminar polinizadores
 
 plant_polli<-data.frame(focal_0[,c(1,29)])
 
+
+# suma de numero de interaciones que ha tenido una especie de planta y polinizador (NO la frecuencia)
 plant_polli1 <- dcast(plant_polli, formula = Pollinator_gen_sp ~ Plant_gen_sp)
 
 # calculated the abundance like number of times that one pollinator species interaction 
