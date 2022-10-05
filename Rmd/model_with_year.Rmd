@@ -1,0 +1,110 @@
+---
+title: "Models with year"
+output: pdf_document
+date: '2022-10-05'
+---
+
+
+# Seed number
+
+we analyse whether the visitation rate of all pollinators, years and their interaction affect to the seed number for each plant species
+
+A- linear model: lm(Seeds~visitatio_rate * Year 
+```{r,echo=FALSE, warning=FALSE,message=FALSE,fig.height = 13,fig.width=15, out.width="100%"}
+
+library(tidyverse)
+library(broom.mixed)
+library(broom)
+library(lmerTest)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(ggeffects)
+library(patchwork)
+library(ggcorrplot)
+library(ggpubr)
+library(kableExtra)
+library(sjPlot)
+
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant_Apis_separada.csv") 
+Pollinator_Plant<-Pollinator_Plant[,-1]
+
+#Species out
+spp_out <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  summarise(Unique_Id = n_distinct(Site_ID)) %>%
+  filter(Unique_Id == 1) %>%
+  select(Plant_gen_sp) %>% pull(Plant_gen_sp)
+
+
+#Data with species in more than 1 site
+Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
+
+# replace NAs by 0
+# hay especies de plantas que presentan datos de fruit y seed pero no de polinizador (durante el tiempo observado no se ve ningun polinizador )
+Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
+
+Pollinator_Plant$Year <- factor(Pollinator_Plant$Year)
+
+#model
+mod_seed_year<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(Seeds~visitatio_rate * Year,data))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+mod_seed_year<-mod_seed_year %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+
+mod_seed_year %>% 
+ kable("latex",booktabs = TRUE, digits =  4,longtable = T, linesep = "") %>% 
+column_spec(6, bold = ifelse(mod_seed_year$p.value < 0.05| is.na(mod_seed_year$p.value), T, F) )%>%
+  kable_styling(position="left")
+
+```
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="80%", fig.align='left'}
+
+mod_seed_year_glance<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(Seeds~visitatio_rate * Year,data))) %>%
+  summarize(glance(mod))%>%
+  ungroup()
+
+table1<-mod_seed_year_glance %>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Asphodelus fistulosus','A.fistulosus', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Cistus crispus', 'C.crispus', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Cistus ladanifer', 'C.ladanifer', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Cistus libanotis', 'C.libanotis', Plant_gen_sp))%>%
+   mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Cistus monspeliensis', 'C.monspeliensis', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Cistus salviifolius', 'C.salviifolius', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Halimium calycinum', 'H. calycinum', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Halimium halimifolium', 'H.halimifolium', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Lavandula pedunculata', 'L.pedunculata', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Lavandula stoechas', 'L.stoechas', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Salvia rosmarinus', 'S.rosmarinus', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Teucrium fruticans', 'T.fructicans', Plant_gen_sp))
+
+table1 %>% 
+    kable("latex",booktabs = TRUE, digits =  3,linesep = "",align = "lcccccccccccc") %>%
+  kable_styling(font_size = 7,full_width = F, position="left")
+
+```
+
+\newpage
+
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+mod_seed_year.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(Seeds~visitatio_rate * Year,data)))
+
+ggarrange(plot_model(mod_seed_year.1$mod[[1]], type = "int", title = " Asphodelus fistulosus"),plot_model(mod_seed_year.1$mod[[2]], type = "int", title = " Cistus crispus"),plot_model(mod_seed_year.1$mod[[3]], type = "int", title = " Cistus ladanifer "),plot_model(mod_seed_year.1$mod[[4]], type = "int",title = "Cistus libanotis"),plot_model(mod_seed_year.1$mod[[5]], type = "int", title = "Cistus monspeliensis"),plot_model(mod_seed_year.1$mod[[6]], type = "int",title = " Cistus salviifolius"),plot_model(mod_seed_year.1$mod[[7]], type = "int",title = " Halimium calycinum"),plot_model(mod_seed_year.1$mod[[8]], type = "int",title = " Halimium halimifolium "),plot_model(mod_seed_year.1$mod[[9]], type = "int",title = " Lavandula pedunculata"),plot_model(mod_seed_year.1$mod[[10]], type = "int",title = " Lavandula stoechas"),plot_model(mod_seed_year.1$mod[[11]], type = "int",title = " Salvia rosmarinus"),plot_model(mod_seed_year.1$mod[[12]], type = "int",title = " Teucrium fruticans"),ncol=3,nrow = 4)
+
+```
+
+*Cistus monspeliensis* - *Halimium halimifolium* - *Teucrium fructicans*
+Warning message:
+In predict.lm(model, newdata = fitfram, type = "response", se.fit = se,: prediction from a rank-deficient fit may be misleading
+
+
+**Importante**: Cistus crispus en 2015 solo tiene dos valores, uno con 0 semillas y visitation rate 0.214; y otro con casi 40 semillas y visitation rate 0
