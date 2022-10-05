@@ -10,9 +10,10 @@ library(dplyr)
 library(patchwork)
 library(ggcorrplot)
 library(ggpubr)
+library (lme4)
 
 
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") #400 observaciones
+Pollinator_Plant<- read.csv("Data/Pollinator_Plant_Apis_separada.csv") #400 observaciones
 str(Pollinator_Plant)
 Pollinator_Plant<-Pollinator_Plant[,-1]
 head(Pollinator_Plant)
@@ -136,6 +137,7 @@ corr <- round(cor(cor_general), 4)
 p.mat <- cor_pmat(cor_general)
 ggcorrplot(corr, hc.order = TRUE, type = "lower",
            lab = TRUE)
+
 
 
 # Models _ Seed numbers---- 
@@ -328,6 +330,169 @@ mod_seed.2$plots[[11]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen
 mod_seed.2$plots[[12]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Teucrium fruticans"), aes(x =  visitatio_rate, y = Seeds),shape=20)+ 
   labs(x = "visitation_rate",y="seed_number",subtitle = "T.fruticans")+  theme_classic()+theme(text = element_text(size=rel(3)))
 
+# visitation rate without Apis mellifera
+
+#plot
+plots_Visitation_rate_no_apis <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  group_map(~ ggplot(.) + aes(x=No_Apis_visit_rate, y=Seeds) + 
+              geom_point() + ggtitle(.y[[1]]))
+
+plots_Visitation_rate_no_apis[[1]]+plots_Visitation_rate_no_apis[[2]]+plots_Visitation_rate_no_apis[[3]]+plots_Visitation_rate_no_apis[[4]]
+plots_Visitation_rate_no_apis[[5]]+plots_Visitation_rate_no_apis[[6]]+plots_Visitation_rate_no_apis[[7]]+plots_Visitation_rate_no_apis[[8]] 
+plots_Visitation_rate_no_apis[[9]]+plots_Visitation_rate_no_apis[[10]]+plots_Visitation_rate_no_apis[[11]]+plots_Visitation_rate_no_apis[[12]]
+
+#model
+mod_seed_Vr_no_apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~No_Apis_visit_rate+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+mod_seed_Vr_no_apis_glance<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~No_Apis_visit_rate+(1|Site_ID),data))) %>%
+  summarize(glance(model))%>%
+  ungroup()
+
+# Residuals with dharma 
+mod_seed_Vr_no_apis_trial<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~No_Apis_visit_rate+(1|Site_ID),data)))%>%
+  mutate(plots = list(DHARMa::simulateResiduals(fittedModel = model))) %>%
+  ungroup()
+
+plot(mod_seed_Vr_no_apis_trial$plots[[1]]) #Asphodelus fistulosus
+plot(mod_seed_Vr_no_apis_trial$plots[[2]]) #Cistus crispus
+plot(mod_seed_Vr_no_apis_trial$plots[[3]]) #Cistus ladanifer
+plot(mod_seed_Vr_no_apis_trial$plots[[4]]) #Cistus libanotis
+plot(mod_seed_Vr_no_apis_trial$plots[[5]]) #Cistus monspeliensis
+plot(mod_seed_Vr_no_apis_trial$plots[[6]]) #Cistus salviifolius
+plot(mod_seed_Vr_no_apis_trial$plots[[7]]) #Halimium calycinum
+plot(mod_seed_Vr_no_apis_trial$plots[[8]]) #Halimium halimifolium
+plot(mod_seed_Vr_no_apis_trial$plots[[9]]) #Lavandula pedunculata
+plot(mod_seed_Vr_no_apis_trial$plots[[10]]) #Lavandula stoechas
+plot(mod_seed_Vr_no_apis_trial$plots[[11]]) #Salvia rosmarinus
+plot(mod_seed_Vr_no_apis_trial$plots[[12]]) #Teucrium fruticans
+
+# model plot 
+mod_seed_Vr_no_apis_trial.2 <- Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~No_Apis_visit_rate+(1|Site_ID),data))) %>%
+  mutate(model1 = list(ggeffects::ggpredict(model, terms = "No_Apis_visit_rate"))) %>%
+  mutate(plots = list(ggplot(model1, aes(x, predicted)) + geom_line() +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2)))
+
+
+
+mod_seed_Vr_no_apis_trial.2$plots[[1]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Asphodelus fistulosus"), aes(x =  No_Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="seed_number",subtitle = "A.fistulosus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_no_apis_trial.2$plots[[2]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus crispus"), aes(x =  No_Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="seed_number",subtitle = "C.crispus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_no_apis_trial.2$plots[[3]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(x =  No_Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="seed_number",subtitle = "C.ladanifer")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_no_apis_trial.2$plots[[4]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus libanotis"), aes(x =  No_Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="seed_number",subtitle = "C.libanotis")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_no_apis_trial.2$plots[[5]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus monspeliensis"), aes(x =  No_Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="seed_number",subtitle = "C.monspeliensis")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_no_apis_trial.2$plots[[6]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(x =  No_Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="seed_number",subtitle = "C.salviifolius")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_no_apis_trial.2$plots[[7]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Halimium calycinum"), aes(x =  No_Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="seed_number",subtitle = "H.calycinum")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_no_apis_trial.2$plots[[8]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Halimium halimifolium"), aes(x =  No_Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="seed_number",subtitle = "H.halimifolium")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_no_apis_trial.2$plots[[9]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(x =  No_Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="seed_number",subtitle = "L.pedunculata")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_no_apis_trial.2$plots[[10]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Lavandula stoechas"), aes(x =  No_Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="seed_number",subtitle = "L.stoechas")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_no_apis_trial.2$plots[[11]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Salvia rosmarinus"), aes(x =  No_Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="seed_number",subtitle = "S.rosmarinus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_no_apis_trial.2$plots[[12]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Teucrium fruticans"), aes(x =  No_Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="seed_number",subtitle = "T.fruticans")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+
+# visitation rate of Apis mellifera
+
+#plot
+plots_Visitation_rate_apis <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  group_map(~ ggplot(.) + aes(x=Apis_visit_rate, y=Seeds) + 
+              geom_point() + ggtitle(.y[[1]]))
+
+plots_Visitation_rate_apis[[1]]+plots_Visitation_rate_apis[[2]]+plots_Visitation_rate_apis[[3]]+plots_Visitation_rate_apis[[4]]
+plots_Visitation_rate_apis[[5]]+plots_Visitation_rate_apis[[6]]+plots_Visitation_rate_apis[[7]]+plots_Visitation_rate_apis[[8]] 
+plots_Visitation_rate_apis[[9]]+plots_Visitation_rate_apis[[10]]+plots_Visitation_rate_apis[[11]]+plots_Visitation_rate_apis[[12]]
+
+#model
+mod_seed_Vr_apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~Apis_visit_rate+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+mod_seed_Vr_apis_glance<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~Apis_visit_rate+(1|Site_ID),data))) %>%
+  summarize(glance(model))%>%
+  ungroup()
+
+
+# model plot 
+mod_seed_Vr_apis_trial.2 <- Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~Apis_visit_rate+(1|Site_ID),data))) %>%
+  mutate(model1 = list(ggeffects::ggpredict(model, terms = "Apis_visit_rate"))) %>%
+  mutate(plots = list(ggplot(model1, aes(x, predicted)) + geom_line() +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2)))
+
+
+
+mod_seed_Vr_apis_trial.2$plots[[1]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Asphodelus fistulosus"), aes(x =  Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="seed_number",subtitle = "A.fistulosus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_apis_trial.2$plots[[2]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus crispus"), aes(x =  Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="seed_number",subtitle = "C.crispus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_apis_trial.2$plots[[3]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(x =  Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="seed_number",subtitle = "C.ladanifer")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_apis_trial.2$plots[[4]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus libanotis"), aes(x =  Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="seed_number",subtitle = "C.libanotis")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_apis_trial.2$plots[[5]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus monspeliensis"), aes(x =  Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="seed_number",subtitle = "C.monspeliensis")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_apis_trial.2$plots[[6]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(x =  Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="seed_number",subtitle = "C.salviifolius")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_apis_trial.2$plots[[7]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Halimium calycinum"), aes(x =  Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="seed_number",subtitle = "H.calycinum")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_apis_trial.2$plots[[8]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Halimium halimifolium"), aes(x =  Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="seed_number",subtitle = "H.halimifolium")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_apis_trial.2$plots[[9]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(x =  Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="seed_number",subtitle = "L.pedunculata")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_apis_trial.2$plots[[10]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Lavandula stoechas"), aes(x =  Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="seed_number",subtitle = "L.stoechas")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_apis_trial.2$plots[[11]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Salvia rosmarinus"), aes(x =  Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="seed_number",subtitle = "S.rosmarinus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_Vr_apis_trial.2$plots[[12]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Teucrium fruticans"), aes(x =  Apis_visit_rate, y = Seeds),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="seed_number",subtitle = "T.fruticans")+  theme_classic()+theme(text = element_text(size=rel(3)))
 
 
 # hymenoptera visitation
@@ -420,6 +585,80 @@ mod_seed.3$plots[[11]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen
 
 mod_seed.3$plots[[12]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Teucrium fruticans"), aes(x =  Hym_visit, y = Seeds),shape=20)+ 
   labs(x = "Hymenoptera_visit",y="seed_number",subtitle = "T.fruticans")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+
+# hymenoptera visitation without A.mellifera
+
+#plot
+plots_seed_Hym_visit_sin_Apis <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  group_map(~ ggplot(.) + aes(x=Hym_visit_sin_apis, y=Seeds) + 
+              geom_point() + ggtitle(.y[[1]]))
+
+plots_seed_Hym_visit_sin_Apis[[1]]+plots_seed_Hym_visit_sin_Apis[[2]]+plots_seed_Hym_visit_sin_Apis[[3]]+plots_seed_Hym_visit_sin_Apis[[4]]
+plots_seed_Hym_visit_sin_Apis[[5]]+plots_seed_Hym_visit_sin_Apis[[6]]+plots_seed_Hym_visit_sin_Apis[[7]]+plots_seed_Hym_visit_sin_Apis[[8]] 
+plots_seed_Hym_visit_sin_Apis[[9]]+plots_seed_Hym_visit_sin_Apis[[10]]+plots_seed_Hym_visit_sin_Apis[[11]]+plots_seed_Hym_visit_sin_Apis[[12]]
+
+#model
+mod_seed_hym_no_apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~Hym_visit_sin_apis+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+mod_seed_hym_no_apis_glance<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~Hym_visit_sin_apis+(1|Site_ID),data))) %>%
+  summarize(glance(model))%>%
+  ungroup()
+
+
+# model plot 
+mod_seedhym_no_apis.2 <- Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds~Hym_visit_sin_apis+(1|Site_ID),data))) %>%
+  mutate(model1 = list(ggeffects::ggpredict(model, terms = "Hym_visit_sin_apis"))) %>%
+  mutate(plots = list(ggplot(model1, aes(x, predicted)) + geom_line() +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2)))
+
+
+
+mod_seedhym_no_apis.2$plots[[1]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Asphodelus fistulosus"), aes(x =  Hym_visit_sin_apis, y = Seeds),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="seed_number",subtitle = "A.fistulosus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seedhym_no_apis.2$plots[[2]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus crispus"), aes(x =  Hym_visit_sin_apis, y = Seeds),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="seed_number",subtitle = "C.crispus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seedhym_no_apis.2$plots[[3]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(x =  Hym_visit_sin_apis, y = Seeds),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="seed_number",subtitle = "C.ladanifer")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seedhym_no_apis.2$plots[[4]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus libanotis"), aes(x =  Hym_visit_sin_apis, y = Seeds),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="seed_number",subtitle = "C.libanotis")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seedhym_no_apis.2$plots[[5]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus monspeliensis"), aes(x =  Hym_visit_sin_apis, y = Seeds),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="seed_number",subtitle = "C.monspeliensis")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seedhym_no_apis.2$plots[[6]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(x =  Hym_visit_sin_apis, y = Seeds),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="seed_number",subtitle = "C.salviifolius")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seedhym_no_apis.2$plots[[7]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Halimium calycinum"), aes(x =  Hym_visit_sin_apis, y = Seeds),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="seed_number",subtitle = "H.calycinum")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seedhym_no_apis.2$plots[[8]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Halimium halimifolium"), aes(x =  Hym_visit_sin_apis, y = Seeds),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="seed_number",subtitle = "H.halimifolium")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seedhym_no_apis.2$plots[[9]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(x =  Hym_visit_sin_apis, y = Seeds),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="seed_number",subtitle = "L.pedunculata")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seedhym_no_apis.2$plots[[10]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Lavandula stoechas"), aes(x =  Hym_visit_sin_apis, y = Seeds),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="seed_number",subtitle = "L.stoechas")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seedhym_no_apis.2$plots[[11]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Salvia rosmarinus"), aes(x =  Hym_visit_sin_apis, y = Seeds),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="seed_number",subtitle = "S.rosmarinus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seedhym_no_apis.2$plots[[12]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Teucrium fruticans"), aes(x =  Hym_visit_sin_apis, y = Seeds),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="seed_number",subtitle = "T.fruticans")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
 
 
 
@@ -707,6 +946,152 @@ mod_seed_weight.2$plots[[11]] + geom_point(data = Pollinator_Plant %>% filter(Pl
 mod_seed_weight.2$plots[[12]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Teucrium fruticans"), aes(x =  visitatio_rate, y = Seed_weight),shape=20)+ 
   labs(x = "visitation_rate",y="Seed_weight",subtitle = "T.fruticans")+  theme_classic()+theme(text = element_text(size=rel(3)))
 
+# visitation rate without Apis mellifera
+
+#plot
+plots_seed_weight_VR_no_apis <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  group_map(~ ggplot(.) + aes(x=No_Apis_visit_rate, y=Seed_weight) + 
+              geom_point() + ggtitle(.y[[1]]))
+
+plots_seed_weight_VR_no_apis[[1]]+plots_seed_weight_VR_no_apis[[2]]+plots_seed_weight_VR_no_apis[[3]]+plots_seed_weight_VR_no_apis[[4]]
+plots_seed_weight_VR_no_apis[[5]]+plots_seed_weight_VR_no_apis[[6]]+plots_seed_weight_VR_no_apis[[7]]+plots_seed_weight_VR_no_apis[[8]] 
+plots_seed_weight_VR_no_apis[[9]]+plots_seed_weight_VR_no_apis[[10]]+plots_seed_weight_VR_no_apis[[11]]+plots_seed_weight_VR_no_apis[[12]]
+
+#model
+mod_seed_weight_VR_no_apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seed_weight~No_Apis_visit_rate+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+
+mod_seed_weight_VR_no_apis_glance<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seed_weight~No_Apis_visit_rate+(1|Site_ID),data))) %>%
+  summarize(glance(model))%>%
+  ungroup()
+
+# model plot 
+mod_seed_weight_VR_no_apis.2 <- Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seed_weight~No_Apis_visit_rate+(1|Site_ID),data))) %>%
+  mutate(model1 = list(ggeffects::ggpredict(model, terms = "No_Apis_visit_rate"))) %>%
+  mutate(plots = list(ggplot(model1, aes(x, predicted)) + geom_line() +
+ geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2)))
+
+
+
+mod_seed_weight_VR_no_apis.2$plots[[1]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Asphodelus fistulosus"), aes(x =  No_Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="Seed_weight",subtitle = "A.fistulosus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_VR_no_apis.2$plots[[2]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus crispus"), aes(x =  No_Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="Seed_weight",subtitle = "C.crispus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_VR_no_apis.2$plots[[3]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(x =  No_Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="Seed_weight",subtitle = "C.ladanifer")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_VR_no_apis.2$plots[[4]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus libanotis"), aes(x =  No_Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="Seed_weight",subtitle = "C.libanotis")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_VR_no_apis.2$plots[[5]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus monspeliensis"), aes(x =  No_Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="Seed_weight",subtitle = "C.monspeliensis")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_VR_no_apis.2$plots[[6]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(x =  No_Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="Seed_weight",subtitle = "C.salviifolius")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_VR_no_apis.2$plots[[7]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Halimium calycinum"), aes(x =  No_Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="Seed_weight",subtitle = "H.calycinum")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_VR_no_apis.2$plots[[8]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Halimium halimifolium"), aes(x =  No_Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="Seed_weight",subtitle = "H.halimifolium")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_VR_no_apis.2$plots[[9]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(x =  No_Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="Seed_weight",subtitle = "L.pedunculata")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_VR_no_apis.2$plots[[10]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Lavandula stoechas"), aes(x =  No_Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="Seed_weight",subtitle = "L.stoechas")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_VR_no_apis.2$plots[[11]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Salvia rosmarinus"), aes(x =  No_Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="Seed_weight",subtitle = "S.rosmarinus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_VR_no_apis.2$plots[[12]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Teucrium fruticans"), aes(x =  No_Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "No_Apis_visit_rate",y="Seed_weight",subtitle = "T.fruticans")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+
+# Visitation rate of Apis mellifera
+
+#plot
+plots_seed_weight_apis <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  group_map(~ ggplot(.) + aes(x=Apis_visit_rate, y=Seed_weight) + 
+ geom_point() + ggtitle(.y[[1]]))
+
+plots_seed_weight_apis[[1]]+plots_seed_weight_apis[[2]]+plots_seed_weight_apis[[3]]+plots_seed_weight_apis[[4]]
+plots_seed_weight_apis[[5]]+plots_seed_weight_apis[[6]]+plots_seed_weight_apis[[7]]+plots_seed_weight_apis[[8]] 
+plots_seed_weight_apis[[9]]+plots_seed_weight_apis[[10]]+plots_seed_weight_apis[[11]]+plots_seed_weight_apis[[12]]
+
+#model
+mod_seed_weight_apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seed_weight~Apis_visit_rate+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+
+mod_seed_weight_apis_glance<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seed_weight~Apis_visit_rate+(1|Site_ID),data))) %>%
+  summarize(glance(model))%>%
+  ungroup()
+
+# model plot 
+mod_seed_weight_apis.2 <- Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seed_weight~Apis_visit_rate+(1|Site_ID),data))) %>%
+  mutate(model1 = list(ggeffects::ggpredict(model, terms = "Apis_visit_rate"))) %>%
+  mutate(plots = list(ggplot(model1, aes(x, predicted)) + geom_line() +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2)))
+
+
+
+mod_seed_weight_apis.2$plots[[1]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Asphodelus fistulosus"), aes(x =  Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="Seed_weight",subtitle = "A.fistulosus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_apis.2$plots[[2]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus crispus"), aes(x =  Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="Seed_weight",subtitle = "C.crispus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_apis.2$plots[[3]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(x =  Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="Seed_weight",subtitle = "C.ladanifer")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_apis.2$plots[[4]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus libanotis"), aes(x =  Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="Seed_weight",subtitle = "C.libanotis")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_apis.2$plots[[5]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus monspeliensis"), aes(x =  Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="Seed_weight",subtitle = "C.monspeliensis")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_apis.2$plots[[6]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(x =  Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="Seed_weight",subtitle = "C.salviifolius")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_apis.2$plots[[7]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Halimium calycinum"), aes(x =  Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="Seed_weight",subtitle = "H.calycinum")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_apis.2$plots[[8]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Halimium halimifolium"), aes(x =  Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="Seed_weight",subtitle = "H.halimifolium")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_apis.2$plots[[9]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(x =  Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="Seed_weight",subtitle = "L.pedunculata")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_apis.2$plots[[10]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Lavandula stoechas"), aes(x =  Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="Seed_weight",subtitle = "L.stoechas")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_apis.2$plots[[11]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Salvia rosmarinus"), aes(x =  Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="Seed_weight",subtitle = "S.rosmarinus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_apis.2$plots[[12]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Teucrium fruticans"), aes(x =  Apis_visit_rate, y = Seed_weight),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="Seed_weight",subtitle = "T.fruticans")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+
 
 # Hymenoptera visitation
 
@@ -799,6 +1184,80 @@ mod_seed_weight.3$plots[[11]] + geom_point(data = Pollinator_Plant %>% filter(Pl
 
 mod_seed_weight.3$plots[[12]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Teucrium fruticans"), aes(x =  Hym_visit, y = Seed_weight),shape=20)+ 
   labs(x = "Hymenoptera_visit",y="Seed_weight",subtitle = "T.fruticans")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+
+
+# hymenoptera visitation rate without A.mellifera
+#plot
+plots_seed_weight_hym_no_apis <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  group_map(~ ggplot(.) + aes(x=Hym_visit_sin_apis, y=Seed_weight) + 
+              geom_point() + ggtitle(.y[[1]]))
+
+plots_seed_weight_hym_no_apis[[1]]+plots_seed_weight_hym_no_apis[[2]]+plots_seed_weight_hym_no_apis[[3]]+plots_seed_weight_hym_no_apis[[4]]
+plots_seed_weight_hym_no_apis[[5]]+plots_seed_weight_hym_no_apis[[6]]+plots_seed_weight_hym_no_apis[[7]]+plots_seed_weight_hym_no_apis[[8]] 
+plots_seed_weight_hym_no_apis[[9]]+plots_seed_weight_hym_no_apis[[10]]+plots_seed_weight_hym_no_apis[[11]]+plots_seed_weight_hym_no_apis[[12]]
+
+#model
+mod_seed_weight_hym_no_apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seed_weight~Hym_visit_sin_apis+(1|Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+mod_seed_weight_hym_no_apis_glance<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seed_weight~Hym_visit_sin_apis+(1|Site_ID),data))) %>%
+  summarize(glance(model))%>%
+  ungroup()
+
+
+# model plot 
+mod_seed_weight_hym_no_apis.2 <- Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seed_weight~Hym_visit_sin_apis+(1|Site_ID),data))) %>%
+  mutate(model1 = list(ggeffects::ggpredict(model, terms = "Hym_visit_sin_apis"))) %>%
+  mutate(plots = list(ggplot(model1, aes(x, predicted)) + geom_line() +
+ geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2)))
+
+
+
+mod_seed_weight_hym_no_apis.2$plots[[1]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Asphodelus fistulosus"), aes(x =  Hym_visit_sin_apis, y = Seed_weight),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="Seed_weight",subtitle = "A.fistulosus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_hym_no_apis.2$plots[[2]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus crispus"), aes(x =  Hym_visit_sin_apis, y = Seed_weight),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="Seed_weight",subtitle = "C.crispus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_hym_no_apis.2$plots[[3]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(x =  Hym_visit_sin_apis, y = Seed_weight),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="Seed_weight",subtitle = "C.ladanifer")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_hym_no_apis.2$plots[[4]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus libanotis"), aes(x =  Hym_visit_sin_apis, y = Seed_weight),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="Seed_weight",subtitle = "C.libanotis")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_hym_no_apis.2$plots[[5]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus monspeliensis"), aes(x =  Hym_visit_sin_apis, y = Seed_weight),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="Seed_weight",subtitle = "C.monspeliensis")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_hym_no_apis.2$plots[[6]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(x =  Hym_visit_sin_apis, y = Seed_weight),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="Seed_weight",subtitle = "C.salviifolius")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_hym_no_apis.2$plots[[7]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Halimium calycinum"), aes(x =  Hym_visit_sin_apis, y = Seed_weight),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="Seed_weight",subtitle = "H.calycinum")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_hym_no_apis.2$plots[[8]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Halimium halimifolium"), aes(x =  Hym_visit_sin_apis, y = Seed_weight),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="Seed_weight",subtitle = "H.halimifolium")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_hym_no_apis.2$plots[[9]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(x =  Hym_visit_sin_apis, y = Seed_weight),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="Seed_weight",subtitle = "L.pedunculata")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_hym_no_apis.2$plots[[10]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Lavandula stoechas"), aes(x =  Hym_visit_sin_apis, y = Seed_weight),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="Seed_weight",subtitle = "L.stoechas")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_hym_no_apis.2$plots[[11]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Salvia rosmarinus"), aes(x =  Hym_visit_sin_apis, y = Seed_weight),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="Seed_weight",subtitle = "S.rosmarinus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_seed_weight_hym_no_apis.2$plots[[12]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Teucrium fruticans"), aes(x =  Hym_visit_sin_apis, y = Seed_weight),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="Seed_weight",subtitle = "T.fruticans")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
 
 
 
@@ -1000,8 +1459,7 @@ mod_fruitproportion.1$plots[[12]] + geom_point(data = Pollinator_Plant %>% filte
 
 
 
-
-# visistation rate
+# visistation rate (all pollinators)
 
 #plot
 plots_fruitproportion_2 <- Pollinator_Plant %>%
@@ -1092,6 +1550,209 @@ mod_fruitproportion.2$plots[[11]] + geom_point(data = Pollinator_Plant %>% filte
 
 mod_fruitproportion.2$plots[[12]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Teucrium fruticans"), aes(x =  visitatio_rate, y = fruit_proportion),shape=20)+ 
   labs(x = "visitation_rate",y="fruit proportion",subtitle = "T.fruticans")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+
+# visitation rate of pollinators without A.mellifera
+# se calcula la visitation rate de los polinizadores sin frecuencias de A.mellifera
+
+#plot
+plots_fruitproportion_polli_no_apis <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  group_map(~ ggplot(.) + aes(x=No_Apis_visit_rate, y=fruit_proportion) + 
+  geom_point() + ggtitle(.y[[1]]))
+
+plots_fruitproportion_polli_no_apis[[1]]+plots_fruitproportion_polli_no_apis[[2]]+plots_fruitproportion_polli_no_apis[[3]]+plots_fruitproportion_polli_no_apis[[4]]
+plots_fruitproportion_polli_no_apis[[5]]+plots_fruitproportion_polli_no_apis[[6]]+plots_fruitproportion_polli_no_apis[[7]]+plots_fruitproportion_polli_no_apis[[8]] 
+plots_fruitproportion_polli_no_apis[[9]]+plots_fruitproportion_polli_no_apis[[10]]+plots_fruitproportion_polli_no_apis[[11]]+plots_fruitproportion_polli_no_apis[[12]]
+
+#model
+mod_fruitproportion_polli_no_api<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~No_Apis_visit_rate + (1|Site_ID),family=binomial,data)))%>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+
+mod_fruitproportion_polli_no_api_glance<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~No_Apis_visit_rate + (1|Site_ID),family=binomial,data))) %>%
+  summarize(glance(model))%>%
+  ungroup()
+
+# Residuals with dharma 
+mod_fruitproportion_polli_no_api_resid<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~No_Apis_visit_rate + (1|Site_ID),family=binomial,data)))%>%
+  mutate(plots = list(DHARMa::simulateResiduals(fittedModel = model))) %>%
+  ungroup()
+
+plot(mod_fruitproportion_polli_no_api_resid$plots[[1]]) #Asphodelus fistulosus
+plot(mod_fruitproportion_polli_no_api_resid$plots[[2]]) #Cistus crispus
+plot(mod_fruitproportion_polli_no_api_resid$plots[[3]]) #Cistus ladanifer
+plot(mod_fruitproportion_polli_no_api_resid$plots[[4]]) #Cistus libanotis
+plot(mod_fruitproportion_polli_no_api_resid$plots[[5]]) #Cistus monspeliensis
+plot(mod_fruitproportion_polli_no_api_resid$plots[[6]]) #Cistus salviifolius
+plot(mod_fruitproportion_polli_no_api_resid$plots[[7]]) #Halimium calycinum
+plot(mod_fruitproportion_polli_no_api_resid$plots[[8]]) #Halimium halimifolium
+plot(mod_fruitproportion_polli_no_api_resid$plots[[9]]) #Lavandula pedunculata
+plot(mod_fruitproportion_polli_no_api_resid$plots[[10]]) #Lavandula stoechas
+plot(mod_fruitproportion_polli_no_api_resid$plots[[11]]) #Salvia rosmarinus
+plot(mod_fruitproportion_polli_no_api_resid$plots[[12]]) #Teucrium fruticans
+
+# model plot 
+mod_fruitproportion_polli_no_api.2 <- Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~No_Apis_visit_rate + (1|Site_ID),family=binomial,data))) %>%
+  mutate(model1 = list(ggeffects::ggpredict(model, terms = "No_Apis_visit_rate"))) %>%
+  mutate(plots = list(ggplot(model1, aes(x, predicted)) + geom_line() +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2)))
+
+
+  
+# salvia=Pollinator_Plant %>%
+#   filter(Plant_gen_sp == "Salvia rosmarinus")
+# 
+# plot(salvia$No_Apis_visit_rate,salvia$fruit_proportion)
+# 
+# mod= glmer(cbind(fruit_formado, Fruit_No) ~ No_Apis_visit_rate + (1|Site_ID), family = binomial, data= salvia)
+# summary(mod)
+# 
+# sjPlot::plot_model(mod, type = "eff", show.ci = TRUE)
+# 
+# library(effects)
+# plot (allEffects(mod))
+# library(ggeffects)
+# ggpredict(mod, "No_Apis_visit_rate")
+# me <- ggpredict(mod, "No_Apis_visit_rate")
+# plot(me)
+
+
+mod_fruitproportion_polli_no_api.2$plots[[1]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Asphodelus fistulosus"), aes(x =  No_Apis_visit_rate, y = fruit_formado/(fruit_formado + Fruit_No)),shape=20)+ 
+  labs(x = "visitation_rate_no_Apis",y="fruit proportion",subtitle = "A.fistulosus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_polli_no_api.2$plots[[2]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus crispus"), aes(x =  No_Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "visitation_rate_no_Apis",y="fruit proportion",subtitle = "C.crispus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_polli_no_api.2$plots[[3]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(x =  No_Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "visitation_rate_no_Apis",y="fruit proportion",subtitle = "C.ladanifer")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_polli_no_api.2$plots[[4]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus libanotis"), aes(x =  No_Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "visitation_rate_no_Apis",y="fruit proportion",subtitle = "C.libanotis")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_polli_no_api.2$plots[[5]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus monspeliensis"), aes(x =  No_Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "visitation_rate_no_Apis",y="fruit proportion",subtitle = "C.monspeliensis")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_polli_no_api.2$plots[[6]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(x =  No_Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "visitation_rate_no_Apis",y="fruit proportion",subtitle = "C.salviifolius")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_polli_no_api.2$plots[[7]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Halimium calycinum"), aes(x =  No_Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "visitation_rate_no_Apis",y="fruit proportion",subtitle = "H.calycinum")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_polli_no_api.2$plots[[8]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Halimium halimifolium"), aes(x =  No_Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "visitation_rate_no_Apis",y="fruit proportion",subtitle = "H.halimifolium")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_polli_no_api.2$plots[[9]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(x =  No_Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "visitation_rate_no_Apis",y="fruit proportion",subtitle = "L.pedunculata")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_polli_no_api.2$plots[[10]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Lavandula stoechas"), aes(x =  No_Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "visitation_rate_no_Apis",y="fruit proportion",subtitle = "L.stoechas")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_polli_no_api.2$plots[[11]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Salvia rosmarinus"), aes(x =  No_Apis_visit_rate, y = fruit_formado/(fruit_formado + Fruit_No)),shape=20)+ 
+  labs(x = "visitation_rate_no_Apis",y="fruit proportion",subtitle = "S.rosmarinus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_polli_no_api.2$plots[[12]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Teucrium fruticans"), aes(x =  No_Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "visitation_rate_no_Apis",y="fruit proportion",subtitle = "T.fruticans")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+
+# Visitation rate of Apis mellifera
+#plot
+plots_fruitproportion_apis <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  group_map(~ ggplot(.) + aes(x=Apis_visit_rate, y=fruit_proportion) + 
+              geom_point() + ggtitle(.y[[1]]))
+
+plots_fruitproportion_apis[[1]]+plots_fruitproportion_apis[[2]]+plots_fruitproportion_apis[[3]]+plots_fruitproportion_apis[[4]]
+plots_fruitproportion_apis[[5]]+plots_fruitproportion_apis[[6]]+plots_fruitproportion_apis[[7]]+plots_fruitproportion_apis[[8]] 
+plots_fruitproportion_apis[[9]]+plots_fruitproportion_apis[[10]]+plots_fruitproportion_apis[[11]]+plots_fruitproportion_apis[[12]]
+
+#model
+mod_fruitproportion__apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~Apis_visit_rate + (1|Site_ID),family=binomial,data)))%>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+mod_fruitproportion__apis_glance<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~Apis_visit_rate + (1|Site_ID),family=binomial,data))) %>%
+  summarize(glance(model))%>%
+  ungroup()
+
+# Residuals with dharma 
+mod_fruitproportion__apis_resid<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~Apis_visit_rate + (1|Site_ID),family=binomial,data)))%>%
+  mutate(plots = list(DHARMa::simulateResiduals(fittedModel = model))) %>%
+  ungroup()
+
+plot(mod_fruitproportion__apis_resid$plots[[1]]) #Asphodelus fistulosus
+plot(mod_fruitproportion__apis_resid$plots[[2]]) #Cistus crispus
+plot(mod_fruitproportion__apis_resid$plots[[3]]) #Cistus ladanifer
+plot(mod_fruitproportion__apis_resid$plots[[4]]) #Cistus libanotis
+plot(mod_fruitproportion__apis_resid$plots[[5]]) #Cistus monspeliensis
+plot(mod_fruitproportion__apis_resid$plots[[6]]) #Cistus salviifolius
+plot(mod_fruitproportion__apis_resid$plots[[7]]) #Halimium calycinum
+plot(mod_fruitproportion__apis_resid$plots[[8]]) #Halimium halimifolium
+plot(mod_fruitproportion__apis_resid$plots[[9]]) #Lavandula pedunculata
+plot(mod_fruitproportion__apis_resid$plots[[10]]) #Lavandula stoechas
+plot(mod_fruitproportion__apis_resid$plots[[11]]) #Salvia rosmarinus
+plot(mod_fruitproportion__apis_resid$plots[[12]]) #Teucrium fruticans
+
+# model plot 
+mod_fruitproportion__apis.2 <- Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~Apis_visit_rate + (1|Site_ID),family=binomial,data))) %>%
+  mutate(model1 = list(ggeffects::ggpredict(model, terms = "Apis_visit_rate"))) %>%
+  mutate(plots = list(ggplot(model1, aes(x, predicted)) + geom_line() +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2)))
+
+
+
+mod_fruitproportion__apis.2$plots[[1]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Asphodelus fistulosus"), aes(x =  Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="fruit proportion",subtitle = "A.fistulosus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion__apis.2$plots[[2]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus crispus"), aes(x =  Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="fruit proportion",subtitle = "C.crispus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion__apis.2$plots[[3]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(x =  Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="fruit proportion",subtitle = "C.ladanifer")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion__apis.2$plots[[4]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus libanotis"), aes(x =  Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="fruit proportion",subtitle = "C.libanotis")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion__apis.2$plots[[5]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus monspeliensis"), aes(x =  Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="fruit proportion",subtitle = "C.monspeliensis")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion__apis.2$plots[[6]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(x =  Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="fruit proportion",subtitle = "C.salviifolius")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion__apis.2$plots[[7]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Halimium calycinum"), aes(x =  Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="fruit proportion",subtitle = "H.calycinum")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion__apis.2$plots[[8]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Halimium halimifolium"), aes(x =  Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="fruit proportion",subtitle = "H.halimifolium")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion__apis.2$plots[[9]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(x =  Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="fruit proportion",subtitle = "L.pedunculata")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion__apis.2$plots[[10]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Lavandula stoechas"), aes(x =  Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="fruit proportion",subtitle = "L.stoechas")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion__apis.2$plots[[11]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Salvia rosmarinus"), aes(x =  Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="fruit proportion",subtitle = "S.rosmarinus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion__apis.2$plots[[12]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Teucrium fruticans"), aes(x =  Apis_visit_rate, y = fruit_proportion),shape=20)+ 
+  labs(x = "Apis_visit_rate",y="fruit proportion",subtitle = "T.fruticans")+  theme_classic()+theme(text = element_text(size=rel(3)))
 
 
 
@@ -1187,6 +1848,100 @@ mod_fruitproportion.3$plots[[12]] + geom_point(data = Pollinator_Plant %>% filte
   labs(x = "Hymenotera_visit",y="fruit proportion",subtitle = "T.fruticans")+  theme_classic()+theme(text = element_text(size=rel(3)))
 
 
+# hymenoptera sin A.mellifera
+
+#plot
+plots_fruitproportion_hyme_no_apis <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  group_map(~ ggplot(.) + aes(x=Hym_visit_sin_apis, y=fruit_proportion) + 
+              geom_point() + ggtitle(.y[[1]]))
+
+plots_fruitproportion_hyme_no_apis[[1]]+plots_fruitproportion_hyme_no_apis[[2]]+plots_fruitproportion_hyme_no_apis[[3]]+plots_fruitproportion_hyme_no_apis[[4]]
+plots_fruitproportion_hyme_no_apis[[5]]+plots_fruitproportion_hyme_no_apis[[6]]+plots_fruitproportion_hyme_no_apis[[7]]+plots_fruitproportion_hyme_no_apis[[8]] 
+plots_fruitproportion_hyme_no_apis[[9]]+plots_fruitproportion_hyme_no_apis[[10]]+plots_fruitproportion_hyme_no_apis[[11]]+plots_fruitproportion_hyme_no_apis[[12]]
+
+
+#model
+mod_fruitproportion_hyme_no_apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~Hym_visit_sin_apis + (1|Site_ID),family=binomial,data)))%>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+mod_fruitproportion_hyme_no_apis_glance<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~Hym_visit_sin_apis + (1|Site_ID),family=binomial,data))) %>%
+  summarize(glance(model))%>%
+  ungroup()
+
+# Residuals with dharma 
+mod_fruitproportion_hyme_no_apis_resid<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~Hym_visit_sin_apis + (1|Site_ID),family=binomial,data)))%>%
+  mutate(plots = list(DHARMa::simulateResiduals(fittedModel = model))) %>%
+  ungroup()
+
+plot(mod_fruitproportion_hyme_no_apis_resid$plots[[1]]) #Asphodelus fistulosus
+plot(mod_fruitproportion_hyme_no_apis_resid$plots[[2]]) #Cistus crispus
+plot(mod_fruitproportion_hyme_no_apis_resid$plots[[3]]) #Cistus ladanifer
+plot(mod_fruitproportion_hyme_no_apis_resid$plots[[4]]) #Cistus libanotis
+plot(mod_fruitproportion_hyme_no_apis_resid$plots[[5]]) #Cistus monspeliensis
+plot(mod_fruitproportion_hyme_no_apis_resid$plots[[6]]) #Cistus salviifolius
+plot(mod_fruitproportion_hyme_no_apis_resid$plots[[7]]) #Halimium calycinum
+plot(mod_fruitproportion_hyme_no_apis_resid$plots[[8]]) #Halimium halimifolium
+plot(mod_fruitproportion_hyme_no_apis_resid$plots[[9]]) #Lavandula pedunculata
+plot(mod_fruitproportion_hyme_no_apis_resid$plots[[10]]) #Lavandula stoechas
+plot(mod_fruitproportion_hyme_no_apis_resid$plots[[11]]) #Salvia rosmarinus
+plot(mod_fruitproportion_hyme_no_apis_resid$plots[[12]]) #Teucrium fruticans
+
+
+# model plot 
+mod_fruitproportion_hyme_no_apis.2 <- Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(glmer(cbind(fruit_formado, Fruit_No)~Hym_visit_sin_apis + (1|Site_ID),family=binomial,data))) %>%
+  mutate(model1 = list(ggeffects::ggpredict(model, terms = "Hym_visit_sin_apis"))) %>%
+  mutate(plots = list(ggplot(model1, aes(x, predicted)) + geom_line() +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2)))
+
+
+
+mod_fruitproportion_hyme_no_apis.2$plots[[1]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Asphodelus fistulosus"), aes(x =  Hym_visit_sin_apis, y = fruit_proportion),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="fruit proportion",subtitle = "A.fistulosus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_hyme_no_apis.2$plots[[2]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus crispus"), aes(x =  Hym_visit_sin_apis, y = fruit_proportion),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="fruit proportion",subtitle = "C.crispus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_hyme_no_apis.2$plots[[3]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(x =  Hym_visit_sin_apis, y = fruit_proportion),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="fruit proportion",subtitle = "C.ladanifer")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_hyme_no_apis.2$plots[[4]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus libanotis"), aes(x =  Hym_visit_sin_apis, y = fruit_proportion),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="fruit proportion",subtitle = "C.libanotis")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_hyme_no_apis.2$plots[[5]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus monspeliensis"), aes(x =  Hym_visit_sin_apis, y = fruit_proportion),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="fruit proportion",subtitle = "C.monspeliensis")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_hyme_no_apis.2$plots[[6]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(x =  Hym_visit_sin_apis, y = fruit_proportion),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="fruit proportion",subtitle = "C.salviifolius")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_hyme_no_apis.2$plots[[7]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Halimium calycinum"), aes(x =  Hym_visit_sin_apis, y = fruit_proportion),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="fruit proportion",subtitle = "H.calycinum")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_hyme_no_apis.2$plots[[8]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Halimium halimifolium"), aes(x =  Hym_visit_sin_apis, y = fruit_proportion),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="fruit proportion",subtitle = "H.halimifolium")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_hyme_no_apis.2$plots[[9]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(x =  Hym_visit_sin_apis, y = fruit_proportion),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="fruit proportion",subtitle = "L.pedunculata")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_hyme_no_apis.2$plots[[10]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Lavandula stoechas"), aes(x =  Hym_visit_sin_apis, y = fruit_proportion),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="fruit proportion",subtitle = "L.stoechas")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_hyme_no_apis.2$plots[[11]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Salvia rosmarinus"), aes(x =  Hym_visit_sin_apis, y = fruit_proportion),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="fruit proportion",subtitle = "S.rosmarinus")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+mod_fruitproportion_hyme_no_apis.2$plots[[12]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Teucrium fruticans"), aes(x =  Hym_visit_sin_apis, y = fruit_proportion),shape=20)+ 
+  labs(x = "Hym_visit_sin_apis",y="fruit proportion",subtitle = "T.fruticans")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+
 
 # frequency
 
@@ -1280,8 +2035,125 @@ mod_fruitproportion.4$plots[[11]] + geom_point(data = Pollinator_Plant %>% filte
 mod_fruitproportion.4$plots[[12]] + geom_point(data = Pollinator_Plant %>% filter(Plant_gen_sp == "Teucrium fruticans"), aes(x =  Frequency, y = fruit_proportion),shape=20)+ 
   labs(x = "Frequency",y="fruit proportion",subtitle = "T.fruticans")+  theme_classic()+theme(text = element_text(size=rel(3)))
 
+##############################
+
+# Incluyeno año como factor fijo ----
+# seed number
+str(Pollinator_Plant)
+
+Pollinator_Plant$Year <- factor(Pollinator_Plant$Year)
 
 
+plots_seed <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  group_map(~ ggplot(.) + aes(x=visitatio_rate, y=Seeds, shape =Site_ID, col=Year)+
+  scale_shape_manual(values = c(15,16,17,18,6,7,8,9,10,11,12,13,14)) + geom_point(size = 3) + ggtitle(.y[[1]]))
+
+plots_seed[[1]]+plots_seed[[2]]+plots_seed[[3]]+plots_seed[[4]]
+plots_seed[[5]]+plots_seed[[6]]+plots_seed[[7]]+plots_seed[[8]] 
+plots_seed[[9]]+plots_seed[[10]]+plots_seed[[11]]+plots_seed[[12]]
+
+
+# linear model: visitation * year (factores fijos) 
+
+mod_seed_year<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(Seeds~visitatio_rate * Year,data))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+# monsp=Pollinator_Plant %>%
+#   filter(Plant_gen_sp== "Cistus monspeliensis")
+# mod_monsp= lm (Seeds~visitatio_rate * Year, data= monsp)
+# summary(mod_monsp)
+# plot(allEffects(mod_monsp))
+
+mod_seed_year_glance<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(Seeds~visitatio_rate * Year,data))) %>%
+  summarize(glance(mod))%>%
+  ungroup()
+
+library(sjPlot)
+
+mod_seed_year.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(Seeds~visitatio_rate * Year,data)))
+
+plot_model(mod_seed_year.1$mod[[1]], type = "int", title = " Asphodelus fistulosus")
+get_model_data(mod_seed_year.1$mod[[1]], type = "int")
+
+plot_model(mod_seed_year.1$mod[[2]], type = "int", title = " Cistus crispus",show.data = TRUE)
+get_model_data(mod_seed_year.1$mod[[2]], type = "int")
+
+plot_model(mod_seed_year.1$mod[[3]], type = "int", title = " Cistus ladanifer ")
+plot_model(mod_seed_year.1$mod[[4]], type = "int",title = "Cistus libanotis")
+plot_model(mod_seed_year.1$mod[[5]], type = "int", title = "Cistus monspeliensis")
+plot_model(mod_seed_year.1$mod[[6]], type = "int",title = " Cistus salviifolius")
+plot_model(mod_seed_year.1$mod[[7]], type = "int",title = " Halimium calycinum")
+plot_model(mod_seed_year.1$mod[[8]], type = "int",title = " Halimium halimifolium ")
+plot_model(mod_seed_year.1$mod[[9]], type = "int",title = " Lavandula pedunculata")
+plot_model(mod_seed_year.1$mod[[10]], type = "int",title = " Lavandula stoechas")
+plot_model(mod_seed_year.1$mod[[11]], type = "int",title = " Salvia rosmarinus")
+plot_model(mod_seed_year.1$mod[[12]], type = "int",title = " Teucrium fruticans")
+
+
+# sitio como random 
+mod_mix_seed_year<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds ~ visitatio_rate * Year + (1 | Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+
+mod_mix_seed_year.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lmer(Seeds ~ visitatio_rate * Year + (1 | Site_ID),data)))
+
+plot_model(mod_mix_seed_year.1$mod[[1]], type = "int", title = " Asphodelus fistulosus")
+plot_model(mod_mix_seed_year.1$mod[[2]], type = "int", title = " Cistus crispus")
+
+plot_model(mod_mix_seed_year.1$mod[[5]], type = "int", title = " Cistus monspeliensis")
+
+# year like random slope -----
+
+mod_seed_slopes<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds ~ visitatio_rate + (1 + Year | Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+# hay especies que dan problema porque hay menos observaciones que 
+# random effect. El error dice:  the random-effects parameters and 
+# the residual variance (or scale parameter) are probably unidentifiable
+# las especies que dan problema y habria que eliminar son:
+# Halimium calycinum, Lavandula pedunculata, Lavandula stoechas, Salvia rosmarinus
+mod_seed_slopes<-Pollinator_Plant %>%
+  filter(!Plant_gen_sp=="Halimium calycinum") %>%
+  filter(!Plant_gen_sp=="Lavandula pedunculata") %>%
+  filter(!Plant_gen_sp=="Lavandula stoechas") %>%
+  filter(!Plant_gen_sp=="Salvia rosmarinus") %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds ~ visitatio_rate + (1 + Year | Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+# cuando se prueban los modelos con estas especies se observa el problema
+caly=Pollinator_Plant%>%
+  filter(Plant_gen_sp=="Halimium calycinum")
+prueba= lmer(Seeds ~ visitatio_rate + (1 + Year | Site_ID),data=caly)
+
+pedu=Pollinator_Plant%>%
+  filter(Plant_gen_sp=="Lavandula pedunculata")
+prueba_pedu= lmer(Seeds ~ visitatio_rate + (1 + Year | Site_ID),data=pedu)
+
+stoechas=Pollinator_Plant%>%
+  filter(Plant_gen_sp=="Lavandula stoechas")
+prueba_sto= lmer(Seeds ~ visitatio_rate + (1 + Year | Site_ID),data=stoechas)
+
+salvia=Pollinator_Plant%>%
+  filter(Plant_gen_sp=="Salvia rosmarinus")
+prueba_salvi= lmer(Seeds ~ visitatio_rate + (1 + Year | Site_ID),data=salvia)
 
 
 #########
