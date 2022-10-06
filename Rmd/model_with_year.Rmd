@@ -7,9 +7,12 @@ date: '2022-10-05'
 
 # Seed number
 
+**Visitation rate (all pollinators)**
+
 we analyse whether the visitation rate of all pollinators, years and their interaction affect to the seed number for each plant species
 
-A- linear model: lm(Seeds~visitatio_rate * Year 
+**A-** linear model: lm(Seeds~visitatio_rate * Year)
+
 ```{r,echo=FALSE, warning=FALSE,message=FALSE,fig.height = 13,fig.width=15, out.width="100%"}
 
 library(tidyverse)
@@ -63,6 +66,7 @@ column_spec(6, bold = ifelse(mod_seed_year$p.value < 0.05| is.na(mod_seed_year$p
 
 ```
 
+
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="80%", fig.align='left'}
 
 mod_seed_year_glance<-Pollinator_Plant %>%
@@ -92,19 +96,695 @@ table1 %>%
 ```
 
 \newpage
-
 ```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
 mod_seed_year.1<-Pollinator_Plant %>%
   nest_by(Plant_gen_sp) %>%
   mutate(mod = list(lm(Seeds~visitatio_rate * Year,data)))
 
-ggarrange(plot_model(mod_seed_year.1$mod[[1]], type = "int", title = " Asphodelus fistulosus"),plot_model(mod_seed_year.1$mod[[2]], type = "int", title = " Cistus crispus"),plot_model(mod_seed_year.1$mod[[3]], type = "int", title = " Cistus ladanifer "),plot_model(mod_seed_year.1$mod[[4]], type = "int",title = "Cistus libanotis"),plot_model(mod_seed_year.1$mod[[5]], type = "int", title = "Cistus monspeliensis"),plot_model(mod_seed_year.1$mod[[6]], type = "int",title = " Cistus salviifolius"),plot_model(mod_seed_year.1$mod[[7]], type = "int",title = " Halimium calycinum"),plot_model(mod_seed_year.1$mod[[8]], type = "int",title = " Halimium halimifolium "),plot_model(mod_seed_year.1$mod[[9]], type = "int",title = " Lavandula pedunculata"),plot_model(mod_seed_year.1$mod[[10]], type = "int",title = " Lavandula stoechas"),plot_model(mod_seed_year.1$mod[[11]], type = "int",title = " Salvia rosmarinus"),plot_model(mod_seed_year.1$mod[[12]], type = "int",title = " Teucrium fruticans"),ncol=3,nrow = 4)
+# estimates of model 
+ggarrange(plot_model(mod_seed_year.1$mod[[1]], title = " Asphodelus fistulosus",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year.1$mod[[2]], title = "  Cistus crispus",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year.1$mod[[3]], title = " Cistus ladanifer",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year.1$mod[[4]], title = "Cistus libanotis",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year.1$mod[[5]], title = "Cistus monspeliensis",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year.1$mod[[6]], title = " Cistus salviifolius",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year.1$mod[[7]], title = " Halimium calycinum",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year.1$mod[[8]], title = " Halimium halimifolium",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year.1$mod[[9]], title = " Lavandula pedunculata",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year.1$mod[[10]], title = " Lavandula stoechas",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year.1$mod[[11]], title = " Salvia rosmarinus",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year.1$mod[[12]], title = " Teucrium fruticans",show.values = TRUE, value.offset = .3), ncol=3,nrow = 4)
 
 ```
 
-*Cistus monspeliensis* - *Halimium halimifolium* - *Teucrium fructicans*
+
+\newpage
+Predicte values of seed number
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+mod_seed_year.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(Seeds~visitatio_rate * Year,data)))
+
+ggarrange(plot_model(mod_seed_year.1$mod[[1]], type = "int", title = " Asphodelus fistulosus",show.data = TRUE),
+plot_model(mod_seed_year.1$mod[[2]], type = "int", title = " Cistus crispus",show.data = TRUE),
+plot_model(mod_seed_year.1$mod[[3]], type = "int", title = " Cistus ladanifer",show.data = TRUE),
+plot_model(mod_seed_year.1$mod[[4]], type = "int",title = "Cistus libanotis",show.data = TRUE),
+plot_model(mod_seed_year.1$mod[[5]], type = "int", title = "Cistus monspeliensis",show.data = TRUE),
+plot_model(mod_seed_year.1$mod[[6]], type = "int",title = " Cistus salviifolius",show.data = TRUE),
+plot_model(mod_seed_year.1$mod[[7]], type = "int",title = " Halimium calycinum",show.data = TRUE),
+plot_model(mod_seed_year.1$mod[[8]], type = "int",title = " Halimium halimifolium",show.data = TRUE),
+plot_model(mod_seed_year.1$mod[[9]], type = "int",title = " Lavandula pedunculata",show.data = TRUE),
+plot_model(mod_seed_year.1$mod[[10]], type = "int",title = " Lavandula stoechas",show.data = TRUE),
+plot_model(mod_seed_year.1$mod[[11]], type = "int",title = " Salvia rosmarinus",show.data = TRUE),
+plot_model(mod_seed_year.1$mod[[12]], type = "int",title = " Teucrium fruticans",show.data = TRUE), ncol=3,nrow = 4)
+
+```
+
+*Cistus monspeliensis* - *Halimium halimifolium* - *Teucrium fructicans* 
 Warning message:
 In predict.lm(model, newdata = fitfram, type = "response", se.fit = se,: prediction from a rank-deficient fit may be misleading
 
 
 **Importante**: Cistus crispus en 2015 solo tiene dos valores, uno con 0 semillas y visitation rate 0.214; y otro con casi 40 semillas y visitation rate 0
+
+\newpage
+
+Predicted values of Seeds for *Cistus crispus*
+```{r,echo=FALSE, warning=FALSE,message=FALSE}
+get_model_data(mod_seed_year.1$mod[[2]], type = "int")
+
+```
+
+\newpage
+
+**B-** linear mixed model with site ID like random factor
+```{r,echo=FALSE, warning=FALSE,message=FALSE,fig.height = 13,fig.width=15, out.width="100%"}
+
+#model
+mod_mix_seed_year<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds ~ visitatio_rate * Year + (1 | Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+mod_mix_seed_year<-mod_mix_seed_year %>%
+  select(-effect, -group)  %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+  
+mod_mix_seed_year<-filter(mod_mix_seed_year, !term == "sd__(Intercept)" & !term =="sd__Observation")
+
+
+mod_mix_seed_year %>% 
+ kable("latex",booktabs = TRUE, digits =  4,longtable = T, linesep = "") %>% 
+column_spec(7, bold = ifelse(mod_mix_seed_year$p.value < 0.05, T, F) )%>%
+  kable_styling(position="left")
+
+```
+
+\newpage
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+
+#model plot
+mod_mix_seed_year.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lmer(Seeds ~ visitatio_rate * Year + (1 | Site_ID),data)))
+
+
+# estimates of model 
+ggarrange(plot_model(mod_mix_seed_year.1$mod[[1]], title = " Asphodelus fistulosus",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year.1$mod[[2]], title = "  Cistus crispus",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year.1$mod[[3]], title = " Cistus ladanifer",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year.1$mod[[4]], title = "Cistus libanotis",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year.1$mod[[5]], title = "Cistus monspeliensis",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year.1$mod[[6]], title = " Cistus salviifolius",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year.1$mod[[7]], title = " Halimium calycinum",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year.1$mod[[8]], title = " Halimium halimifolium",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year.1$mod[[9]], title = " Lavandula pedunculata",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year.1$mod[[10]], title = " Lavandula stoechas",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year.1$mod[[11]], title = " Salvia rosmarinus",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year.1$mod[[12]], title = " Teucrium fruticans",show.values = TRUE, value.offset = .3), ncol=3,nrow = 4)
+
+```
+
+\newpage
+Predicted values of Seeds
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+
+ggarrange(plot_model(mod_mix_seed_year.1$mod[[1]], type = "int", title = " Asphodelus fistulosus",show.data = TRUE),
+plot_model(mod_mix_seed_year.1$mod[[2]], type = "int", title = " Cistus crispus",show.data = TRUE),
+plot_model(mod_mix_seed_year.1$mod[[3]], type = "int", title = " Cistus ladanifer",show.data = TRUE),
+plot_model(mod_mix_seed_year.1$mod[[4]], type = "int",title = "Cistus libanotis", show.data = TRUE),
+plot_model(mod_mix_seed_year.1$mod[[5]], type = "int", title = " Cistus monspeliensis",show.data = TRUE),
+plot_model(mod_mix_seed_year.1$mod[[6]], type = "int",title = " Cistus salviifolius",show.data = TRUE),
+plot_model(mod_mix_seed_year.1$mod[[7]], type = "int",title = " Halimium calycinum", show.data = TRUE),
+plot_model(mod_mix_seed_year.1$mod[[8]], type = "int",title = " Halimium halimifolium",show.data = TRUE),
+plot_model(mod_mix_seed_year.1$mod[[9]], type = "int",title = " Lavandula pedunculata",show.data = TRUE),
+plot_model(mod_mix_seed_year.1$mod[[10]], type = "int",title = " Lavandula stoechas",show.data = TRUE),
+plot_model(mod_mix_seed_year.1$mod[[11]], type = "int",title = " Salvia rosmarinus",show.data = TRUE),
+plot_model(mod_mix_seed_year.1$mod[[12]], type = "int",title = " Teucrium fruticans",show.data = TRUE)
+,ncol=3,nrow = 4)
+
+```
+
+*Cistus monspeliensis* - *Halimium halimifolium* - *Teucrium fructicans* 
+Could not compute variance-covariance matrix of predictions. No confidence intervals are returned.
+
+**se prueban modelos con year like random slope** 
+
+Hay especies que dan problema porque hay menos observaciones que 
+random effect. El error dice:  the random-effects parameters and the residual variance (or scale parameter) are probably unidentifiable. Las especies que dan problema y habria que eliminar son: Halimium calycinum, Lavandula pedunculata, Lavandula stoechas, Salvia rosmarinus
+
+
+\newpage
+**Visitation rate of *Apis mellifera* **
+
+**A-** linear model: lm(Seeds ~ Apis_visitatio_rate * Year)
+```{r,echo=FALSE, warning=FALSE,message=FALSE,fig.height = 13,fig.width=15, out.width="100%"}
+#model
+mod_seed_year_apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(Seeds ~ Apis_visit_rate * Year,data))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+mod_seed_year_apis<-mod_seed_year_apis %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+
+mod_seed_year_apis %>% 
+ kable("latex",booktabs = TRUE, digits =  4,longtable = T, linesep = "") %>% 
+column_spec(6, bold = ifelse(mod_seed_year_apis$p.value < 0.05| is.na(mod_seed_year_apis$p.value), T, F) )%>%
+  kable_styling(position="left")
+
+```
+
+\newpage
+
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+mod_seed_year_apis.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(Seeds ~ Apis_visit_rate * Year,data)))
+
+ggarrange(plot_model(mod_seed_year_apis.1$mod[[1]], title = " Asphodelus fistulosus",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_apis.1$mod[[2]], title = "  Cistus crispus",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_apis.1$mod[[3]], title = " Cistus ladanifer",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_apis.1$mod[[4]], title = "Cistus libanotis",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_apis.1$mod[[5]], title = "Cistus monspeliensis",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_apis.1$mod[[6]], title = " Cistus salviifolius",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_apis.1$mod[[7]], title = " Halimium calycinum",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_apis.1$mod[[8]], title = " Halimium halimifolium",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_apis.1$mod[[9]], title = " Lavandula pedunculata",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_apis.1$mod[[10]], title = " Lavandula stoechas",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_apis.1$mod[[11]], title = " Salvia rosmarinus",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_apis.1$mod[[12]], title = " Teucrium fruticans",show.values = TRUE, value.offset = .3), ncol=3,nrow = 4)
+
+```
+
+
+\newpage
+
+Predicted values of Seeds 
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+
+ggarrange(plot_model(mod_seed_year_apis.1$mod[[1]], type = "int", title = " Asphodelus fistulosus",show.data = TRUE),
+plot_model(mod_seed_year_apis.1$mod[[2]], type = "int", title = " Cistus crispus",show.data = TRUE),
+plot_model(mod_seed_year_apis.1$mod[[3]], type = "int", title = " Cistus ladanifer",show.data = TRUE),
+plot_model(mod_seed_year_apis.1$mod[[4]], type = "int",title = "Cistus libanotis",show.data = TRUE),
+plot_model(mod_seed_year_apis.1$mod[[5]], type = "int", title = " Cistus monspeliensis",show.data = TRUE),
+plot_model(mod_seed_year_apis.1$mod[[6]], type = "int",title = " Cistus salviifolius",show.data = TRUE),
+plot_model(mod_seed_year_apis.1$mod[[7]], type = "int",title = " Halimium calycinum",show.data = TRUE),
+plot_model(mod_seed_year_apis.1$mod[[8]], type = "int",title = " Halimium halimifolium",show.data = TRUE),
+plot_model(mod_seed_year_apis.1$mod[[9]], type = "int",title = " Lavandula pedunculata",show.data = TRUE),
+plot_model(mod_seed_year_apis.1$mod[[10]], type = "int",title = " Lavandula stoechas",show.data = TRUE),
+plot_model(mod_seed_year_apis.1$mod[[11]], type = "int",title = " Salvia rosmarinus",show.data = TRUE),
+plot_model(mod_seed_year_apis.1$mod[[12]], type = "int",title = " Teucrium fruticans",show.data = TRUE), ncol=3,nrow = 4)
+
+```
+
+*Asphodelus fistulosus* - *Cistus libanotis*- *Cistus monspeliensis* - *Halimium calycinum* - *Halimium halimifolium* - *Teucrium fructicans* 
+
+Warning message: In predict.lm(model, newdata = fitfram, type = "response", se.fit = se,: prediction from a rank-deficient fit may be misleading
+
+\newpage
+**B-** linear mixed model with site ID like random factor
+
+```{r,echo=FALSE, warning=FALSE,message=FALSE,fig.height = 13,fig.width=15, out.width="100%"}
+
+#model
+mod_mix_seed_year_apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds ~ Apis_visit_rate * Year + (1 | Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+mod_mix_seed_year_apis<-mod_mix_seed_year_apis %>%
+  select(-effect, -group)  %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+  
+mod_mix_seed_year_apis<-filter(mod_mix_seed_year_apis, !term == "sd__(Intercept)" & !term =="sd__Observation")
+
+
+mod_mix_seed_year_apis %>% 
+ kable("latex",booktabs = TRUE, digits =  4,longtable = T, linesep = "") %>% 
+column_spec(7, bold = ifelse(mod_mix_seed_year_apis$p.value < 0.05, T, F) )%>%
+  kable_styling(position="left")
+
+```
+
+\newpage
+
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+#model plot
+mod_mix_seed_year_apis.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lmer(Seeds ~ Apis_visit_rate * Year + (1 | Site_ID),data)))
+
+ggarrange(plot_model(mod_mix_seed_year_apis.1$mod[[1]], title = " Asphodelus fistulosus",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_apis.1$mod[[2]], title = "  Cistus crispus",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_apis.1$mod[[3]], title = " Cistus ladanifer",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_apis.1$mod[[4]], title = "Cistus libanotis",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_apis.1$mod[[5]], title = "Cistus monspeliensis",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_apis.1$mod[[6]], title = " Cistus salviifolius",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_apis.1$mod[[7]], title = " Halimium calycinum",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_apis.1$mod[[8]], title = " Halimium halimifolium",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_apis.1$mod[[9]], title = " Lavandula pedunculata",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_apis.1$mod[[10]], title = " Lavandula stoechas",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_apis.1$mod[[11]], title = " Salvia rosmarinus",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_apis.1$mod[[12]], title = " Teucrium fruticans",show.values = TRUE, value.offset = .3),ncol=3,nrow = 4)
+```
+
+
+\newpage
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+
+
+ggarrange(plot_model(mod_mix_seed_year_apis.1$mod[[1]], type = "int", title = " Asphodelus fistulosus",show.data = TRUE),
+plot_model(mod_mix_seed_year_apis.1$mod[[2]], type = "int", title = " Cistus crispus",show.data = TRUE),
+plot_model(mod_mix_seed_year_apis.1$mod[[3]], type = "int", title = " Cistus ladanifer",show.data = TRUE),
+plot_model(mod_mix_seed_year_apis.1$mod[[4]], type = "int",title = "Cistus libanotis",show.data = TRUE),
+plot_model(mod_mix_seed_year_apis.1$mod[[5]], type = "int", title = " Cistus monspeliensis",show.data = TRUE),
+plot_model(mod_mix_seed_year_apis.1$mod[[6]], type = "int",title = " Cistus salviifolius",show.data = TRUE),
+plot_model(mod_mix_seed_year_apis.1$mod[[7]], type = "int",title = " Halimium calycinum",show.data = TRUE),
+plot_model(mod_mix_seed_year_apis.1$mod[[8]], type = "int",title = " Halimium halimifolium",show.data = TRUE),
+plot_model(mod_mix_seed_year_apis.1$mod[[9]], type = "int",title = " Lavandula pedunculata",show.data = TRUE),
+plot_model(mod_mix_seed_year_apis.1$mod[[10]], type = "int",title = " Lavandula stoechas",show.data = TRUE),
+plot_model(mod_mix_seed_year_apis.1$mod[[11]], type = "int",title = " Salvia rosmarinus",show.data = TRUE),
+plot_model(mod_mix_seed_year_apis.1$mod[[12]], type = "int",title = " Teucrium fruticans",show.data = TRUE),ncol=3,nrow = 4)
+
+```
+
+*Asphodelus fistulosus* - *Cistus libanotis*- *Cistus monspeliensis* - *Halimium calycinum* - *Halimium halimifolium* - *Teucrium fructicans* 
+
+Could not compute variance-covariance matrix of predictions. No confidence intervals are returned
+
+\newpage
+**Visitation rate of pollinator without *Apis mellifera* **
+
+**A-** linear model: lm(Seeds ~ No_Apis_visitatio_rate * Year)
+```{r,echo=FALSE, warning=FALSE,message=FALSE,fig.height = 13,fig.width=15, out.width="100%"}
+#model
+mod_seed_year_no_apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(Seeds ~ No_Apis_visit_rate * Year,data))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+mod_seed_year_no_apis<-mod_seed_year_no_apis %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+
+mod_seed_year_no_apis %>% 
+ kable("latex",booktabs = TRUE, digits =  4,longtable = T, linesep = "") %>% 
+column_spec(6, bold = ifelse(mod_seed_year_no_apis$p.value < 0.05| is.na(mod_seed_year_no_apis$p.value), T, F) )%>%
+  kable_styling(position="left")
+
+```
+
+\newpage
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+
+
+#model plot
+mod_seed_year_no_apis.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(Seeds ~ No_Apis_visit_rate * Year,data)))
+
+ggarrange(plot_model(mod_seed_year_no_apis.1$mod[[1]], title = " Asphodelus fistulosus",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_no_apis.1$mod[[2]], title = "  Cistus crispus",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_no_apis.1$mod[[3]], title = " Cistus ladanifer",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_no_apis.1$mod[[4]], title = "Cistus libanotis",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_no_apis.1$mod[[5]], title = "Cistus monspeliensis",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_no_apis.1$mod[[6]], title = " Cistus salviifolius",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_no_apis.1$mod[[7]], title = " Halimium calycinum",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_no_apis.1$mod[[8]], title = " Halimium halimifolium",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_no_apis.1$mod[[9]], title = " Lavandula pedunculata",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_no_apis.1$mod[[10]], title = " Lavandula stoechas",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_no_apis.1$mod[[11]], title = " Salvia rosmarinus",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_no_apis.1$mod[[12]], title = " Teucrium fruticans",show.values = TRUE, value.offset = .3),ncol=3,nrow = 4)
+
+```
+
+\newpage
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+
+
+ggarrange(plot_model(mod_seed_year_no_apis.1$mod[[1]], type = "int", title = " Asphodelus fistulosus",show.data = TRUE),
+plot_model(mod_seed_year_no_apis.1$mod[[2]], type = "int", title = " Cistus crispus",show.data = TRUE),
+plot_model(mod_seed_year_no_apis.1$mod[[3]], type = "int", title = " Cistus ladanifer",show.data = TRUE),
+plot_model(mod_seed_year_no_apis.1$mod[[4]], type = "int",title = "Cistus libanotis",show.data = TRUE),
+plot_model(mod_seed_year_no_apis.1$mod[[5]], type = "int", title = " Cistus monspeliensis",show.data = TRUE),
+plot_model(mod_seed_year_no_apis.1$mod[[6]], type = "int",title = " Cistus salviifolius",show.data = TRUE),
+plot_model(mod_seed_year_no_apis.1$mod[[7]], type = "int",title = " Halimium calycinum",show.data = TRUE),
+plot_model(mod_seed_year_no_apis.1$mod[[8]], type = "int",title = " Halimium halimifolium",show.data = TRUE),
+plot_model(mod_seed_year_no_apis.1$mod[[9]], type = "int",title = " Lavandula pedunculata",show.data = TRUE),
+plot_model(mod_seed_year_no_apis.1$mod[[10]], type = "int",title = " Lavandula stoechas",show.data = TRUE),
+plot_model(mod_seed_year_no_apis.1$mod[[11]], type = "int",title = " Salvia rosmarinus",show.data = TRUE),
+plot_model(mod_seed_year_no_apis.1$mod[[12]], type = "int",title = " Teucrium fruticans",show.data = TRUE),ncol=3,nrow = 4)
+
+```
+
+*Cistus monspeliensis* - *Halimium halimifolium* - *Teucrium fructicans* 
+Warning message:
+In predict.lm(model, newdata = fitfram, type = "response", se.fit = se,: prediction from a rank-deficient fit may be misleading
+
+\newpage 
+
+**B-** linear mixed model with site ID like random factor
+
+Warning messages:Some predictor variables are on very different scales: consider rescaling. The warning occurred in Salvia rosmarinus
+
+```{r,echo=FALSE, warning=FALSE,message=FALSE,fig.height = 13,fig.width=15, out.width="100%"}
+
+#model
+mod_mix_seed_year_no_apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds ~ No_Apis_visit_rate * Year + (1 | Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+
+mod_mix_seed_year_no_apis<-mod_mix_seed_year_no_apis %>%
+  select(-effect, -group)  %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+  
+mod_mix_seed_year_no_apis<-filter(mod_mix_seed_year_no_apis, !term == "sd__(Intercept)" & !term =="sd__Observation")
+
+
+mod_mix_seed_year_no_apis %>% 
+ kable("latex",booktabs = TRUE, digits =  4,longtable = T, linesep = "") %>% 
+column_spec(7, bold = ifelse(mod_mix_seed_year_no_apis$p.value < 0.05, T, F) )%>%  kable_styling(position="left")
+
+```
+
+\newpage
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+
+
+#model plot
+mod_mix_seed_year_no_apis.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lmer(Seeds ~ No_Apis_visit_rate * Year + (1 | Site_ID),data)))
+
+
+ggarrange(plot_model(mod_mix_seed_year_no_apis.1$mod[[1]], title = " Asphodelus fistulosus",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[2]], title = "Cistus crispus",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[3]], title = " Cistus ladanifer",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[4]], title = "Cistus libanotis",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[5]], title = "Cistus monspeliensis",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[6]], title = " Cistus salviifolius",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[7]], title = " Halimium calycinum",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[8]], title = " Halimium halimifolium",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[9]], title = " Lavandula pedunculata",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[10]], title = " Lavandula stoechas",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[11]], title = " Salvia rosmarinus",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[12]], title = " Teucrium fruticans",show.values = TRUE, value.offset = .3),ncol=3,nrow = 4)
+
+```
+
+\newpage
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+
+
+ggarrange(plot_model(mod_mix_seed_year_no_apis.1$mod[[1]], type = "int", title = " Asphodelus fistulosus",show.data = TRUE),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[2]], type = "int", title = " Cistus crispus",show.data = TRUE),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[3]], type = "int", title = " Cistus ladanifer",show.data = TRUE),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[4]], type = "int",title = "Cistus libanotis",show.data = TRUE),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[5]], type = "int", title = " Cistus monspeliensis",show.data = TRUE),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[6]], type = "int",title = " Cistus salviifolius",show.data = TRUE),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[7]], type = "int",title = " Halimium calycinum",show.data = TRUE),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[8]], type = "int",title = " Halimium halimifolium",show.data = TRUE),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[9]], type = "int",title = " Lavandula pedunculata",show.data = TRUE),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[10]], type = "int",title = " Lavandula stoechas",show.data = TRUE),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[11]], type = "int",title = " Salvia rosmarinus",show.data = TRUE),
+plot_model(mod_mix_seed_year_no_apis.1$mod[[12]], type = "int",title = " Teucrium fruticans",show.data = TRUE),ncol=3,nrow = 4)
+
+```
+
+\newpage
+**Visitation rate of hymenoptera **
+
+**A-** linear model: lm(Seeds ~ No_Apis_visitatio_rate * Year)
+```{r,echo=FALSE, warning=FALSE,message=FALSE,fig.height = 13,fig.width=15, out.width="100%"}
+#model
+mod_seed_year_hym<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(Seeds ~ Hym_visit * Year,data))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+mod_seed_year_hym<-mod_seed_year_hym %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+
+mod_seed_year_hym %>% 
+ kable("latex",booktabs = TRUE, digits =  4,longtable = T, linesep = "") %>% 
+column_spec(6, bold = ifelse(mod_seed_year_hym$p.value < 0.05| is.na(mod_seed_year_hym$p.value), T, F) )%>%
+  kable_styling(position="left")
+
+```
+
+
+\newpage
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+
+mod_seed_year_hym.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(Seeds ~ Hym_visit * Year,data)))
+
+ggarrange(plot_model(mod_seed_year_hym.1$mod[[1]], title = " Asphodelus fistulosus",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_hym.1$mod[[2]], title = "  Cistus crispus",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_hym.1$mod[[3]], title = " Cistus ladanifer",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_hym.1$mod[[4]], title = "Cistus libanotis",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_hym.1$mod[[5]], title = "Cistus monspeliensis",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_hym.1$mod[[6]], title = " Cistus salviifolius",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_hym.1$mod[[7]], title = " Halimium calycinum",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_hym.1$mod[[8]], title = " Halimium halimifolium",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_hym.1$mod[[9]], title = " Lavandula pedunculata",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_hym.1$mod[[10]], title = " Lavandula stoechas",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_hym.1$mod[[11]], title = " Salvia rosmarinus",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_hym.1$mod[[12]], title = " Teucrium fruticans",show.values = TRUE, value.offset = .3),ncol=3,nrow = 4)
+
+```
+
+
+\newpage
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+
+
+ggarrange(plot_model(mod_seed_year_hym.1$mod[[1]], type = "int", title = " Asphodelus fistulosus",show.data = TRUE),
+plot_model(mod_seed_year_hym.1$mod[[2]], type = "int", title = " Cistus crispus",show.data = TRUE),
+plot_model(mod_seed_year_hym.1$mod[[3]], type = "int", title = " Cistus ladanifer",show.data = TRUE),
+plot_model(mod_seed_year_hym.1$mod[[4]], type = "int",title = "Cistus libanotis",show.data = TRUE),
+plot_model(mod_seed_year_hym.1$mod[[5]], type = "int", title = " Cistus monspeliensis",show.data = TRUE),
+plot_model(mod_seed_year_hym.1$mod[[6]], type = "int",title = " Cistus salviifolius",show.data = TRUE),
+plot_model(mod_seed_year_hym.1$mod[[7]], type = "int",title = " Halimium calycinum",show.data = TRUE),
+plot_model(mod_seed_year_hym.1$mod[[8]], type = "int",title = " Halimium halimifolium",show.data = TRUE),
+plot_model(mod_seed_year_hym.1$mod[[9]], type = "int",title = " Lavandula pedunculata",show.data = TRUE),
+plot_model(mod_seed_year_hym.1$mod[[10]], type = "int",title = " Lavandula stoechas",show.data = TRUE),
+plot_model(mod_seed_year_hym.1$mod[[11]], type = "int",title = " Salvia rosmarinus",show.data = TRUE),
+plot_model(mod_seed_year_hym.1$mod[[12]], type = "int",title = " Teucrium fruticans",show.data = TRUE),ncol=3,nrow = 4)
+
+```
+
+\newpage 
+
+**B-** linear mixed model with site ID like random factor
+```{r,echo=FALSE, warning=FALSE,message=FALSE,fig.height = 13,fig.width=15, out.width="100%"}
+
+#model
+mod_mix_seed_year_hym<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds ~ Hym_visit * Year + (1 | Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+
+
+mod_mix_seed_year_hym<-mod_mix_seed_year_hym %>%
+  select(-effect, -group)  %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+  
+mod_mix_seed_year_hym<-filter(mod_mix_seed_year_hym, !term == "sd__(Intercept)" & !term =="sd__Observation")
+
+
+mod_mix_seed_year_hym %>% 
+ kable("latex",booktabs = TRUE, digits =  4,longtable = T, linesep = "") %>% 
+column_spec(7, bold = ifelse(mod_mix_seed_year_hym$p.value < 0.05, T, F) )%>%  kable_styling(position="left")
+
+```
+
+
+\newpage
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+#model plot
+mod_mix_seed_year_hym.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lmer(Seeds ~ Hym_visit * Year + (1 | Site_ID),data)))
+
+
+ggarrange(plot_model(mod_mix_seed_year_hym.1$mod[[1]], title = " Asphodelus fistulosus",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_hym.1$mod[[2]], title = "  Cistus crispus",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_hym.1$mod[[3]], title = " Cistus ladanifer",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_hym.1$mod[[4]], title = "Cistus libanotis",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_hym.1$mod[[5]], title = "Cistus monspeliensis",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_hym.1$mod[[6]], title = " Cistus salviifolius",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_hym.1$mod[[7]], title = " Halimium calycinum",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_hym.1$mod[[8]], title = " Halimium halimifolium",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_hym.1$mod[[9]], title = " Lavandula pedunculata",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_hym.1$mod[[10]], title = " Lavandula stoechas",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_hym.1$mod[[11]], title = " Salvia rosmarinus",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_hym.1$mod[[12]], title = " Teucrium fruticans",show.values = TRUE, value.offset = .3),ncol=3,nrow = 4)
+
+```
+
+\newpage
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+
+
+ggarrange(plot_model(mod_mix_seed_year_hym.1$mod[[1]], type = "int", title = " Asphodelus fistulosus",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym.1$mod[[2]], type = "int", title = " Cistus crispus",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym.1$mod[[3]], type = "int", title = " Cistus ladanifer",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym.1$mod[[4]], type = "int",title = "Cistus libanotis",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym.1$mod[[5]], type = "int", title = " Cistus monspeliensis",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym.1$mod[[6]], type = "int",title = " Cistus salviifolius",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym.1$mod[[7]], type = "int",title = " Halimium calycinum",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym.1$mod[[8]], type = "int",title = " Halimium halimifolium",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym.1$mod[[9]], type = "int",title = " Lavandula pedunculata",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym.1$mod[[10]], type = "int",title = " Lavandula stoechas",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym.1$mod[[11]], type = "int",title = " Salvia rosmarinus",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym.1$mod[[12]], type = "int",title = " Teucrium fruticans",show.data = TRUE),ncol=3,nrow = 4)
+
+```
+
+
+\newpage
+**Visitation rate of hymenoptera without A.mellifera **
+
+**A-** linear model: lm(Seeds ~ No_Apis_visitatio_rate * Year)
+```{r,echo=FALSE, warning=FALSE,message=FALSE,fig.height = 13,fig.width=15, out.width="100%"}
+# linear model 
+mod_seed_year_hym_no_apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(Seeds ~ Hym_visit_sin_apis * Year,data))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+mod_seed_year_hym_no_apis<-mod_seed_year_hym_no_apis %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+
+mod_seed_year_hym_no_apis %>% 
+ kable("latex",booktabs = TRUE, digits =  4,longtable = T, linesep = "") %>% 
+column_spec(6, bold = ifelse(mod_seed_year_hym_no_apis$p.value < 0.05| is.na(mod_seed_year_hym_no_apis$p.value), T, F) )%>%
+  kable_styling(position="left")
+
+```
+
+
+\newpage
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+#model plot
+mod_seed_year_hym_no_apis.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(Seeds ~ Hym_visit_sin_apis * Year,data)))
+
+
+ggarrange(plot_model(mod_seed_year_hym_no_apis.1$mod[[1]], title = " Asphodelus fistulosus",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[2]], title = "  Cistus crispus",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[3]], title = " Cistus ladanifer",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[4]], title = "Cistus libanotis",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[5]], title = "Cistus monspeliensis",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[6]], title = " Cistus salviifolius",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[7]], title = " Halimium calycinum",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[8]], title = " Halimium halimifolium",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[9]], title = " Lavandula pedunculata",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[10]], title = " Lavandula stoechas",show.values = TRUE,value.offset = .3),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[11]], title = " Salvia rosmarinus",show.values = TRUE, value.offset = .3),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[12]], title = " Teucrium fruticans",show.values = TRUE, value.offset = .3),ncol=3,nrow = 4)
+
+```
+
+\newpage
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+
+
+ggarrange(plot_model(mod_seed_year_hym_no_apis.1$mod[[1]], type = "int", title = " Asphodelus fistulosus",show.data = TRUE),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[2]], type = "int", title = " Cistus crispus",show.data = TRUE),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[3]], type = "int", title = " Cistus ladanifer",show.data = TRUE),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[4]], type = "int",title = "Cistus libanotis",show.data = TRUE),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[5]], type = "int", title = " Cistus monspeliensis",show.data = TRUE),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[6]], type = "int",title = " Cistus salviifolius",show.data = TRUE),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[7]], type = "int",title = " Halimium calycinum",show.data = TRUE),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[8]], type = "int",title = " Halimium halimifolium",show.data = TRUE),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[9]], type = "int",title = " Lavandula pedunculata",show.data = TRUE),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[10]], type = "int",title = " Lavandula stoechas",show.data = TRUE),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[11]], type = "int",title = " Salvia rosmarinus",show.data = TRUE),
+plot_model(mod_seed_year_hym_no_apis.1$mod[[12]], type = "int",title = " Teucrium fruticans",show.data = TRUE),ncol=3,nrow = 4)
+
+```
+
+
+\newpage 
+
+**B-** linear mixed model with site ID like random factor
+```{r,echo=FALSE, warning=FALSE,message=FALSE,fig.height = 13,fig.width=15, out.width="100%"}
+
+#model
+mod_mix_seed_year_hym_no_apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds ~ Hym_visit_sin_apis * Year + (1 | Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+
+
+mod_mix_seed_year_hym_no_apis<-mod_mix_seed_year_hym_no_apis %>%
+  select(-effect, -group)  %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+  
+mod_mix_seed_year_hym_no_apis<-filter(mod_mix_seed_year_hym_no_apis, !term == "sd__(Intercept)" & !term =="sd__Observation")
+
+
+mod_mix_seed_year_hym_no_apis %>% 
+ kable("latex",booktabs = TRUE, digits =  4,longtable = T, linesep = "") %>% 
+column_spec(7, bold = ifelse(mod_mix_seed_year_hym_no_apis$p.value < 0.05, T, F) )%>%  kable_styling(position="left")
+
+```
+
+\newpage
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+#model plot
+mod_mix_seed_year_hym_no_apis.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lmer(Seeds ~ Hym_visit_sin_apis * Year + (1 | Site_ID),data)))
+
+
+ggarrange(plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[1]], title = " Asphodelus fistulosus",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[2]], title = "  Cistus crispus",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[3]], title = " Cistus ladanifer",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[4]], title = "Cistus libanotis",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[5]], title = "Cistus monspeliensis",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[6]], title = " Cistus salviifolius",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[7]], title = " Halimium calycinum",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[8]], title = " Halimium halimifolium",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[9]], title = " Lavandula pedunculata",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[10]], title = " Lavandula stoechas",show.values = TRUE,value.offset = .3),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[11]], title = " Salvia rosmarinus",show.values = TRUE, value.offset = .3),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[12]], title = " Teucrium fruticans",show.values = TRUE, value.offset = .3),ncol=3,nrow = 4)
+
+```
+
+\newpage
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 20,fig.width=22, out.width="100%"}
+
+
+ggarrange(plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[1]], type = "int", title = " Asphodelus fistulosus",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[2]], type = "int", title = " Cistus crispus",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[3]], type = "int", title = " Cistus ladanifer",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[4]], type = "int",title = "Cistus libanotis",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[5]], type = "int", title = " Cistus monspeliensis",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[6]], type = "int",title = " Cistus salviifolius",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[7]], type = "int",title = " Halimium calycinum",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[8]], type = "int",title = " Halimium halimifolium",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[9]], type = "int",title = " Lavandula pedunculata",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[10]], type = "int",title = " Lavandula stoechas",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[11]], type = "int",title = " Salvia rosmarinus",show.data = TRUE),
+plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[12]], type = "int",title = " Teucrium fruticans",show.data = TRUE),ncol=3,nrow = 4)
+
+```
