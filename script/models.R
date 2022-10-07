@@ -2097,6 +2097,21 @@ plot_model(mod_seed_year.1$mod[[10]], type = "int",title = " Lavandula stoechas"
 plot_model(mod_seed_year.1$mod[[11]], type = "int",title = " Salvia rosmarinus",show.data = TRUE)
 plot_model(mod_seed_year.1$mod[[12]], type = "int",title = " Teucrium fruticans",show.data = TRUE)
 
+
+plot_model(mod_seed_year.1$mod[[1]], type = "pred", title = "Asphodelus fistulosus",show.data = TRUE)
+plot_model(mod_seed_year.1$mod[[2]], type = "pred", title = " Cistus crispus",show.data = TRUE)
+plot_model(mod_seed_year.1$mod[[3]], type = "pred", title = " Cistus ladanifer",show.data = TRUE)
+plot_model(mod_seed_year.1$mod[[4]], type = "pred",title = "Cistus libanotis",show.data = TRUE)
+plot_model(mod_seed_year.1$mod[[5]], type = "pred", title = "Cistus monspeliensis",show.data = TRUE)
+plot_model(mod_seed_year.1$mod[[6]], type = "pred",title = " Cistus salviifolius",show.data = TRUE)
+plot_model(mod_seed_year.1$mod[[7]], type = "pred",title = " Halimium calycinum",show.data = TRUE)
+plot_model(mod_seed_year.1$mod[[8]], type = "pred",title = " Halimium halimifolium",show.data = TRUE)
+plot_model(mod_seed_year.1$mod[[9]], type = "pred",title = " Lavandula pedunculata",show.data = TRUE)
+plot_model(mod_seed_year.1$mod[[10]], type = "pred",title = " Lavandula stoechas",show.data = TRUE)
+plot_model(mod_seed_year.1$mod[[11]], type = "pred",title = " Salvia rosmarinus",show.data = TRUE)
+plot_model(mod_seed_year.1$mod[[12]], type = "pred",title = " Teucrium fruticans",show.data = TRUE)
+
+
 # estimates of model 
 plot_model(mod_seed_year.1$mod[[1]], title = " Asphodelus fistulosus",show.values = TRUE, value.offset = .3)
 plot_model(mod_seed_year.1$mod[[2]], title = "  Cistus crispus",show.values = TRUE, value.offset = .3)
@@ -2513,6 +2528,593 @@ plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[10]], title = " Lavandula stoech
 plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[11]], title = " Salvia rosmarinus",show.values = TRUE, value.offset = .3)
 plot_model(mod_mix_seed_year_hym_no_apis.1$mod[[12]], title = " Teucrium fruticans",show.values = TRUE, value.offset = .3)
 
+
+# Richness
+
+# linear model 
+mod_seed_year_richness<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(Seeds ~ richness * Year,data))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+#model plot
+mod_seed_year_richness.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(Seeds ~ richness * Year,data)))
+
+plot_model(mod_seed_year_richness.1$mod[[1]], type = "int", title = " Asphodelus fistulosus",show.data = TRUE)
+plot_model(mod_seed_year_richness.1$mod[[2]], type = "int", title = " Cistus crispus",show.data = TRUE)
+plot_model(mod_seed_year_richness.1$mod[[3]], type = "int", title = " Cistus ladanifer",show.data = TRUE)
+plot_model(mod_seed_year_richness.1$mod[[4]], type = "int",title = "Cistus libanotis",show.data = TRUE)
+plot_model(mod_seed_year_richness.1$mod[[5]], type = "int", title = " Cistus monspeliensis",show.data = TRUE)
+plot_model(mod_seed_year_richness.1$mod[[6]], type = "int",title = " Cistus salviifolius",show.data = TRUE)
+plot_model(mod_seed_year_richness.1$mod[[7]], type = "int",title = " Halimium calycinum",show.data = TRUE)
+plot_model(mod_seed_year_richness.1$mod[[8]], type = "int",title = " Halimium halimifolium",show.data = TRUE)
+plot_model(mod_seed_year_richness.1$mod[[9]], type = "int",title = " Lavandula pedunculata",show.data = TRUE)
+plot_model(mod_seed_year_richness.1$mod[[10]], type = "int",title = " Lavandula stoechas",show.data = TRUE)
+plot_model(mod_seed_year_richness.1$mod[[11]], type = "int",title = " Salvia rosmarinus",show.data = TRUE)
+plot_model(mod_seed_year_richness.1$mod[[12]], type = "int",title = " Teucrium fruticans",show.data = TRUE)
+
+# estimates of model 
+plot_model(mod_seed_year_richness.1$mod[[1]], title = " Asphodelus fistulosus",show.values = TRUE, value.offset = .3)
+plot_model(mod_seed_year_richness.1$mod[[2]], title = "  Cistus crispus",show.values = TRUE, value.offset = .3)
+plot_model(mod_seed_year_richness.1$mod[[3]], title = " Cistus ladanifer",show.values = TRUE, value.offset = .3)
+plot_model(mod_seed_year_richness.1$mod[[4]], title = "Cistus libanotis",show.values = TRUE,value.offset = .3)
+plot_model(mod_seed_year_richness.1$mod[[5]], title = "Cistus monspeliensis",show.values = TRUE, value.offset = .3)
+plot_model(mod_seed_year_richness.1$mod[[6]], title = " Cistus salviifolius",show.values = TRUE, value.offset = .3)
+plot_model(mod_seed_year_richness.1$mod[[7]], title = " Halimium calycinum",show.values = TRUE,value.offset = .3)
+plot_model(mod_seed_year_richness.1$mod[[8]], title = " Halimium halimifolium",show.values = TRUE,value.offset = .3)
+plot_model(mod_seed_year_richness.1$mod[[9]], title = " Lavandula pedunculata",show.values = TRUE,value.offset = .3)
+plot_model(mod_seed_year_richness.1$mod[[10]], title = " Lavandula stoechas",show.values = TRUE,value.offset = .3)
+plot_model(mod_seed_year_richness.1$mod[[11]], title = " Salvia rosmarinus",show.values = TRUE, value.offset = .3)
+plot_model(mod_seed_year_richness.1$mod[[12]], title = " Teucrium fruticans",show.values = TRUE, value.offset = .3)
+
+
+
+
+# sitio como random 
+mod_mix_seed_year_richness<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(model = list(lmer(Seeds ~ richness * Year + (1 | Site_ID),data))) %>%
+  summarise(broom.mixed::tidy(model)) %>%
+  ungroup()
+
+
+#model plot
+mod_mix_seed_year_richness.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lmer(Seeds ~ richness * Year + (1 | Site_ID),data)))
+
+plot_model(mod_mix_seed_year_richness.1$mod[[1]], type = "int", title = " Asphodelus fistulosus",show.data = TRUE)
+plot_model(mod_mix_seed_year_richness.1$mod[[2]], type = "int", title = " Cistus crispus",show.data = TRUE)
+plot_model(mod_mix_seed_year_richness.1$mod[[3]], type = "int", title = " Cistus ladanifer",show.data = TRUE)
+plot_model(mod_mix_seed_year_richness.1$mod[[4]], type = "int",title = "Cistus libanotis",show.data = TRUE)
+plot_model(mod_mix_seed_year_richness.1$mod[[5]], type = "int", title = " Cistus monspeliensis",show.data = TRUE)
+plot_model(mod_mix_seed_year_richness.1$mod[[6]], type = "int",title = " Cistus salviifolius",show.data = TRUE)
+plot_model(mod_mix_seed_year_richness.1$mod[[7]], type = "int",title = " Halimium calycinum",show.data = TRUE)
+plot_model(mod_mix_seed_year_richness.1$mod[[8]], type = "int",title = " Halimium halimifolium",show.data = TRUE)
+plot_model(mod_mix_seed_year_richness.1$mod[[9]], type = "int",title = " Lavandula pedunculata",show.data = TRUE)
+plot_model(mod_mix_seed_year_richness.1$mod[[10]], type = "int",title = " Lavandula stoechas",show.data = TRUE)
+plot_model(mod_mix_seed_year_richness.1$mod[[11]], type = "int",title = " Salvia rosmarinus",show.data = TRUE)
+plot_model(mod_mix_seed_year_richness.1$mod[[12]], type = "int",title = " Teucrium fruticans",show.data = TRUE)
+
+
+# estimates of model 
+plot_model(mod_mix_seed_year_richness.1$mod[[1]], title = " Asphodelus fistulosus",show.values = TRUE, value.offset = .3)
+plot_model(mod_mix_seed_year_richness.1$mod[[2]], title = "  Cistus crispus",show.values = TRUE, value.offset = .3)
+plot_model(mod_mix_seed_year_richness.1$mod[[3]], title = " Cistus ladanifer",show.values = TRUE, value.offset = .3)
+plot_model(mod_mix_seed_year_richness.1$mod[[4]], title = "Cistus libanotis",show.values = TRUE,value.offset = .3)
+plot_model(mod_mix_seed_year_richness.1$mod[[5]], title = "Cistus monspeliensis",show.values = TRUE, value.offset = .3)
+plot_model(mod_mix_seed_year_richness.1$mod[[6]], title = " Cistus salviifolius",show.values = TRUE, value.offset = .3)
+plot_model(mod_mix_seed_year_richness.1$mod[[7]], title = " Halimium calycinum",show.values = TRUE,value.offset = .3)
+plot_model(mod_mix_seed_year_richness.1$mod[[8]], title = " Halimium halimifolium",show.values = TRUE,value.offset = .3)
+plot_model(mod_mix_seed_year_richness.1$mod[[9]], title = " Lavandula pedunculata",show.values = TRUE,value.offset = .3)
+plot_model(mod_mix_seed_year_richness.1$mod[[10]], title = " Lavandula stoechas",show.values = TRUE,value.offset = .3)
+plot_model(mod_mix_seed_year_richness.1$mod[[11]], title = " Salvia rosmarinus",show.values = TRUE, value.offset = .3)
+plot_model(mod_mix_seed_year_richness.1$mod[[12]], title = " Teucrium fruticans",show.values = TRUE, value.offset = .3)
+
+
+## Fruit proportion ----
+
+# visitation rate (all pollinators)
+
+# glm binomial
+mod_fruit_year<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glm(cbind(fruit_formado,Fruit_No) ~ visitatio_rate * Year,data,family = binomial))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+#model plot
+mod_fruit_year.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glm(cbind(fruit_formado,Fruit_No) ~ visitatio_rate * Year,data,family = binomial)))
+
+plot_model(mod_fruit_year.1$mod[[1]], type = "pred", title = " Asphodelus fistulosus")
+plot_model(mod_fruit_year.1$mod[[2]], type = "pred", title = " Cistus crispus")
+plot_model(mod_fruit_year.1$mod[[3]], type = "pred", title = " Cistus ladanifer")
+plot_model(mod_fruit_year.1$mod[[4]], type = "pred",title = "Cistus libanotis")
+plot_model(mod_fruit_year.1$mod[[5]], type = "pred", title = " Cistus monspeliensis")
+plot_model(mod_fruit_year.1$mod[[6]], type = "pred",title = " Cistus salviifolius")
+plot_model(mod_fruit_year.1$mod[[7]], type = "pred",title = " Halimium calycinum")
+plot_model(mod_fruit_year.1$mod[[8]], type = "pred",title = " Halimium halimifolium")
+plot_model(mod_fruit_year.1$mod[[9]], type = "pred",title = " Lavandula pedunculata")
+plot_model(mod_fruit_year.1$mod[[10]], type = "pred",title = " Lavandula stoechas")
+plot_model(mod_fruit_year.1$mod[[11]], type = "pred",title = " Salvia rosmarinus")
+plot_model(mod_fruit_year.1$mod[[12]], type = "pred",title = " Teucrium fruticans")
+
+
+plot_model(mod_fruit_year.1$mod[[1]], type = "int", title = " Asphodelus fistulosus",show.data = TRUE)
+plot_model(mod_fruit_year.1$mod[[2]], type = "int", title = " Cistus crispus",show.data = TRUE)
+plot_model(mod_fruit_year.1$mod[[3]], type = "int", title = " Cistus ladanifer",show.data = TRUE)
+plot_model(mod_fruit_year.1$mod[[4]], type = "int",title = "Cistus libanotis",show.data = TRUE)
+plot_model(mod_fruit_year.1$mod[[5]], type = "int", title = " Cistus monspeliensis",show.data = TRUE)
+plot_model(mod_fruit_year.1$mod[[6]], type = "int",title = " Cistus salviifolius",show.data = TRUE)
+plot_model(mod_fruit_year.1$mod[[7]], type = "int",title = " Halimium calycinum",show.data = TRUE)
+plot_model(mod_fruit_year.1$mod[[8]], type = "int",title = " Halimium halimifolium",show.data = TRUE)
+plot_model(mod_fruit_year.1$mod[[9]], type = "int",title = " Lavandula pedunculata",show.data = TRUE)
+plot_model(mod_fruit_year.1$mod[[10]], type = "int",title = " Lavandula stoechas",show.data = TRUE)
+plot_model(mod_fruit_year.1$mod[[11]], type = "int",title = " Salvia rosmarinus",show.data = TRUE)
+plot_model(mod_fruit_year.1$mod[[12]], type = "int",title = " Teucrium fruticans",show.data = TRUE)
+
+
+get_model_data(mod_fruit_year.1$mod[[11]], type = "int")
+
+
+# glmm binomial
+mod_mix_fruit_year<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glmer(cbind(fruit_formado, Fruit_No)~visitatio_rate *Year + (1|Site_ID),data,family = binomial))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+#plot
+mod_mix_fruit_year.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glmer(cbind(fruit_formado, Fruit_No)~visitatio_rate *Year + (1|Site_ID),data,family = binomial)))
+
+plot_model(mod_mix_fruit_year.1$mod[[1]], type = "pred", title = " Asphodelus fistulosus")
+plot_model(mod_mix_fruit_year.1$mod[[2]], type = "pred", title = " Cistus crispus")
+plot_model(mod_mix_fruit_year.1$mod[[3]], type = "pred", title = " Cistus ladanifer")
+plot_model(mod_mix_fruit_year.1$mod[[4]], type = "pred",title = "Cistus libanotis")
+plot_model(mod_mix_fruit_year.1$mod[[5]], type = "pred", title = " Cistus monspeliensis")
+plot_model(mod_mix_fruit_year.1$mod[[6]], type = "pred",title = " Cistus salviifolius")
+plot_model(mod_mix_fruit_year.1$mod[[7]], type = "pred",title = " Halimium calycinum")
+plot_model(mod_mix_fruit_year.1$mod[[8]], type = "pred",title = " Halimium halimifolium")
+plot_model(mod_mix_fruit_year.1$mod[[9]], type = "pred",title = " Lavandula pedunculata")
+plot_model(mod_mix_fruit_year.1$mod[[10]], type = "pred",title = " Lavandula stoechas")
+plot_model(mod_mix_fruit_year.1$mod[[11]], type = "pred",title = " Salvia rosmarinus")
+plot_model(mod_mix_fruit_year.1$mod[[12]], type = "pred",title = " Teucrium fruticans")
+
+
+plot_model(mod_mix_fruit_year.1$mod[[1]], type = "int", title = " Asphodelus fistulosus")
+plot_model(mod_mix_fruit_year.1$mod[[2]], type = "int", title = " Cistus crispus")
+plot_model(mod_mix_fruit_year.1$mod[[3]], type = "int", title = " Cistus ladanifer")
+plot_model(mod_mix_fruit_year.1$mod[[4]], type = "int",title = "Cistus libanotis")
+plot_model(mod_mix_fruit_year.1$mod[[5]], type = "int", title = " Cistus monspeliensis")
+plot_model(mod_mix_fruit_year.1$mod[[6]], type = "int",title = " Cistus salviifolius")
+plot_model(mod_mix_fruit_year.1$mod[[7]], type = "int",title = " Halimium calycinum")
+plot_model(mod_mix_fruit_year.1$mod[[8]], type = "int",title = " Halimium halimifolium")
+plot_model(mod_mix_fruit_year.1$mod[[9]], type = "int",title = " Lavandula pedunculata")
+plot_model(mod_mix_fruit_year.1$mod[[10]], type = "int",title = " Lavandula stoechas")
+plot_model(mod_mix_fruit_year.1$mod[[11]], type = "int",title = " Salvia rosmarinus")
+plot_model(mod_mix_fruit_year.1$mod[[12]], type = "int",title = " Teucrium fruticans")
+
+
+# visitation rate of Apis mellifera
+
+# glm binomial
+mod_fruit_year_apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glm(cbind(fruit_formado,Fruit_No) ~ Apis_visit_rate * Year,data,family = binomial))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+#model plot
+mod_fruit_year_apis.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glm(cbind(fruit_formado,Fruit_No) ~ Apis_visit_rate * Year,data,family = binomial)))
+
+plot_model(mod_fruit_year_apis.1$mod[[1]], type = "pred", title = " Asphodelus fistulosus")
+plot_model(mod_fruit_year_apis.1$mod[[2]], type = "pred", title = " Cistus crispus")
+plot_model(mod_fruit_year_apis.1$mod[[3]], type = "pred", title = " Cistus ladanifer")
+plot_model(mod_fruit_year_apis.1$mod[[4]], type = "pred",title = "Cistus libanotis")
+plot_model(mod_fruit_year_apis.1$mod[[5]], type = "pred", title = " Cistus monspeliensis")
+plot_model(mod_fruit_year_apis.1$mod[[6]], type = "pred",title = " Cistus salviifolius")
+plot_model(mod_fruit_year_apis.1$mod[[7]], type = "pred",title = " Halimium calycinum")
+plot_model(mod_fruit_year_apis.1$mod[[8]], type = "pred",title = " Halimium halimifolium")
+plot_model(mod_fruit_year_apis.1$mod[[9]], type = "pred",title = " Lavandula pedunculata")
+plot_model(mod_fruit_year_apis.1$mod[[10]], type = "pred",title = " Lavandula stoechas")
+plot_model(mod_fruit_year_apis.1$mod[[11]], type = "pred",title = " Salvia rosmarinus")
+plot_model(mod_fruit_year_apis.1$mod[[12]], type = "pred",title = " Teucrium fruticans")
+
+
+plot_model(mod_fruit_year_apis.1$mod[[1]], type = "int", title = " Asphodelus fistulosus")
+plot_model(mod_fruit_year_apis.1$mod[[2]], type = "int", title = " Cistus crispus")
+plot_model(mod_fruit_year_apis.1$mod[[3]], type = "int", title = " Cistus ladanifer")
+plot_model(mod_fruit_year_apis.1$mod[[4]], type = "int",title = "Cistus libanotis")
+plot_model(mod_fruit_year_apis.1$mod[[5]], type = "int", title = " Cistus monspeliensis")
+plot_model(mod_fruit_year_apis.1$mod[[6]], type = "int",title = " Cistus salviifolius")
+plot_model(mod_fruit_year_apis.1$mod[[7]], type = "int",title = " Halimium calycinum")
+plot_model(mod_fruit_year_apis.1$mod[[8]], type = "int",title = " Halimium halimifolium")
+plot_model(mod_fruit_year_apis.1$mod[[9]], type = "int",title = " Lavandula pedunculata")
+plot_model(mod_fruit_year_apis.1$mod[[10]], type = "int",title = " Lavandula stoechas")
+plot_model(mod_fruit_year_apis.1$mod[[11]], type = "int",title = " Salvia rosmarinus")
+plot_model(mod_fruit_year_apis.1$mod[[12]], type = "int",title = " Teucrium fruticans")
+
+
+
+# glmm binomial
+mod_mix_fruit_year_apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glmer(cbind(fruit_formado, Fruit_No)~Apis_visit_rate *Year + (1|Site_ID),data,family = binomial))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+#plot
+mod_mix_fruit_year_apis.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glmer(cbind(fruit_formado, Fruit_No)~Apis_visit_rate *Year + (1|Site_ID),data,family = binomial)))
+
+plot_model(mod_mix_fruit_year_apis.1$mod[[1]], type = "pred", title = " Asphodelus fistulosus")
+plot_model(mod_mix_fruit_year_apis.1$mod[[2]], type = "pred", title = " Cistus crispus")
+plot_model(mod_mix_fruit_year_apis.1$mod[[3]], type = "pred", title = " Cistus ladanifer")
+plot_model(mod_mix_fruit_year_apis.1$mod[[4]], type = "pred",title = "Cistus libanotis")
+plot_model(mod_mix_fruit_year_apis.1$mod[[5]], type = "pred", title = " Cistus monspeliensis")
+plot_model(mod_mix_fruit_year_apis.1$mod[[6]], type = "pred",title = " Cistus salviifolius")
+plot_model(mod_mix_fruit_year_apis.1$mod[[7]], type = "pred",title = " Halimium calycinum")
+plot_model(mod_mix_fruit_year_apis.1$mod[[8]], type = "pred",title = " Halimium halimifolium")
+plot_model(mod_mix_fruit_year_apis.1$mod[[9]], type = "pred",title = " Lavandula pedunculata")
+plot_model(mod_mix_fruit_year_apis.1$mod[[10]], type = "pred",title = " Lavandula stoechas")
+plot_model(mod_mix_fruit_year_apis.1$mod[[11]], type = "pred",title = " Salvia rosmarinus")
+plot_model(mod_mix_fruit_year_apis.1$mod[[12]], type = "pred",title = " Teucrium fruticans")
+
+
+plot_model(mod_mix_fruit_year_apis.1$mod[[1]], type = "int", title = " Asphodelus fistulosus")
+plot_model(mod_mix_fruit_year_apis.1$mod[[2]], type = "int", title = " Cistus crispus")
+plot_model(mod_mix_fruit_year_apis.1$mod[[3]], type = "int", title = " Cistus ladanifer")
+plot_model(mod_mix_fruit_year_apis.1$mod[[4]], type = "int",title = "Cistus libanotis")
+plot_model(mod_mix_fruit_year_apis.1$mod[[5]], type = "int", title = " Cistus monspeliensis")
+plot_model(mod_mix_fruit_year_apis.1$mod[[6]], type = "int",title = " Cistus salviifolius")
+plot_model(mod_mix_fruit_year_apis.1$mod[[7]], type = "int",title = " Halimium calycinum")
+plot_model(mod_mix_fruit_year_apis.1$mod[[8]], type = "int",title = " Halimium halimifolium")
+plot_model(mod_mix_fruit_year_apis.1$mod[[9]], type = "int",title = " Lavandula pedunculata")
+plot_model(mod_mix_fruit_year_apis.1$mod[[10]], type = "int",title = " Lavandula stoechas")
+plot_model(mod_mix_fruit_year_apis.1$mod[[11]], type = "int",title = " Salvia rosmarinus")
+plot_model(mod_mix_fruit_year_apis.1$mod[[12]], type = "int",title = " Teucrium fruticans")
+
+
+# visitation rate of pollinator without Apis mellifera
+
+# glm binomial
+mod_fruit_year_no_apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glm(cbind(fruit_formado,Fruit_No) ~ No_Apis_visit_rate * Year,data,family = binomial))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+#model plot
+mod_fruit_year_no_apis.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glm(cbind(fruit_formado,Fruit_No) ~ No_Apis_visit_rate * Year,data,family = binomial)))
+
+plot_model(mod_fruit_year_no_apis.1$mod[[1]], type = "pred", title = " Asphodelus fistulosus")
+plot_model(mod_fruit_year_no_apis.1$mod[[2]], type = "pred", title = " Cistus crispus")
+plot_model(mod_fruit_year_no_apis.1$mod[[3]], type = "pred", title = " Cistus ladanifer")
+plot_model(mod_fruit_year_no_apis.1$mod[[4]], type = "pred",title = "Cistus libanotis")
+plot_model(mod_fruit_year_no_apis.1$mod[[5]], type = "pred", title = " Cistus monspeliensis")
+plot_model(mod_fruit_year_no_apis.1$mod[[6]], type = "pred",title = " Cistus salviifolius")
+plot_model(mod_fruit_year_no_apis.1$mod[[7]], type = "pred",title = " Halimium calycinum")
+plot_model(mod_fruit_year_no_apis.1$mod[[8]], type = "pred",title = " Halimium halimifolium")
+plot_model(mod_fruit_year_no_apis.1$mod[[9]], type = "pred",title = " Lavandula pedunculata")
+plot_model(mod_fruit_year_no_apis.1$mod[[10]], type = "pred",title = " Lavandula stoechas")
+plot_model(mod_fruit_year_no_apis.1$mod[[11]], type = "pred",title = " Salvia rosmarinus")
+plot_model(mod_fruit_year_no_apis.1$mod[[12]], type = "pred",title = " Teucrium fruticans")
+
+
+plot_model(mod_fruit_year_no_apis.1$mod[[1]], type = "int", title = " Asphodelus fistulosus")
+plot_model(mod_fruit_year_no_apis.1$mod[[2]], type = "int", title = " Cistus crispus")
+plot_model(mod_fruit_year_no_apis.1$mod[[3]], type = "int", title = " Cistus ladanifer")
+plot_model(mod_fruit_year_no_apis.1$mod[[4]], type = "int",title = "Cistus libanotis")
+plot_model(mod_fruit_year_no_apis.1$mod[[5]], type = "int", title = " Cistus monspeliensis")
+plot_model(mod_fruit_year_no_apis.1$mod[[6]], type = "int",title = " Cistus salviifolius")
+plot_model(mod_fruit_year_no_apis.1$mod[[7]], type = "int",title = " Halimium calycinum")
+plot_model(mod_fruit_year_no_apis.1$mod[[8]], type = "int",title = " Halimium halimifolium")
+plot_model(mod_fruit_year_no_apis.1$mod[[9]], type = "int",title = " Lavandula pedunculata")
+plot_model(mod_fruit_year_no_apis.1$mod[[10]], type = "int",title = " Lavandula stoechas")
+plot_model(mod_fruit_year_no_apis.1$mod[[11]], type = "int",title = " Salvia rosmarinus")
+plot_model(mod_fruit_year_no_apis.1$mod[[12]], type = "int",title = " Teucrium fruticans")
+
+
+
+# glmm binomial
+mod_mix_fruit_year_no_apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glmer(cbind(fruit_formado, Fruit_No)~No_Apis_visit_rate *Year + (1|Site_ID),data,family = binomial))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+#plot
+mod_mix_fruit_year_no_apis.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glmer(cbind(fruit_formado, Fruit_No)~No_Apis_visit_rate *Year + (1|Site_ID),data,family = binomial)))
+
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[1]], type = "pred", title = " Asphodelus fistulosus")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[2]], type = "pred", title = " Cistus crispus")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[3]], type = "pred", title = " Cistus ladanifer")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[4]], type = "pred",title = "Cistus libanotis")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[5]], type = "pred", title = " Cistus monspeliensis")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[6]], type = "pred",title = " Cistus salviifolius")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[7]], type = "pred",title = " Halimium calycinum")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[8]], type = "pred",title = " Halimium halimifolium")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[9]], type = "pred",title = " Lavandula pedunculata")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[10]], type = "pred",title = " Lavandula stoechas")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[11]], type = "pred",title = " Salvia rosmarinus")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[12]], type = "pred",title = " Teucrium fruticans")
+
+
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[1]], type = "int", title = " Asphodelus fistulosus")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[2]], type = "int", title = " Cistus crispus")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[3]], type = "int", title = " Cistus ladanifer")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[4]], type = "int",title = "Cistus libanotis")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[5]], type = "int", title = " Cistus monspeliensis")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[6]], type = "int",title = " Cistus salviifolius")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[7]], type = "int",title = " Halimium calycinum")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[8]], type = "int",title = " Halimium halimifolium")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[9]], type = "int",title = " Lavandula pedunculata")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[10]], type = "int",title = " Lavandula stoechas")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[11]], type = "int",title = " Salvia rosmarinus")
+plot_model(mod_mix_fruit_year_no_apis.1$mod[[12]], type = "int",title = " Teucrium fruticans")
+
+
+
+# visitation rate of hymenoptera
+
+# glm binomial
+mod_fruit_year_hym<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glm(cbind(fruit_formado,Fruit_No) ~ Hym_visit * Year,data,family = binomial))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+#model plot
+mod_fruit_year_hym.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glm(cbind(fruit_formado,Fruit_No) ~ Hym_visit * Year,data,family = binomial)))
+
+plot_model(mod_fruit_year_hym.1$mod[[1]], type = "pred", title = " Asphodelus fistulosus")
+plot_model(mod_fruit_year_hym.1$mod[[2]], type = "pred", title = " Cistus crispus")
+plot_model(mod_fruit_year_hym.1$mod[[3]], type = "pred", title = " Cistus ladanifer")
+plot_model(mod_fruit_year_hym.1$mod[[4]], type = "pred",title = "Cistus libanotis")
+plot_model(mod_fruit_year_hym.1$mod[[5]], type = "pred", title = " Cistus monspeliensis")
+plot_model(mod_fruit_year_hym.1$mod[[6]], type = "pred",title = " Cistus salviifolius")
+plot_model(mod_fruit_year_hym.1$mod[[7]], type = "pred",title = " Halimium calycinum")
+plot_model(mod_fruit_year_hym.1$mod[[8]], type = "pred",title = " Halimium halimifolium")
+plot_model(mod_fruit_year_hym.1$mod[[9]], type = "pred",title = " Lavandula pedunculata")
+plot_model(mod_fruit_year_hym.1$mod[[10]], type = "pred",title = " Lavandula stoechas")
+plot_model(mod_fruit_year_hym.1$mod[[11]], type = "pred",title = " Salvia rosmarinus")
+plot_model(mod_fruit_year_hym.1$mod[[12]], type = "pred",title = " Teucrium fruticans")
+
+
+plot_model(mod_fruit_year_hym.1$mod[[1]], type = "int", title = " Asphodelus fistulosus")
+plot_model(mod_fruit_year_hym.1$mod[[2]], type = "int", title = " Cistus crispus")
+plot_model(mod_fruit_year_hym.1$mod[[3]], type = "int", title = " Cistus ladanifer")
+plot_model(mod_fruit_year_hym.1$mod[[4]], type = "int",title = "Cistus libanotis")
+plot_model(mod_fruit_year_hym.1$mod[[5]], type = "int", title = " Cistus monspeliensis")
+plot_model(mod_fruit_year_hym.1$mod[[6]], type = "int",title = " Cistus salviifolius")
+plot_model(mod_fruit_year_hym.1$mod[[7]], type = "int",title = " Halimium calycinum")
+plot_model(mod_fruit_year_hym.1$mod[[8]], type = "int",title = " Halimium halimifolium")
+plot_model(mod_fruit_year_hym.1$mod[[9]], type = "int",title = " Lavandula pedunculata")
+plot_model(mod_fruit_year_hym.1$mod[[10]], type = "int",title = " Lavandula stoechas")
+plot_model(mod_fruit_year_hym.1$mod[[11]], type = "int",title = " Salvia rosmarinus")
+plot_model(mod_fruit_year_hym.1$mod[[12]], type = "int",title = " Teucrium fruticans")
+
+
+# glmm binomial
+mod_mix_fruit_year_hym<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glmer(cbind(fruit_formado, Fruit_No)~Hym_visit *Year + (1|Site_ID),data,family = binomial))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+#plot
+mod_mix_fruit_year_hym.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glmer(cbind(fruit_formado, Fruit_No)~Hym_visit *Year + (1|Site_ID),data,family = binomial)))
+
+plot_model(mod_mix_fruit_year_hym.1$mod[[1]], type = "pred", title = " Asphodelus fistulosus")
+plot_model(mod_mix_fruit_year_hym.1$mod[[2]], type = "pred", title = " Cistus crispus")
+plot_model(mod_mix_fruit_year_hym.1$mod[[3]], type = "pred", title = " Cistus ladanifer")
+plot_model(mod_mix_fruit_year_hym.1$mod[[4]], type = "pred",title = "Cistus libanotis")
+plot_model(mod_mix_fruit_year_hym.1$mod[[5]], type = "pred", title = " Cistus monspeliensis")
+plot_model(mod_mix_fruit_year_hym.1$mod[[6]], type = "pred",title = " Cistus salviifolius")
+plot_model(mod_mix_fruit_year_hym.1$mod[[7]], type = "pred",title = " Halimium calycinum")
+plot_model(mod_mix_fruit_year_hym.1$mod[[8]], type = "pred",title = " Halimium halimifolium")
+plot_model(mod_mix_fruit_year_hym.1$mod[[9]], type = "pred",title = " Lavandula pedunculata")
+plot_model(mod_mix_fruit_year_hym.1$mod[[10]], type = "pred",title = " Lavandula stoechas")
+plot_model(mod_mix_fruit_year_hym.1$mod[[11]], type = "pred",title = " Salvia rosmarinus")
+plot_model(mod_mix_fruit_year_hym.1$mod[[12]], type = "pred",title = " Teucrium fruticans")
+
+
+plot_model(mod_mix_fruit_year_hym.1$mod[[1]], type = "int", title = " Asphodelus fistulosus")
+plot_model(mod_mix_fruit_year_hym.1$mod[[2]], type = "int", title = " Cistus crispus")
+plot_model(mod_mix_fruit_year_hym.1$mod[[3]], type = "int", title = " Cistus ladanifer")
+plot_model(mod_mix_fruit_year_hym.1$mod[[4]], type = "int",title = "Cistus libanotis")
+plot_model(mod_mix_fruit_year_hym.1$mod[[5]], type = "int", title = " Cistus monspeliensis")
+plot_model(mod_mix_fruit_year_hym.1$mod[[6]], type = "int",title = " Cistus salviifolius")
+plot_model(mod_mix_fruit_year_hym.1$mod[[7]], type = "int",title = " Halimium calycinum")
+plot_model(mod_mix_fruit_year_hym.1$mod[[8]], type = "int",title = " Halimium halimifolium")
+plot_model(mod_mix_fruit_year_hym.1$mod[[9]], type = "int",title = " Lavandula pedunculata")
+plot_model(mod_mix_fruit_year_hym.1$mod[[10]], type = "int",title = " Lavandula stoechas")
+plot_model(mod_mix_fruit_year_hym.1$mod[[11]], type = "int",title = " Salvia rosmarinus")
+plot_model(mod_mix_fruit_year_hym.1$mod[[12]], type = "int",title = " Teucrium fruticans")
+
+
+
+# visitation rate of hymenoptera without A.mellifera
+
+# glm binomial
+mod_fruit_year_hym_no_apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glm(cbind(fruit_formado,Fruit_No) ~ Hym_visit_sin_apis * Year,data,family = binomial))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+#model plot
+mod_fruit_year_hym_no_apis.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glm(cbind(fruit_formado,Fruit_No) ~ Hym_visit_sin_apis * Year,data,family = binomial)))
+
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[1]], type = "pred", title = " Asphodelus fistulosus")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[2]], type = "pred", title = " Cistus crispus")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[3]], type = "pred", title = " Cistus ladanifer")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[4]], type = "pred",title = "Cistus libanotis")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[5]], type = "pred", title = " Cistus monspeliensis")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[6]], type = "pred",title = " Cistus salviifolius")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[7]], type = "pred",title = " Halimium calycinum")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[8]], type = "pred",title = " Halimium halimifolium")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[9]], type = "pred",title = " Lavandula pedunculata")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[10]], type = "pred",title = " Lavandula stoechas")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[11]], type = "pred",title = " Salvia rosmarinus")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[12]], type = "pred",title = " Teucrium fruticans")
+
+
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[1]], type = "int", title = " Asphodelus fistulosus")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[2]], type = "int", title = " Cistus crispus")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[3]], type = "int", title = " Cistus ladanifer")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[4]], type = "int",title = "Cistus libanotis")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[5]], type = "int", title = " Cistus monspeliensis")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[6]], type = "int",title = " Cistus salviifolius")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[7]], type = "int",title = " Halimium calycinum")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[8]], type = "int",title = " Halimium halimifolium")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[9]], type = "int",title = " Lavandula pedunculata")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[10]], type = "int",title = " Lavandula stoechas")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[11]], type = "int",title = " Salvia rosmarinus")
+plot_model(mod_fruit_year_hym_no_apis.1$mod[[12]], type = "int",title = " Teucrium fruticans")
+
+
+# glmm binomial
+mod_mix_fruit_year_hym_no_apis<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glmer(cbind(fruit_formado, Fruit_No)~Hym_visit_sin_apis *Year + (1|Site_ID),data,family = binomial))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+#plot
+mod_mix_fruit_year_hym_no_apis.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glmer(cbind(fruit_formado, Fruit_No)~Hym_visit_sin_apis *Year + (1|Site_ID),data,family = binomial)))
+
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[1]], type = "pred", title = " Asphodelus fistulosus")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[2]], type = "pred", title = " Cistus crispus")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[3]], type = "pred", title = " Cistus ladanifer")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[4]], type = "pred",title = "Cistus libanotis")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[5]], type = "pred", title = " Cistus monspeliensis")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[6]], type = "pred",title = " Cistus salviifolius")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[7]], type = "pred",title = " Halimium calycinum")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[8]], type = "pred",title = " Halimium halimifolium")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[9]], type = "pred",title = " Lavandula pedunculata")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[10]], type = "pred",title = " Lavandula stoechas")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[11]], type = "pred",title = " Salvia rosmarinus")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[12]], type = "pred",title = " Teucrium fruticans")
+
+
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[1]], type = "int", title = " Asphodelus fistulosus")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[2]], type = "int", title = " Cistus crispus")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[3]], type = "int", title = " Cistus ladanifer")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[4]], type = "int",title = "Cistus libanotis")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[5]], type = "int", title = " Cistus monspeliensis")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[6]], type = "int",title = " Cistus salviifolius")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[7]], type = "int",title = " Halimium calycinum")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[8]], type = "int",title = " Halimium halimifolium")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[9]], type = "int",title = " Lavandula pedunculata")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[10]], type = "int",title = " Lavandula stoechas")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[11]], type = "int",title = " Salvia rosmarinus")
+plot_model(mod_mix_fruit_year_hym_no_apis.1$mod[[12]], type = "int",title = " Teucrium fruticans")
+
+
+
+# Richness
+
+# glm binomial
+mod_fruit_year_richness<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glm(cbind(fruit_formado,Fruit_No) ~ richness * Year,data,family = binomial))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+#model plot
+mod_fruit_year_richness.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glm(cbind(fruit_formado,Fruit_No) ~ richness * Year,data,family = binomial)))
+
+plot_model(mod_fruit_year_richness.1$mod[[1]], type = "pred", title = " Asphodelus fistulosus")
+plot_model(mod_fruit_year_richness.1$mod[[2]], type = "pred", title = " Cistus crispus")
+plot_model(mod_fruit_year_richness.1$mod[[3]], type = "pred", title = " Cistus ladanifer")
+plot_model(mod_fruit_year_richness.1$mod[[4]], type = "pred",title = "Cistus libanotis")
+plot_model(mod_fruit_year_richness.1$mod[[5]], type = "pred", title = " Cistus monspeliensis")
+plot_model(mod_fruit_year_richness.1$mod[[6]], type = "pred",title = " Cistus salviifolius")
+plot_model(mod_fruit_year_richness.1$mod[[7]], type = "pred",title = " Halimium calycinum")
+plot_model(mod_fruit_year_richness.1$mod[[8]], type = "pred",title = " Halimium halimifolium")
+plot_model(mod_fruit_year_richness.1$mod[[9]], type = "pred",title = " Lavandula pedunculata")
+plot_model(mod_fruit_year_richness.1$mod[[10]], type = "pred",title = " Lavandula stoechas")
+plot_model(mod_fruit_year_richness.1$mod[[11]], type = "pred",title = " Salvia rosmarinus")
+plot_model(mod_fruit_year_richness.1$mod[[12]], type = "pred",title = " Teucrium fruticans")
+
+
+plot_model(mod_fruit_year_richness.1$mod[[1]], type = "int", title = " Asphodelus fistulosus")
+plot_model(mod_fruit_year_richness.1$mod[[2]], type = "int", title = " Cistus crispus")
+plot_model(mod_fruit_year_richness.1$mod[[3]], type = "int", title = " Cistus ladanifer")
+plot_model(mod_fruit_year_richness.1$mod[[4]], type = "int",title = "Cistus libanotis")
+plot_model(mod_fruit_year_richness.1$mod[[5]], type = "int", title = " Cistus monspeliensis")
+plot_model(mod_fruit_year_richness.1$mod[[6]], type = "int",title = " Cistus salviifolius")
+plot_model(mod_fruit_year_richness.1$mod[[7]], type = "int",title = " Halimium calycinum")
+plot_model(mod_fruit_year_richness.1$mod[[8]], type = "int",title = " Halimium halimifolium")
+plot_model(mod_fruit_year_richness.1$mod[[9]], type = "int",title = " Lavandula pedunculata")
+plot_model(mod_fruit_year_richness.1$mod[[10]], type = "int",title = " Lavandula stoechas")
+plot_model(mod_fruit_year_richness.1$mod[[11]], type = "int",title = " Salvia rosmarinus")
+plot_model(mod_fruit_year_richness.1$mod[[12]], type = "int",title = " Teucrium fruticans")
+
+
+# glmm binomial
+mod_mix_fruit_year_richness<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glmer(cbind(fruit_formado, Fruit_No)~richness *Year + (1|Site_ID),data,family = binomial))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+#plot
+mod_mix_fruit_year_richness.1<-Pollinator_Plant %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(glmer(cbind(fruit_formado, Fruit_No)~richness *Year + (1|Site_ID),data,family = binomial)))
+
+plot_model(mod_mix_fruit_year_richness.1$mod[[1]], type = "pred", title = " Asphodelus fistulosus")
+plot_model(mod_mix_fruit_year_richness.1$mod[[2]], type = "pred", title = " Cistus crispus")
+plot_model(mod_mix_fruit_year_richness.1$mod[[3]], type = "pred", title = " Cistus ladanifer")
+plot_model(mod_mix_fruit_year_richness.1$mod[[4]], type = "pred",title = "Cistus libanotis")
+plot_model(mod_mix_fruit_year_richness.1$mod[[5]], type = "pred", title = " Cistus monspeliensis")
+plot_model(mod_mix_fruit_year_richness.1$mod[[6]], type = "pred",title = " Cistus salviifolius")
+plot_model(mod_mix_fruit_year_richness.1$mod[[7]], type = "pred",title = " Halimium calycinum")
+plot_model(mod_mix_fruit_year_richness.1$mod[[8]], type = "pred",title = " Halimium halimifolium")
+plot_model(mod_mix_fruit_year_richness.1$mod[[9]], type = "pred",title = " Lavandula pedunculata")
+plot_model(mod_mix_fruit_year_richness.1$mod[[10]], type = "pred",title = " Lavandula stoechas")
+plot_model(mod_mix_fruit_year_richness.1$mod[[11]], type = "pred",title = " Salvia rosmarinus")
+plot_model(mod_mix_fruit_year_richness.1$mod[[12]], type = "pred",title = " Teucrium fruticans")
+
+
+plot_model(mod_mix_fruit_year_richness.1$mod[[1]], type = "int", title = " Asphodelus fistulosus")
+plot_model(mod_mix_fruit_year_richness.1$mod[[2]], type = "int", title = " Cistus crispus")
+plot_model(mod_mix_fruit_year_richness.1$mod[[3]], type = "int", title = " Cistus ladanifer")
+plot_model(mod_mix_fruit_year_richness.1$mod[[4]], type = "int",title = "Cistus libanotis")
+plot_model(mod_mix_fruit_year_richness.1$mod[[5]], type = "int", title = " Cistus monspeliensis")
+plot_model(mod_mix_fruit_year_richness.1$mod[[6]], type = "int",title = " Cistus salviifolius")
+plot_model(mod_mix_fruit_year_richness.1$mod[[7]], type = "int",title = " Halimium calycinum")
+plot_model(mod_mix_fruit_year_richness.1$mod[[8]], type = "int",title = " Halimium halimifolium")
+plot_model(mod_mix_fruit_year_richness.1$mod[[9]], type = "int",title = " Lavandula pedunculata")
+plot_model(mod_mix_fruit_year_richness.1$mod[[10]], type = "int",title = " Lavandula stoechas")
+plot_model(mod_mix_fruit_year_richness.1$mod[[11]], type = "int",title = " Salvia rosmarinus")
+plot_model(mod_mix_fruit_year_richness.1$mod[[12]], type = "int",title = " Teucrium fruticans")
 
 
 # year like random slope -----
