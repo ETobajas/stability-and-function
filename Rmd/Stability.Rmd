@@ -187,6 +187,26 @@ syn_LM2=prueba%>%
   group_by(Plant_gen_sp,Site_ID)%>% 
   do(syncLM=syncLM(.[4:127]))
 
+#Gross et al. 2014
+av_sync <- function(x, w = TRUE){
+ xx<-x[,which(colSums(x) > 0)]
+ S <- ncol(xx) #num sp
+ total <- rowSums(xx)
+ p <- colSums(xx)/sum(colSums(xx)) #rel abund
+ cors <- c()
+ for(i in 1:ncol(xx)) cors[i] <- cor(xx[,i],total-xx[,i])
+if(w){
+   out <- sum(p * cors) #a--b, a-c, ...
+ }else{
+   out <- (1/S) * sum(cors) #a--b, a-c, ...
+ }
+ out
+}
+
+syn_G2=prueba%>%
+ group_by(Plant_gen_sp,Site_ID)%>%
+ do(av_sync=av_sync(.[4:ncol(prueba)]))
+
 
 # join tables 
 full2=full_join(cv_1Fruit2, cv_1Seed2, by = c('Plant_gen_sp', 'Site_ID'))%>%
@@ -195,11 +215,13 @@ full2=full_join(cv_1Fruit2, cv_1Seed2, by = c('Plant_gen_sp', 'Site_ID'))%>%
   full_join (., S2, by=c('Plant_gen_sp', 'Site_ID'))%>%
   full_join (., syn_2, by=c('Plant_gen_sp', 'Site_ID'))%>%
   full_join (., syn_LM2, by=c('Plant_gen_sp', 'Site_ID'))%>%
+  full_join (., syn_G2, by=c('Plant_gen_sp', 'Site_ID'))%>%
   rename(cv_1_fruit=fruit_proportion, cv_1_seed=Seeds,   cv_1_visitation=visitatio_rate,S_total=richness.x, S_mean=richness.y)
 
 
 full2$log_VR <- unlist(full2$log_VR)
 full2$syncLM <- unlist(full2$syncLM)
+full2$ av_sync <- unlist(full2$ av_sync)
 
 full2 %>% 
     kable("latex",booktabs = TRUE, digits =  4,longtable = T,linesep = "")%>%
@@ -226,6 +248,25 @@ cr %>%
 
 ```
 
+Correlacion indices sincronia
+```{r,echo=FALSE, warning=FALSE,message=FALSE, out.width="80%", fig.align='left'}
+
+# correlacion indices de sincronia
+
+syn_cor<-full2 %>% select(log_VR,syncLM,av_sync)
+
+## Replace Inf and -Inf with NA
+syn_cor[is.na(syn_cor) | syn_cor == "Inf"] <- 0 
+syn_cor[is.na(syn_cor) | syn_cor == "-Inf"] <- 0 
+
+syn_cor <- mutate_all(syn_cor, ~replace(., is.na(.), 0))
+
+cr_syn=cor(syn_cor)
+
+cr_syn %>% 
+    kable("latex",booktabs = TRUE, digits =  4)
+
+```
 
 \newpage
 
@@ -720,7 +761,65 @@ p1+p2+p3+p4+p5+p6+p7
 
 \newpage
 
-C- log VR ~ mean richness  
+C- Gross index ~ Total richness
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%", fig.align='center'}
+
+rich_Gross<-full_2 %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(av_sync ~ S_total,data))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+opts <- options(knitr.kable.NA = "")
+
+rich_Gross<-rich_Gross %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+
+rich_Gross %>% 
+ kable("latex",booktabs = TRUE, digits =  3,linesep = c("","\\addlinespace")) %>% 
+column_spec(6, bold = ifelse(rich_Gross$p.value < 0.05| is.na(rich_Gross$p.value), T, F) )%>%
+  kable_styling(position="center", latex_option="hold_position")
+
+```
+
+\newpage
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%", fig.align='center'}
+
+#model plot
+rich_Gross.2 <- full_2 %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(av_sync ~ S_total,data))) %>%
+  mutate(mod1 = list(ggeffects::ggpredict(mod, terms = "S_total"))) %>%
+  mutate(plots = list(ggplot(mod1, aes(x, predicted)) + geom_line() +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2)))
+
+
+
+p1=rich_Gross.2$plots[[1]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Cistus crispus")), aes(y =  av_sync, x = S_total))+ 
+  labs(y = "av_sync",x="total richness",subtitle = "C.crispus")+theme_classic()+theme(text = element_text(size=rel(3)))
+
+p2=rich_Gross.2$plots[[2]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(y =  av_sync, x = S_total))+ 
+  labs(y = "av_sync",x="total richness",subtitle = "C.ladanifer")+ scale_x_continuous(limits = c(9, 27))+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+p3=rich_Gross.2$plots[[3]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(y =  av_sync, x = S_total))+ 
+  labs(y = "av_sync",x="total richness",subtitle = "C.salviifolius")+ scale_x_continuous(limits = c(7, 31))+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+
+
+p5=rich_Gross.2$plots[[5]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Halimium halimifolium")), aes(y =  av_sync, x = S_total))+ labs(y = "av_sync",x="total richness",subtitle = "H.halimifolium")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+
+p6=rich_Gross.2$plots[[6]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(y =  av_sync, x = S_total))+ 
+  labs(y = "av_sync",x="total richness",subtitle = "L.pedunculata")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+
+p1+p2+p3+p5+p6
+```
+
+\newpage
+
+D- log VR ~ mean richness  
 
 ```{r,echo=FALSE, warning=FALSE,message=FALSE,fig.height = 13,fig.width=15, out.width="100%"}
 
@@ -816,7 +915,7 @@ p1+p2+p3+p4+p5+p6+p7
 
 \newpage
 
-D- Loreau & Mazancourt syncrony index ~  mean richness 
+E- Loreau & Mazancourt syncrony index ~  mean richness 
 
 ```{r,echo=FALSE, warning=FALSE,message=FALSE,fig.height = 13,fig.width=15, out.width="100%"}
 
@@ -908,6 +1007,64 @@ p7=rich.4$plots[[7]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp 
   labs(x = "S_mean",y="syncLM",subtitle = "L.stoechas")+  theme_classic()+theme(text = element_text(size=rel(3)))
 
 p1+p2+p3+p4+p5+p6+p7
+```
+
+
+\newpage
+
+C- Gross index ~ mean richness
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%", fig.align='center'}
+
+#model
+rich_mean_Gross<-full_2 %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(av_sync ~ S_mean,data))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+opts <- options(knitr.kable.NA = "")
+
+rich_mean_Gross<-rich_mean_Gross %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+
+rich_mean_Gross %>% 
+ kable("latex",booktabs = TRUE, digits =  3,linesep = c("","\\addlinespace")) %>% 
+column_spec(6, bold = ifelse(rich_mean_Gross$p.value < 0.05| is.na(rich_mean_Gross$p.value), T, F) )%>%
+  kable_styling(position="center", latex_option="hold_position")
+
+```
+
+\newpage
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%", fig.align='center'}
+
+#model plot
+rich_mean_Gross.2 <- full_2 %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(av_sync ~ S_mean,data))) %>%
+  mutate(mod1 = list(ggeffects::ggpredict(mod, terms = "S_mean"))) %>%
+  mutate(plots = list(ggplot(mod1, aes(x, predicted)) + geom_line() +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2)))
+
+
+
+p1=rich_mean_Gross.2$plots[[1]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Cistus crispus")), aes(y =  av_sync, x = S_mean))+ 
+labs(y = "av_sync",x="mean richness",subtitle = "C.crispus")+theme_classic() +theme(text = element_text(size=rel(3)))
+
+
+p2=rich_mean_Gross.2$plots[[2]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(y =  av_sync, x = S_mean))+ 
+  labs(y = "av_sync",x="mean richness",subtitle = "C.ladanifer") + scale_x_continuous(limits = c(4.5, 11)) + theme_classic()+theme(text = element_text(size=rel(3)))
+
+p3=rich_mean_Gross.2$plots[[3]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(y =  av_sync, x = S_mean))+ labs(y = "av_sync",x="mean richness",subtitle = "C.salviifolius")+ scale_x_continuous(limits = c(4, 12))+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+
+p5=rich_mean_Gross.2$plots[[5]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Halimium halimifolium")), aes(y =  av_sync, x = S_mean))+labs(y = "av_sync",x="mean richness",subtitle = "H.halimifolium")+  theme_classic() +theme(text = element_text(size=rel(3)))
+
+
+p6=rich_mean_Gross.2$plots[[6]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(y =  av_sync, x = S_mean))+ labs(y = "av_sync",x="mean richness",subtitle = "L.pedunculata")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+
+p1+p2+p3+p5+p6
 ```
 
 \newpage
@@ -1142,9 +1299,114 @@ p7=sta_polli3.2$plots[[7]] + geom_point(data = full_2 %>% filter(Plant_gen_sp ==
 p1+p2+p3+p5+p6+p7
 ```
 
+
 \newpage
 
-C) mean richness + log VR
+C) total richness + Gross index
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%", fig.align='center'}
+
+#model: total richness + Gross index
+sta_polli_Gross<-full_2 %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(cv_1_visitation~S_total+av_sync,data))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+sta_polli_Gross<-sta_polli_Gross %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+
+sta_polli_Gross %>% 
+ kable("latex",booktabs = TRUE, digits =  3,linesep = c("","","\\addlinespace")) %>% 
+column_spec(6, bold = ifelse(sta_polli_Gross$p.value < 0.05|is.na(sta_polli_Gross$p.value), T, F))%>%
+  kable_styling(position="center", latex_option="hold_position")
+
+```
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="80%", fig.align='left'}
+
+#goodness of fit measures
+sta_polli_Gross_glance<-full_2 %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(cv_1_visitation~S_total+av_sync,data))) %>%
+  summarize(glance(mod))%>%
+  ungroup()
+
+table9<-sta_polli_Gross_glance %>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Cistus crispus', 'C.crispus', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Cistus ladanifer', 'C.ladanifer', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Cistus salviifolius', 'C.salviifolius', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Halimium calycinum', 'H. calycinum', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Halimium halimifolium', 'H.halimifolium', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Lavandula pedunculata', 'L.pedunculata', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Lavandula stoechas', 'L.stoechas', Plant_gen_sp))
+
+table9 %>% 
+ kable("latex",booktabs = TRUE, digits =  3,linesep = "",align = "lcccccccccccc")%>%
+  kable_styling(font_size = 8,full_width = F, position="left")
+
+```
+
+
+\newpage
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%", fig.align='center'}
+
+# model plot (cv_1_visitation~total richness)
+sta_polli_Gross.2 <- full_2 %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(cv_1_visitation~S_total+av_sync,data))) %>%
+  mutate(mod1 = list(ggeffects::ggpredict(mod, terms = "S_total"))) %>%
+  mutate(plots = list(ggplot(mod1, aes(x, predicted)) + geom_line() +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .1)))
+
+
+
+p1=sta_polli_Gross.2$plots[[1]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Cistus crispus")), aes(x =  S_total, y = cv_1_visitation))+ labs(x = "S_total",y="visitation rate stability",subtitle = "C.crispus")+theme_classic()+theme(text = element_text(size=rel(3)))
+
+p2=sta_polli_Gross.2$plots[[2]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(x =  S_total, y = cv_1_visitation))+ labs(x = "S_total",y="visitation rate stability",subtitle = "C.ladanifer") + scale_x_continuous(limits = c(9, 27))+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+
+p3=sta_polli_Gross.2$plots[[3]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(x =  S_total, y = cv_1_visitation))+  labs(x = "S_total",y="visitation rate stability",subtitle = "C.salviifolius") + scale_x_continuous(limits = c(7, 31))+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+
+p5=sta_polli_Gross.2$plots[[5]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Halimium halimifolium")), aes(x =  S_total, y = cv_1_visitation))+ labs(x = "S_total",y="visitation rate stability",subtitle = "H.halimifolium")+  theme_classic() +theme(text = element_text(size=rel(3)))
+
+p6=sta_polli_Gross.2$plots[[6]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Lavandula pedunculata")), aes(x =  S_total, y = cv_1_visitation))+ labs(x = "S_total",y="visitation rate stability",subtitle = "L.pedunculata")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+
+p1+p2+p3+p5+p6
+```
+
+
+\newpage
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%", fig.align='center'}
+
+# model plot (cv_1_visitation~av_sync)
+sta_polli_Gross.3 <- full_2 %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(cv_1_visitation~S_total+av_sync,data))) %>%
+  mutate(mod1 = list(ggeffects::ggpredict(mod, terms = "av_sync"))) %>%
+  mutate(plots = list(ggplot(mod1, aes(x, predicted)) + geom_line() +
+ geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .1)))
+
+
+
+p1=sta_polli_Gross.3$plots[[1]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus crispus"), aes(x =  av_sync, y = cv_1_visitation))+ labs(x = "av_sync",y="visitation rate stability",subtitle = "C.crispus")+ theme_classic()+theme(text = element_text(size=rel(3)))
+
+p2=sta_polli_Gross.3$plots[[2]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(x =  av_sync, y = cv_1_visitation))+ labs(x = "av_sync",y="visitation rate stability",subtitle = "C.ladanifer")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+p3=sta_polli_Gross.3$plots[[3]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(x =  av_sync, y = cv_1_visitation))+ labs(x = "av_sync",y="visitation rate stability",subtitle = "C.salviifolius")+ theme_classic()+theme(text = element_text(size=rel(3)))
+
+
+p5=sta_polli_Gross.3$plots[[5]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Halimium halimifolium")), aes(x =  av_sync, y = cv_1_visitation))+ labs(x = "av_sync",y="visitation rate stability",subtitle = "H.halimifolium")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+p6=sta_polli_Gross.3$plots[[6]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(x =  av_sync, y = cv_1_visitation))+ labs(x = "av_sync",y="visitation rate stability",subtitle = "L.pedunculata")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+p1+p2+p3+p5+p6
+```
+
+\newpage
+
+D) mean richness + log VR
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%", fig.align='center'}
 
 #model 3: mean richness + log VR
@@ -1244,7 +1506,7 @@ p1+p2+p3+p5+p6
 
 \newpage
 
-D) mean richness + Lorea & Mazancourt index
+E) mean richness + Lorea & Mazancourt index
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%", fig.align='center'}
 
 #model 3: mean richness + log VR
@@ -1343,4 +1605,103 @@ p6=sta_polli_Smean_plot4.2$plots[[6]] + geom_point(data = na.omit(full_2 %>% fil
 p7=sta_polli_Smean_plot4.2$plots[[7]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Lavandula stoechas")), aes(x =  syncLM, y = cv_1_visitation),shape=20)+ labs(x = "syncLM",y="visitation rate stability",subtitle = "L.stoechas")+  theme_classic()+theme(text = element_text(size=rel(3)))
 
 p1+p2+p3+p5+p6+p7
+```
+
+\newpage
+
+F) mean richness + Gross index
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%", fig.align='center'}
+
+#model: mean richness + Gross index
+sta_polli_Smean_Gross<-full_2 %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(cv_1_visitation~S_mean+av_sync,data))) %>%
+  summarize(tidy(mod))%>%
+  ungroup()
+
+sta_polli_Smean_Gross<-sta_polli_Smean_Gross %>%
+  mutate(Plant_gen_sp = replace(Plant_gen_sp, duplicated(Plant_gen_sp), ""))
+
+sta_polli_Smean_Gross %>% 
+ kable("latex",booktabs = TRUE, digits =  3,linesep = c("","","\\addlinespace")) %>% 
+column_spec(6, bold = ifelse(sta_polli_Smean_Gross$p.value <0.05|is.na(sta_polli_Smean_Gross$p.value), T, F))%>%
+  kable_styling(position="center", latex_option="hold_position")
+
+```
+
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="80%", fig.align='left'}
+
+#goodness of fit measures
+sta_polli_Smean_Gross_glance<-full_2 %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(cv_1_visitation~S_mean+av_sync,data))) %>%
+  summarize(glance(mod))%>%
+  ungroup()
+
+table11<-sta_polli_Smean_Gross_glance %>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Cistus crispus', 'C.crispus', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Cistus ladanifer', 'C.ladanifer', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Cistus salviifolius', 'C.salviifolius', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Halimium calycinum', 'H. calycinum', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Halimium halimifolium', 'H.halimifolium', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Lavandula pedunculata', 'L.pedunculata', Plant_gen_sp))%>%
+  mutate( Plant_gen_sp = if_else(Plant_gen_sp == 'Lavandula stoechas', 'L.stoechas', Plant_gen_sp))
+
+table11 %>% 
+ kable("latex",booktabs = TRUE, digits =  3,linesep = "",align = "lcccccccccccc")%>%
+  kable_styling(font_size = 8,full_width = F, position="left")
+
+```
+
+\newpage
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%", fig.align='center'}
+
+sta_polli_Smean_Gross2 <- full_2 %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(cv_1_visitation~S_mean+av_sync,data))) %>%
+  mutate(mod = list(ggeffects::ggpredict(mod, terms = "S_mean"))) %>%
+  mutate(plots = list(ggplot(mod, aes(x, predicted)) + geom_line() +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2)))
+
+
+p1=sta_polli_Smean_Gross2$plots[[1]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Cistus crispus")), aes(x =  S_mean, y = cv_1_visitation))+ labs(x = "mean richness",y="visitation rate stability",subtitle = "C.crispus")+theme_classic()+theme(text = element_text(size=rel(3)))
+
+p2=sta_polli_Smean_Gross2$plots[[2]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Cistus ladanifer")), aes(x =  S_mean, y = cv_1_visitation))+ labs(x = "mean richness",y="visitation rate stability",subtitle = "C.ladanifer")+  theme_classic() +theme(text = element_text(size=rel(3)))
+
+p3=sta_polli_Smean_Gross2$plots[[3]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Cistus salviifolius")), aes(x =  S_mean, y = cv_1_visitation))+ labs(x = "mean richness",y="visitation rate stability",subtitle = "C.salviifolius")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+
+p5=sta_polli_Smean_Gross2$plots[[5]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Halimium halimifolium")), aes(x =  S_mean, y = cv_1_visitation))+ labs(x = "mean richness",y="visitation rate stability",subtitle = "H.halimifolium")+theme_classic()+theme(text = element_text(size=rel(3)))
+
+p6=sta_polli_Smean_Gross2$plots[[6]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(x =  S_mean, y = cv_1_visitation))+ labs(x = "mean richness",y="visitation rate stability",subtitle = "L.pedunculata")+ theme_classic()+theme(text = element_text(size=rel(3)))
+
+
+p1+p2+p3+p5+p6
+```
+
+
+\newpage
+```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%", fig.align='center'}
+
+sta_polli_Smean_Gross3 <- full_2 %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(cv_1_visitation~S_mean+av_sync,data))) %>%
+  mutate(mod = list(ggeffects::ggpredict(mod, terms = "av_sync"))) %>%
+  mutate(plots = list(ggplot(mod, aes(x, predicted)) + geom_line() +
+ geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .2)))
+
+
+p1=sta_polli_Smean_Gross3$plots[[1]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Cistus crispus")), aes(x =  av_sync, y = cv_1_visitation))+ labs(x = "av_sync",y="visitation rate stability",subtitle = "C.crispus")+ theme_classic()+theme(text = element_text(size=rel(3)))
+
+p2=sta_polli_Smean_Gross3$plots[[2]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(x =  av_sync, y = cv_1_visitation))+ labs(x = "av_sync",y="visitation rate stability",subtitle = "C.ladanifer")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+p3=sta_polli_Smean_Gross3$plots[[3]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(x =  av_sync, y = cv_1_visitation))+ labs(x = "av_sync",y="visitation rate stability",subtitle = "C.salviifolius")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+
+p5=sta_polli_Smean_Gross3$plots[[5]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Halimium halimifolium"), aes(x =  av_sync, y = cv_1_visitation))+ labs(x = "av_sync",y="visitation rate stability",subtitle = "H.halimifolium")+  theme_classic()+theme(text = element_text(size=rel(3)))
+
+p6=sta_polli_Smean_Gross3$plots[[6]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(x =  av_sync, y = cv_1_visitation))+ labs(x = "av_sync",y="visitation rate stability",subtitle = "L.pedunculata")+  theme_classic() +theme(text = element_text(size=rel(3)))
+
+
+p1+p2+p3+p5+p6
 ```
