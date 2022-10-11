@@ -546,10 +546,24 @@ visitation<-merge(x=visitation,y=Hym,by=c("Year","Site_ID", "Plant_gen_sp","plan
 visitation<-visitation %>% mutate(Hym_visit = Hym_freq/Flower_abundance)
 
 
-# hymenoptera sin A. mellifera
+# solo hymenoptera sin A. mellifera
+
+sin_apis=focal %>%
+   filter(!Pollinator_gen_sp=="Apis mellifera")
+
+levels(factor(sin_apis$Pollinator_gen_sp))
+
+# frecuencia de hymnenopteros sin A. mellifera
+Hym_no_apis<-aggregate(Frequency ~ Year+Site_ID+Plant_gen_sp+plant_id, sin_apis[sin_apis$Orden %in% c("Hymenoptera"),], sum)
+names(Hym_no_apis)[names(Hym_no_apis) == "Frequency"] <- "Hym_freq_sin_apis"
+
+# hymenopter visitation sin A. mellifera
+visitation<-merge(x=visitation,y=Hym_no_apis,by=c("Year","Site_ID", "Plant_gen_sp","plant_id" ),all.x=T, all.y=F)
+visitation<-visitation %>% mutate(Hym_visit_sin_apis = Hym_freq_sin_apis/Flower_abundance)
 
 
-
+# nota: si sumo Apis_freq y no_apis_freq es igual a frequency (todos los polinizadores)
+# si sumo Apis_freq y Hym_freq_sin-apis es igual a Hym_freq (solo Hymenoptero, sin dipteros y coleopteros)
 
 # Diptera frequency
 dip<-aggregate(Frequency ~ Year+Site_ID+Plant_gen_sp+plant_id, focal[focal$Orden %in% c("Diptera"),], sum)
@@ -658,6 +672,8 @@ visitation<-arrange(visitation,Site_ID, Plant_gen_sp)
 
 #to <- mutate_at(to,"richness08", ~replace(., is.na(.), 0))
 
+
+
 # join visitation and reproductive success
 #solo individuos coincidentes
 total<-merge(x=reprod_success,y=visitation,by=c("Year","Site_ID", "Plant_gen_sp","plant_id"),all.x=F, all.y=F)
@@ -670,7 +686,7 @@ total<-arrange(total,Site_ID, Plant_gen_sp)
 
 
 write_xlsx(total, "C:/Users/estef/git/stability-and-function/Data/Pollinator_Plant.xlsx")
-write.csv(total, "C:/Users/estef/git/stability-and-function/Data/Pollinator_Plant.csv")
+write.csv(total, "C:/Users/estef/git/stability-and-function/Data/Pollinator_Plant_Amellifera_separada.csv")
 write.csv(total1, "C:/Users/estef/git/stability-and-function/Data/Pollinator_Plant_fruityes.csv")
 
 
