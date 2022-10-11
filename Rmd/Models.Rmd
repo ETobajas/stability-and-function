@@ -352,6 +352,19 @@ p1+p2+p3+p4+p5+p6+p7+p8+p9+p10+p11+p12
 
 visitation rate (frequency/ flower abundance) is calculated to all pollinators no apis mellifera.
 
+```{r,echo=FALSE, warning=FALSE,message=FALSE,fig.height = 13,fig.width=15, out.width="100%"}
+#plot
+#plot
+plots_fruitproportion_polli_no_apis <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  group_map(~ ggplot(.) + aes(x=No_Apis_visit_rate, y=fruit_proportion) + 
+  geom_point() + ggtitle(.y[[1]]))
+
+ggarrange(plots_fruitproportion_polli_no_apis[[1]],plots_fruitproportion_polli_no_apis[[2]],plots_fruitproportion_polli_no_apis[[3]],plots_fruitproportion_polli_no_apis[[4]],plots_fruitproportion_polli_no_apis[[5]],plots_fruitproportion_polli_no_apis[[6]],plots_fruitproportion_polli_no_apis[[7]],plots_fruitproportion_polli_no_apis[[8]],plots_fruitproportion_polli_no_apis[[9]],plots_fruitproportion_polli_no_apis[[10]],plots_fruitproportion_polli_no_apis[[11]],plots_fruitproportion_polli_no_apis[[12]], ncol=3, nrow=4)
+
+```
+
+\newpage
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
 
 
@@ -390,7 +403,8 @@ mod_fruitproportion_polli_no_api_glance %>%
   kable_styling(font_size = 8,full_width = F, position="center")
 ```
 
-
+\newpage
+Data were 'prettified'. Consider using `terms="No_Apis_visit_rate [all]"` to get smooth plots.
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%", fig.align='center'}
 
 # model plot 
@@ -436,6 +450,15 @@ p1+p2+p3+p4+p5+p6+p7+p8+p9+p10+p11+p12
 
 Only data of Apis mellifera
 
+Problemas C.libanotis 
+Warning messages:
+1: In vcov.merMod(object, use.hessian = use.hessian) :
+  variance-covariance matrix computed from finite-difference Hessian is
+not positive definite or contains NA values: falling back to var-cov estimated from RX
+2: In vcov.merMod(object, correlation = correlation, sigm = sig) :
+  variance-covariance matrix computed from finite-difference Hessian is
+not positive definite or contains NA values: falling back to var-cov estimated from RX
+
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
 
 # visistation rate A.mellifera
@@ -473,6 +496,8 @@ mod_fruitproportion__apis_glance %>%
  kable("latex",booktabs = TRUE, digits =  3,linesep = "",align = "lccccccc")%>%  kable_styling(font_size = 8,full_width = F, position="center")
 ```
 
+\newpage
+Data were 'prettified'. Consider using `terms="Apis_visit_rate [all]"` to get smooth plots.
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%", fig.align='center'}
 
 # model plot 
@@ -618,7 +643,20 @@ p1+p2+p3+p4+p5+p6+p7+p8+p9+p10+p11+p12
 \newpage 
 
 ## Hymenoptera visitation rate without A.mellifera
+```{r,echo=FALSE, warning=FALSE,message=FALSE,fig.height = 13,fig.width=15, out.width="100%"}
+#plot
+plots_fruitproportion_hyme_no_apis <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp) %>%
+  group_map(~ ggplot(.) + aes(x=Hym_visit_sin_apis, y=fruit_proportion) + 
+              geom_point() + ggtitle(.y[[1]]))
 
+ggarrange(plots_fruitproportion_hyme_no_apis[[1]],plots_fruitproportion_hyme_no_apis[[2]],plots_fruitproportion_hyme_no_apis[[3]],plots_fruitproportion_hyme_no_apis[[4]],plots_fruitproportion_hyme_no_apis[[5]],plots_fruitproportion_hyme_no_apis[[6]],plots_fruitproportion_hyme_no_apis[[7]],plots_fruitproportion_hyme_no_apis[[8]],plots_fruitproportion_hyme_no_apis[[9]],plots_fruitproportion_hyme_no_apis[[10]],plots_fruitproportion_hyme_no_apis[[11]],plots_fruitproportion_hyme_no_apis[[12]], ncol=3, nrow=4)
+
+```
+
+\newpage
+
+Problemas H.calycinum: unable to evaluate scaled gradient and Hessian is numerically singular: parameters are not uniquely determined
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%"}
 
 mod_fruitproportion_hyme_no_apis<-Pollinator_Plant %>%
@@ -656,6 +694,8 @@ mod_fruitproportion_hyme_no_apis_glance %>%
   kable_styling(font_size = 8,full_width = F, position="center")
 ```
 
+\newpage
+Data were 'prettified'. Consider using `terms="Hym_visit_sin_apis [all]"` to get smooth plots
 ```{r, echo=FALSE, warning=FALSE,message=FALSE, out.width="100%", fig.align='center'}
 
 # model plot 
