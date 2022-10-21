@@ -137,22 +137,24 @@ cv_1pollinator2<-pol_plant2 %>%
   ungroup()
 
 
+
+
 ## Richness ##
 
 #  pollinator richness for each plant species per site (Total)
-S<-aggregate(richness ~ Plant_gen_sp+Site_ID, data = Pollinator_Plant,FUN = sum)
+#S<-aggregate(richness ~ Plant_gen_sp+Site_ID, data = Pollinator_Plant,FUN = sum)
 
 #suma de la riqueza media por año para cada plant sp y sitio
-S2<-aggregate(richness ~ Plant_gen_sp+Site_ID, data = pol_plant2,FUN = sum)
+#S2<-aggregate(richness ~ Plant_gen_sp+Site_ID, data = pol_plant2,FUN = sum)
 
 
 
 # join tables con nuevos calculos (sin plant_id)
 full2=full_join(cv_1Fruit2, cv_1Seed2, by = c('Plant_gen_sp', 'Site_ID'))%>%
   full_join (., cv_1pollinator2, by=c('Plant_gen_sp', 'Site_ID')) %>%
-  full_join (., S, by=c('Plant_gen_sp', 'Site_ID'))%>%
-  full_join (., S2, by=c('Plant_gen_sp', 'Site_ID'))%>%
-  rename(cv_1_fruit=fruit_proportion, cv_1_seed=Seeds, cv_1_visitation=visitatio_rate, S_total=richness.x, S_mean=richness.y)
+  #full_join (., S, by=c('Plant_gen_sp', 'Site_ID'))%>%
+  #full_join (., S2, by=c('Plant_gen_sp', 'Site_ID'))%>%
+  rename(cv_1_fruit=fruit_proportion, cv_1_seed=Seeds, cv_1_visitation=visitatio_rate)
 
 
 # correlacion total
@@ -182,7 +184,7 @@ cor(tr2)
 
 
 
-## Synchrony ###
+## pollinator species to calculate richness and synchrony ###
 
 focal<- read.csv("Data/focal.csv") 
 focal<-focal[,-1]
@@ -193,6 +195,7 @@ focal_0 <- focal[!(focal$Pollinator_gen_sp == "NA NA"),] #eliminar polinizadores
 #Data with species in more than 1 site
 focal_0 = focal_0 %>% filter(!Plant_gen_sp %in% spp_out)
 
+focal_0$Pollinator_gen_sp <- sub(" ", "_", focal_0$Pollinator_gen_sp )
 
 levels(factor(focal_0$Plant_gen_sp))
 levels(factor(full$Plant_gen_sp))
@@ -209,7 +212,19 @@ df.result2 <- dcast(df.result, formula = Site_ID + Year +plant_id+Plant_gen_sp ~
 # sin plant_id
 prueba=df.result2 %>%
   group_by(Site_ID,Year, Plant_gen_sp) %>%
-  summarise_if(is.numeric, sum) 
+  summarise_if(is.numeric, sum)  %>%
+  ungroup()
+
+
+# Richness 
+data_long <- gather(prueba, pollinator, frequ, Andrena_agilissima : Xylocopa_violacea , factor_key=T)
+data_long
+
+riqueza= data_long %>%
+  group_by(Site_ID, Plant_gen_sp)  %>%
+  filter(frequ > 0) %>%
+  summarise(S_total= n_distinct(pollinator))
+
 
 
 # log variance ratio (Lepš et al., 2018)
@@ -293,16 +308,13 @@ syn_G2=prueba%>%
  do(av_sync=av_sync(.[4:ncol(prueba)]))
 
 
-syn_G2spearman=prueba%>%
-  group_by(Plant_gen_sp,Site_ID)%>%
-  do(av_sync_spearma=av_sync_spearma(.[4:ncol(prueba)]))
-
 
 
 # join tables con nuevos calculos (sin plant_id)
 full2=full_join(full2, syn_2, by = c('Plant_gen_sp', 'Site_ID'))%>%
   full_join (., syn_LM2, by=c('Plant_gen_sp', 'Site_ID'))%>%
-  full_join (., syn_G2, by=c('Plant_gen_sp', 'Site_ID'))
+  full_join (., syn_G2, by=c('Plant_gen_sp', 'Site_ID'))%>%
+  full_join (., riqueza, by=c('Plant_gen_sp', 'Site_ID'))
 
 head(full2)
 full2$log_VR <- unlist(full2$log_VR)
@@ -314,7 +326,7 @@ full2$ av_sync <- unlist(full2$ av_sync)
 
 # correlacion indices de sincronia
 
-syn_cor<-full2 %>% select(log_VR,syncLM,av_sync)
+syn_cor<-full2 %>% select(log_VR,syncLM,av_sync,S_total)
 
 ## Replace Inf and -Inf with NA
 syn_cor[is.na(syn_cor) | syn_cor == "Inf"] <- 0 
@@ -354,6 +366,33 @@ plots1 <- map2(df_with_plotsb$plot, df_with_plotsb$Plant_gen_sp, ~(.x + labs(tit
 
 plots1[[1]] + plots1[[2]] + plots1[[3]] + plots1[[4]]+plots1[[5]]+plots1[[6]]+plots1[[7]]+
   plots1[[8]]+plots1[[9]]+plots1[[10]]+plots1[[11]]+plots1[[12]]
+
+
+# correlacion synchrony index and richness to different plant species
+correl_syn_richn<-full2 %>% select(Plant_gen_sp,S_total,log_VR,syncLM,av_sync)
+
+## Replace Inf and -Inf with NA
+correl_syn_richn[is.na(correl_syn_richn) | correl_syn_richn == "Inf"] <- NA 
+correl_syn_richn[is.na(correl_syn_richn) | correl_syn_richn == "-Inf"] <- NA 
+
+correl_syn_richn <- mutate_all(correl_syn_richn, ~replace(., is.na(.), 0))
+
+
+
+df_with_plots_syn_rich <- correl_syn_richn %>%
+  group_by(Plant_gen_sp) %>%
+  nest() %>%
+  mutate(plot = map(data, function(.x) {
+    .x  %>%
+      cor() %>%
+      ggcorrplot::ggcorrplot(show.diag = F, type="lower",lab=TRUE)
+  }))
+
+plots1 <- map2(df_with_plots_syn_rich$plot, df_with_plots_syn_rich$Plant_gen_sp, ~(.x + labs(title = .y)))
+
+
+ plots1[[2]] + plots1[[3]] +plots1[[6]]+
+  plots1[[8]]+plots1[[9]]
 
 # tabla correlacion 
 b_cor <- b %>%
@@ -403,7 +442,7 @@ full_2[is.na(full_2) | full_2 == "Inf"] <- NA
 full_2[is.na(full_2) | full_2 == "-Inf"] <- NA 
 
 
-# Relationship between fruit proportion stability and visitation rate stability
+# Relationship between fruit proportion stability and visitation rate stability----
 # new data (full_2)
 
 plots_sta_fruit <- full_2 %>%
@@ -479,7 +518,7 @@ sta_fruit.1$plots[[7]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "La
   labs(x = "visitation rate stability",y="fruit proportion stability",subtitle = "L.stoechas")+  theme_classic()
 
 
-# Relationship between seed number stability and visitation rate stability
+# Relationship between seed number stability and visitation rate stability----
 
 plots_sta_seed <- full_2 %>%
   group_by(Plant_gen_sp) %>%
@@ -552,7 +591,7 @@ sta_seed.1$plots[[7]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lav
 
 ######
 
-#relationship between richness-synchrony with different synchrony indice.
+#relationship between richness-synchrony with different synchrony indice.----
 
 # new data (full_2)
 # total richness ~ logVR
@@ -918,7 +957,7 @@ rich_mean_Gross.2$plots[[7]] + geom_point(data = full_2 %>% filter(Plant_gen_sp 
 
 
 ######
-# Stability of visitation rate is affected by richness and synchrony
+# Stability of visitation rate is affected by richness and synchrony----
 
 #model 1: total richness + log VR
 
@@ -1015,6 +1054,44 @@ sta_polli2.1$plots[[7]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "L
 
 
 #model 2: total richness + Lorea and Mazancourt index
+# probar modelo general con plant specie como random
+
+# visreg(sta_gene, xvar = "S_total", by = "Plant_gen_sp", re.form = NULL, overlay = T)
+# levels(factor(full_2$Plant_gen_sp))
+# gene=full_2 %>%
+# filter(!Plant_gen_sp %in% c("Halimium halimifolium", "Lavandula pedunculata"))
+# 
+# sta_gene_lm=lm(cv_1_visitation~S_total+syncLM, data=gene)
+# summary(sta_gene_lm)
+# plot_model(sta_gene_lm, type="pred")
+# 
+# 
+# sta_gene= lmer (cv_1_visitation~S_total+syncLM+ (1|Plant_gen_sp), data = gene)
+# summary(sta_gene)
+# plot_model(sta_gene, type="pred")
+# plot_model(sta_gene, type = "re")
+# 
+# sta_gene_site= lmer (cv_1_visitation~S_total+syncLM+ (1|Site_ID), data = gene)
+# summary(sta_gene_site)
+# plot_model(sta_gene_site, type="pred")
+# plot_model(sta_gene_site, type = "re")
+# 
+# ggplot(gene,
+#        aes(x = Plant_gen_sp,
+#            y = cv_1_visitation)) +
+#   geom_boxplot()+ geom_jitter(aes(color = Site_ID))
+
+
+##########################
+
+levels(factor(full_2$Plant_gen_sp))
+full_clear=full_2 %>%
+  filter(!Plant_gen_sp=="Halimium calycinum") %>%
+  filter(!Plant_gen_sp=="Lavandula stoechas")
+
+#write.csv(full_clear, "C:/Users/estef/git/stability-and-function/Data/Stability_fivespecies.csv")
+
+
 sta_polli3<-full_2 %>%
   nest_by(Plant_gen_sp) %>%
   mutate(mod = list(lm(cv_1_visitation~S_total+syncLM,data))) %>%
@@ -1022,6 +1099,15 @@ sta_polli3<-full_2 %>%
   ungroup()
 
 
+sta_polli3_prue<-full_2 %>%
+  nest_by(Plant_gen_sp) %>%
+  mutate(mod = list(lm(cv_1_visitation~S_total+syncLM,data))) 
+
+#cis=sta_polli3_prue$mod[[6]]
+#vif(cis)
+
+
+  
 #goodness of fit measures
 sta_polli_glance3<-full_2 %>%
   nest_by(Plant_gen_sp) %>%
@@ -1039,28 +1125,31 @@ sta_polli3.1 <- full_2 %>%
                         geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .1)))
 
 
+par( mfrow= c(5,1) )
+p1=sta_polli3.1$plots[[1]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Cistus crispus")), aes(x =  S_total, y = cv_1_visitation))+ 
+  labs(x = "Richness",y="visitation rate stability",subtitle = "C.crispus",cex.sub=0.2)+
+  theme_classic()+theme( plot.subtitle = element_text(face = "italic"))
 
-sta_polli3.1$plots[[1]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Cistus crispus")), aes(x =  S_total, y = cv_1_visitation))+ 
-  labs(x = "S_total",y="visitation rate stability",subtitle = "C.crispus",cex.sub=0.2)+
-  theme_classic()
+p2=sta_polli3.1$plots[[2]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(x =  S_total, y = cv_1_visitation))+ 
+  labs(x = "Richness",y="visitation rate stability",subtitle = "C.ladanifer")+  theme_classic()+theme( plot.subtitle = element_text(face = "italic"))
 
-sta_polli3.1$plots[[2]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus ladanifer"), aes(x =  S_total, y = cv_1_visitation))+ 
-  labs(x = "S_total",y="visitation rate stability",subtitle = "C.ladanifer")+  theme_classic()
+p3=sta_polli3.1$plots[[3]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(x =  S_total, y = cv_1_visitation))+ 
+  labs(x = "Richness",y="visitation rate stability",subtitle = "C.salviifolius")+  theme_classic()+theme( plot.subtitle = element_text(face = "italic"))
 
-sta_polli3.1$plots[[3]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(x =  S_total, y = cv_1_visitation))+ 
-  labs(x = "S_total",y="visitation rate stability",subtitle = "C.salviifolius")+  theme_classic()
+p4=sta_polli3.1$plots[[4]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Halimium halimifolium"), aes(x =  S_total, y = cv_1_visitation))+ 
+ labs(x = "Richness",y="visitation rate stability",subtitle = "H.halimifolium")+  theme_classic()+theme( plot.subtitle = element_text(face = "italic"))
 
-sta_polli3.1$plots[[4]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Halimium calycinum"), aes(x =  S_total, y = cv_1_visitation))+ 
-  labs(x = "S_total",y="visitation rate stability",subtitle = "H.calycinum")+  theme_classic()
+p5=sta_polli3.1$plots[[5]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Lavandula pedunculata")), aes(x =  S_total, y = cv_1_visitation))+ 
+  labs(x = "Richness",y="visitation rate stability",subtitle = "L.pedunculata")+  theme_classic()+theme( plot.subtitle = element_text(face = "italic"))
 
-sta_polli3.1$plots[[5]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Halimium halimifolium")), aes(x =  S_total, y = cv_1_visitation))+ 
-  labs(x = "S_total",y="visitation rate stability",subtitle = "H.halimifolium")+  theme_classic()
 
-sta_polli3.1$plots[[6]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Lavandula pedunculata")), aes(x =  S_total, y = cv_1_visitation))+ 
-  labs(x = "S_total",y="visitation rate stability",subtitle = "L.pedunculata")+  theme_classic()
+ggarrange(p1,p2,p3,p4,p5, ncol = 5, nrow = 1)
 
-sta_polli3.1$plots[[7]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Lavandula stoechas")), aes(x =  S_total, y = cv_1_visitation))+ 
-  labs(x = "S_total",y="visitation rate stability",subtitle = "L.stoechas")+  theme_classic()
+# sta_polli3.1$plots[[6]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Lavandula pedunculata")), aes(x =  S_total, y = cv_1_visitation))+ 
+#   labs(x = "S_total",y="visitation rate stability",subtitle = "L.pedunculata")+  theme_classic()
+# 
+# sta_polli3.1$plots[[7]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Lavandula stoechas")), aes(x =  S_total, y = cv_1_visitation))+ 
+#   labs(x = "S_total",y="visitation rate stability",subtitle = "L.stoechas")+  theme_classic()
 
 
 # model2 plot (cv_1_visitation~syncLM)
@@ -1083,17 +1172,17 @@ sta_polli3.2$plots[[2]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "C
 sta_polli3.2$plots[[3]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Cistus salviifolius"), aes(x =  syncLM, y = cv_1_visitation))+ 
   labs(x = "Lorea and Mazancourt index",y="visitation rate stability",subtitle = "C.salviifolius")+  theme_classic()
 
-sta_polli3.2$plots[[4]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Halimium calycinum"), aes(x =  syncLM, y = cv_1_visitation))+ 
-  labs(x = "Lorea and Mazancourt index",y="visitation rate stability",subtitle = "H.calycinum")+  theme_classic()
-
-sta_polli3.2$plots[[5]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Halimium halimifolium")), aes(x =  syncLM, y = cv_1_visitation))+ 
+sta_polli3.2$plots[[4]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Halimium halimifolium"), aes(x =  syncLM, y = cv_1_visitation))+ 
   labs(x = "Lorea and Mazancourt index",y="visitation rate stability",subtitle = "H.halimifolium")+  theme_classic()
 
-sta_polli3.2$plots[[6]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(x =  syncLM, y = cv_1_visitation))+ 
+sta_polli3.2$plots[[5]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Lavandula pedunculata")), aes(x =  syncLM, y = cv_1_visitation))+ 
   labs(x = "Lorea and Mazancourt index",y="visitation rate stability",subtitle = "L.pedunculata")+  theme_classic()
 
-sta_polli3.2$plots[[7]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Lavandula stoechas")), aes(x =  syncLM, y = cv_1_visitation))+ 
-  labs(x = "Lorea and Mazancourt index",y="visitation rate stability",subtitle = "L.stoechas")+  theme_classic()
+# sta_polli3.2$plots[[6]] + geom_point(data = full_2 %>% filter(Plant_gen_sp == "Lavandula pedunculata"), aes(x =  syncLM, y = cv_1_visitation))+ 
+#   labs(x = "Lorea and Mazancourt index",y="visitation rate stability",subtitle = "L.pedunculata")+  theme_classic()
+# 
+# sta_polli3.2$plots[[7]] + geom_point(data = na.omit(full_2 %>% filter(Plant_gen_sp == "Lavandula stoechas")), aes(x =  syncLM, y = cv_1_visitation))+ 
+#   labs(x = "Lorea and Mazancourt index",y="visitation rate stability",subtitle = "L.stoechas")+  theme_classic()
 
 
 #model: total richness + Gross index
