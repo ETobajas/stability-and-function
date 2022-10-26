@@ -112,7 +112,7 @@ p_cv_visit+ plot_layout(guides = "collect")
 ## Stability of visitation rate and stability of the plant reproductive success
 
 Stability of fruit proportion varied from 2.62 to 120.66 (mean ± SE: 19.806 ± 3.615), whereas the stability of seed number ranged 1.28 to 55.86 (7.018 ± 1.441).
-When we analyzed whether the stability of the visitation rate affected the stability of the plant reproductive success, we found no relationship between this and the stability of the fruit proportion (Estimate: 4.692; std. error: 4.545), and neither with the stability of the number of seeds (Estimate: 0.859; std. error: 1.825).
+When we analyzed whether the stability of the visitation rate affected the stability of the plant reproductive success, we found no relationship between this and the stability of the fruit proportion (Estimate: 4.692; std. error: 4.545) (Fig 2A), and neither with the stability of the number of seeds (Estimate: 0.859; std. error: 1.825) (Fig 2B).
 
 ```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 10,fig.width=20,out.width="100%"}
 
