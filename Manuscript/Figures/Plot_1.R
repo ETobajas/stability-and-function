@@ -37,7 +37,8 @@ p1=ggplot(effe_mod_sta, aes(asynchrony, fit)) + geom_line(size=1)+
   geom_point(data = data_plant, aes(x =  asynchrony, y = cv_1_visitation, color=Plant_gen_sp), size=3)+
   theme_classic ()+theme(panel.border = element_rect(colour = "black", fill=NA))+
   labs(x = "Asynchrony of pollinator",y="Stability of visitation rate")+
-  guides(colour=guide_legend(nrow=2,byrow=TRUE))
+  guides(colour=guide_legend(nrow=2,byrow=TRUE))+ theme(legend.text = element_text(face="italic"))
+
 
 
 #getting effects for richness
@@ -52,7 +53,9 @@ p2=ggplot(effe2_mod_sta, aes(S_total, fit)) + geom_line(size=1)+
   geom_point(data = data_plant, aes(x =  S_total, y = cv_1_visitation, color=Plant_gen_sp), size=3)+
   theme_classic ()+theme(panel.border = element_rect(colour = "black", fill=NA))+
   labs(x = "Richness of pollinator",y="") +
-  guides(colour=guide_legend(nrow=2,byrow=TRUE))
+  guides(colour=guide_legend(nrow=2,byrow=TRUE))+ theme(legend.text = element_text(face="italic"))
+  
+
 
 
 #join plots
