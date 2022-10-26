@@ -36,11 +36,13 @@ p1=ggplot(effe_mod_sta, aes(asynchrony, fit)) + geom_line(size=1)+
   scale_y_continuous(limits = c(-0.14, 6))+ labs(color='Plant species')+
   geom_point(data = data_plant, aes(x =  asynchrony, y = cv_1_visitation, color=Plant_gen_sp), size=3)+
   theme_classic ()+theme(panel.border = element_rect(colour = "black", fill=NA))+
-  labs(x = "Asynchrony of pollinator",y="Stability of visitation rate")
+  labs(x = "Asynchrony of pollinator",y="Stability of visitation rate")+
+  guides(colour=guide_legend(nrow=2,byrow=TRUE))
 
 
 #getting effects for richness
 effe2_mod_sta <-data.frame( effect("S_total", mod1_sta, se = TRUE))
+
 
 
 #plot model of richness
@@ -49,12 +51,14 @@ p2=ggplot(effe2_mod_sta, aes(S_total, fit)) + geom_line(size=1)+
   scale_y_continuous(limits = c(-0.14, 6))+  labs(color='Plant species')+
   geom_point(data = data_plant, aes(x =  S_total, y = cv_1_visitation, color=Plant_gen_sp), size=3)+
   theme_classic ()+theme(panel.border = element_rect(colour = "black", fill=NA))+
-  labs(x = "Richness of pollinator",y="")
+  labs(x = "Richness of pollinator",y="") +
+  guides(colour=guide_legend(nrow=2,byrow=TRUE))
 
 
 #join plots
 p_cv_visit=p1+p2+ 
   plot_annotation(tag_levels = "A")& 
   theme(plot.tag.position = c(0, 1),
-        plot.tag = element_text(hjust = -3.5, vjust = 1.5, size=15))& theme(legend.position = "bottom",legend.background = element_blank(),legend.box.background = element_rect(colour = "black"))
+        plot.tag = element_text(hjust = -0.5, size=15))& 
+  theme(legend.position = "bottom",legend.background = element_blank(),legend.box.background = element_rect(colour = "black"))
 p_cv_visit+ plot_layout(guides = "collect")
