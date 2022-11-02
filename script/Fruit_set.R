@@ -297,6 +297,7 @@ reprod_success0<-arrange(reprod_success0,Site_ID, Plant_gen_sp)
 ### Focal ###
 
 focal <- read.csv("Data_BeeFun/master_focals.csv")
+str(focal)
 
 # remove years (2021,2020)
 levels(factor(focal$Year))
@@ -491,7 +492,20 @@ focal$plant_id = ifelse(focal$Plant_individual=="AFE" |focal$Plant_individual== 
 
 levels(factor(focal$plant_id))
 
-write.csv(focal, "C:/Users/estef/git/stability-and-function/Data/focal.csv")
+# add time of observation 
+# 2015-2016 = observing all visitors during a 5 minute census
+# 2017-2018-2019 = 3 minute census
+focal=focal %>%
+  mutate(time_obs= ifelse(Year== "2015"| Year=="2016", 5,3)) %>%
+  relocate(time_obs, .before = Time)
+
+
+# calculate visitation frequency in 1 minute
+focal=focal%>%
+  mutate(freq_minute= Frequency/time_obs)%>%
+  relocate(freq_minute, .before = Flower_abundance)
+
+#write.csv(focal, "C:/Users/estef/git/stability-and-function/Data/focal.csv")
 
 
 # Flower abundance
@@ -504,10 +518,20 @@ flower_abun<-aggregate(Flower_abundance ~ Year+Site_ID+Plant_gen_sp+plant_id, da
 Pol_frequency<-aggregate(Frequency ~ Year+Site_ID+Plant_gen_sp+plant_id, data = focal, FUN = sum)
 
 
+# pollinator frequency in 1 minute ##
+## pollinator frequency (Total (sum)) per plant individual, species plants, site and year
+Pol_frequency_minut<-aggregate(freq_minute ~ Year+Site_ID+Plant_gen_sp+plant_id, data = focal, FUN = sum)
+
+
+
 #link flower_abun and Pol_frequency (dejando individuos que tienen flores pero no visitas)
-visitation<-merge(x=flower_abun,y=Pol_frequency,by=c("Year","Site_ID", "Plant_gen_sp","plant_id" ),all.x=T, all.y=F)
+visitation=left_join(flower_abun, Pol_frequency, by = c("Year","Site_ID", "Plant_gen_sp","plant_id" ))%>%
+  left_join (., Pol_frequency_minut, by=c("Year","Site_ID", "Plant_gen_sp","plant_id" ))
+
 
 sum(is.na(visitation$Frequency)) # 45 observ (plant id) no tienen visitas polinizador
+
+sum(is.na(visitation$freq_minute)) # 45 observ (plant id) no tienen visitas polinizador
 
 
 visitation<-visitation%>%
@@ -515,6 +539,13 @@ visitation<-visitation%>%
 
 # frequency/ flower abundance
 visitation<-visitation %>% mutate(visitatio_rate = Frequency/Flower_abundance)
+
+# visitiation rate in 1 minute (frequency in 1 minute/ flower abundante)
+visitation<-visitation %>% mutate(visitation_rate_minute = freq_minute/Flower_abundance)
+
+
+## IMPORTANTE: calculada la visitation rate en un minuto para todos los polinizadores juntos
+## no se ha calculado para A.mellifera, ni para hymnenoptera, diptera o coleoptera
 
 
 # Apis mellifera frequency (solo A.mellifera)
@@ -597,7 +628,7 @@ visitation<-arrange(visitation,Site_ID, Plant_gen_sp)
 # calculating richness
 focal_0 <- focal[!(focal$Pollinator_gen_sp == "NA NA"),] #eliminar polinizadores NA NA
 
-focal_1<-data.frame(focal_0[,c(1,2,6,29,30)])
+focal_1<-data.frame(focal_0[,c(1,2,6,31,32)])
 
 focal1 <- dcast(focal_1, formula = Site_ID + Year +Plant_gen_sp+plant_id ~ Pollinator_gen_sp)
 
@@ -677,6 +708,8 @@ visitation<-arrange(visitation,Site_ID, Plant_gen_sp)
 # join visitation and reproductive success
 #solo individuos coincidentes
 total<-merge(x=reprod_success,y=visitation,by=c("Year","Site_ID", "Plant_gen_sp","plant_id"),all.x=F, all.y=F)
+
+
 # eliminando cuando no hay fruto pero si polinizador 
 total1<-merge(x=reprod_success,y=visitation,by=c("Year","Site_ID", "Plant_gen_sp","plant_id"),all.x=T, all.y=F)
 
@@ -686,7 +719,7 @@ total<-arrange(total,Site_ID, Plant_gen_sp)
 
 
 write_xlsx(total, "C:/Users/estef/git/stability-and-function/Data/Pollinator_Plant.xlsx")
-write.csv(total, "C:/Users/estef/git/stability-and-function/Data/Pollinator_Plant_Amellifera_separada.csv")
+write.csv(total, "C:/Users/estef/git/stability-and-function/Data/Pollinator_Plant.csv")
 write.csv(total1, "C:/Users/estef/git/stability-and-function/Data/Pollinator_Plant_fruityes.csv")
 
 
