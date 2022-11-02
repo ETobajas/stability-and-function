@@ -15,10 +15,14 @@ library(effects)
 
 
 
-Pollinator_Plant<- read.csv("Data/Pollinator_Plant_Apis_separada.csv") #400 observaciones
+Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") #400 observaciones
 Pollinator_Plant<-Pollinator_Plant[,-1]
 Pollinator_Plant$Year= as.factor(Pollinator_Plant$Year)
 str(Pollinator_Plant)
+
+levels(factor(Pollinator_Plant$Site_ID))
+
+
 
 #Species out (plant species only in one site)
 spp_out <- Pollinator_Plant %>%
@@ -35,6 +39,26 @@ Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
 
 
+
+#number of plant species per site
+num_plant_site= Pollinator_Plant %>%
+  group_by(Site_ID)  %>%
+  summarise(numb= n_distinct(Plant_gen_sp))
+
+ave_plant <- num_plant_site%>% 
+  summarize(mean_plant = mean(numb, na.rm=T),
+            standarderror = sd(numb, na.rm = TRUE)/sqrt(n()))
+
+levels(factor(Pollinator_Plant$Plant_gen_sp))
+
+
+# number of plant individual per plant species
+num_ind_plant= Pollinator_Plant %>%
+  group_by(Plant_gen_sp)  %>%
+  summarise(numb= n_distinct(plant_id))
+
+
+
 #we analyze whether the fruit proportion is affected by richness, 
 #year and its interaction for all data 
 #with plant species nested within site as random effect
@@ -42,6 +66,8 @@ Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
 mod1_to= glmer(cbind(fruit_formado, Fruit_No) ~ richness * Year + (1|Site_ID/Plant_gen_sp),family=binomial,data=Pollinator_Plant)
 summary(mod1_to)
 vif(mod1_to)
+
+car::Anova(mod1_to,Type="III")
 
 plot_model(mod1_to, type = "pred")
 plot_model(mod1_to, type = "int")
@@ -59,22 +85,26 @@ ggplot(ee, aes(richness,fit, group=Year, color = Year, fill=Year))+
 
 
 
-# and visitation rate, year and its interaction
-mod2_to= glmer(cbind(fruit_formado, Fruit_No) ~ visitatio_rate * Year + (1|Site_ID/Plant_gen_sp),family=binomial,data=Pollinator_Plant)
+# and visitation rate/minute, year and its interaction
+mod2_to= glmer(cbind(fruit_formado, Fruit_No) ~ visitation_rate_minute * Year + (1|Site_ID/Plant_gen_sp),family=binomial,data=Pollinator_Plant)
 summary(mod2_to)
+
+car::Anova(mod2_to,Type="III")
 
 plot_model(mod2_to, type = "pred")
 plot_model(mod2_to, type = "int")
 
 #getting effects for the two variables
-ee_1 <- as.data.frame(Effect(c("visitatio_rate","Year"),mod = mod2_to))
+ee_1 <- as.data.frame(Effect(c("visitation_rate_minute","Year"),mod = mod2_to))
 
 #plot
-ggplot(ee_1, aes(visitatio_rate,fit, group=Year, color = Year, fill=Year))+
+ggplot(ee_1, aes(visitation_rate_minute,fit, group=Year, color = Year, fill=Year))+
   geom_line(size=0.8)+
   geom_ribbon(aes(ymin = lower, ymax = upper), alpha = .2,colour=NA)+
-  geom_point(data=Pollinator_Plant, aes(visitatio_rate, fruit_proportion))+
-  labs(x = "visitation rate",y="fruit proportion")
+  geom_point(data=Pollinator_Plant, aes(visitation_rate_minute, fruit_proportion))+
+  labs(x = "visitation rate/minute",y="fruit proportion")
+
+
 
 #we also analyze whether the seed number is affected by richness, 
 #year and its interaction for all data 
@@ -89,9 +119,10 @@ Pollinator_Plant=Pollinator_Plant %>% group_by(Plant_gen_sp)%>%
 mod3_tot= lmer(seed_sc ~richness * Year + (1|Site_ID/Plant_gen_sp),data=Pollinator_Plant)
 summary(mod3_tot)
 
+car::Anova(mod3_tot,Type="III")
 
 plot_model(mod3_tot, type = "pred")
-plot_model(mod3_tot, type = "int", show.data = T)
+plot_model(mod3_tot, type = "int", show.data = F)
 
 #getting effects for the two variables
 ee_2 <- as.data.frame(Effect(c("richness","Year"),mod = mod3_tot))
@@ -103,24 +134,24 @@ ggplot(ee_2, aes(richness,fit, group=Year, color = Year, fill=Year))+
   geom_point(data=Pollinator_Plant, aes(richness, seed_sc))+
   labs(x = "richness",y="seed number")
 
-# and visitation rate, year and its interaction
+# and visitation rate/minute, year and its interaction
 #model
-mod4_tot= lmer(seed_sc ~visitatio_rate * Year + (1|Site_ID/Plant_gen_sp),data=Pollinator_Plant)
+mod4_tot= lmer(seed_sc ~visitation_rate_minute * Year + (1|Site_ID/Plant_gen_sp),data=Pollinator_Plant)
 summary(mod4_tot)
-
+Anova(mod4_tot, type="III")
 
 plot_model(mod4_tot, type = "pred")
 plot_model(mod4_tot, type = "int")
 
 #getting effects for the two variables
-ee_3 <- as.data.frame(Effect(c("visitatio_rate","Year"),mod = mod4_tot))
+ee_3 <- as.data.frame(Effect(c("visitation_rate_minute","Year"),mod = mod4_tot))
 
 #plot
-ggplot(ee_3, aes(visitatio_rate,fit, group=Year, color = Year, fill=Year))+
+ggplot(ee_3, aes(visitation_rate_minute,fit, group=Year, color = Year, fill=Year))+
   geom_line(size=0.8)+
   geom_ribbon(aes(ymin = lower, ymax = upper), alpha = .2,colour=NA)+
-  geom_point(data=Pollinator_Plant, aes(visitatio_rate, seed_sc))+
-  labs(x = "visitation rate",y="seed number")
+  geom_point(data=Pollinator_Plant, aes(visitation_rate_minute, seed_sc))+
+  labs(x = "visitation rate/minute",y="seed number")
 
 
 
@@ -139,7 +170,7 @@ levels(factor(year2015$Plant_gen_sp)) # 12 plant species
 # general model (plant species nested within site as random effect)
 
 # model: Richness and visitation rate
-mod1_2015= glmer(cbind(fruit_formado, Fruit_No) ~ richness + visitatio_rate + (1|Site_ID/Plant_gen_sp),family=binomial,data=year2015)
+mod1_2015= glmer(cbind(fruit_formado, Fruit_No) ~ richness + visitation_rate_minute + (1|Site_ID/Plant_gen_sp),family=binomial,data=year2015)
 summary(mod1_2015)
 
 vif(mod1_2015) #check for correlations between variables included in model
