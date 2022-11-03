@@ -183,31 +183,33 @@ prueba=prueba %>%
   relocate(time_obs, .before = Andrena_agilissima)
 
 # add round per year
-round=focal %>%
-  group_by(Year) %>%
-  summarise_at(vars(8), funs(max(., na.rm=TRUE)))
+round=focal_0 %>%
+  group_by(Year, Plant_gen_sp,Site_ID) %>%
+  summarise(round= n_distinct(Round))
+
 
 prueba=left_join(prueba, round) %>%
-  relocate(Round, .before = Plant_gen_sp)
+  relocate(round, .before = Plant_gen_sp)
 
 
 # calculate sample effort: different rounds per year and different observation time. 
 # We multiply round by time = effort. 
-# The abundance of each pollinator is multiplied by effort and divided by its year's effort.
-
 prueba= prueba %>%
-  mutate(effort= Round*time_obs) %>%
+  mutate(effort= round*time_obs) %>%
   relocate(effort, .before = Andrena_agilissima)
 
-mean(prueba$effort)
+# The abundance of each pollinator is divided by observation time
+prueba_time=prueba %>%
+  mutate_at(vars(c(7:130)),funs(./time_obs))
 
-prueba_2=prueba %>%
-  mutate_at(vars(c(7:130)),funs(.*mean(prueba$effort)/effort))
+# The abundance of each pollinator is divided by effort 
+prueba_effort=prueba %>%
+  mutate_at(vars(c(7:130)),funs(./effort))
 
 
 
 # Richness 
-data_long <- gather(prueba_2, pollinator, frequ, Andrena_agilissima : Xylocopa_violacea , factor_key=T)
+data_long <- gather(prueba, pollinator, frequ, Andrena_agilissima : Xylocopa_violacea , factor_key=T)
 data_long
 
 riqueza= data_long %>%
@@ -227,9 +229,19 @@ log_VR <- function(x){
 
 
 # un dato por sp planta, sitio y año (sin plant_id)
-syn_2=prueba_2%>% 
+# corrected observation time
+syn_1=prueba_time%>% 
   group_by(Plant_gen_sp,Site_ID)%>% 
   do(log_VR=log_VR(.[7:130]))
+
+
+# corrected effort
+syn_2=prueba_effort%>% 
+  group_by(Plant_gen_sp,Site_ID)%>% 
+  do(log_VR=log_VR(.[7:130]))
+
+
+
 
 # Loreau & Mazancourt syncrony index
 #sum of the tempotral covariances of all species / sum of sqrt of the variances squared
@@ -240,9 +252,17 @@ syncLM <- function(x){
 
 
 # un dato por sp planta, sitio y año (sin plant_id)
-syn_LM2=prueba_2%>% 
+# corrected observation time
+syn_LM1=prueba_time%>% 
   group_by(Plant_gen_sp,Site_ID)%>% 
   do(syncLM=syncLM(.[7:130]))
+
+
+# corrected effort
+syn_LM2=prueba_effort %>% 
+  group_by(Plant_gen_sp,Site_ID)%>% 
+  do(syncLM=syncLM(.[7:130]))
+
 
 
 
@@ -276,31 +296,42 @@ if(w){
 # av_sync(x = test[ ,4:ncol(test)])
 
 
-
-syn_G2=prueba_2%>%
+# corrected observation time
+syn_G1=prueba_time%>%
  group_by(Plant_gen_sp,Site_ID)%>%
- do(av_sync=av_sync(.[7:ncol(prueba_2)]))
+ do(av_sync=av_sync(.[7:ncol(prueba_time)]))
 
-
+# corrected effort
+syn_G2=prueba_effort%>%
+  group_by(Plant_gen_sp,Site_ID)%>%
+  do(av_sync=av_sync(.[7:ncol(prueba_effort)]))
 
 
 # join tables con nuevos calculos (sin plant_id)
-full2=full_join(full2, syn_2, by = c('Plant_gen_sp', 'Site_ID'))%>%
+full2=full_join(full2, syn_1, by = c('Plant_gen_sp', 'Site_ID'))%>%
+  full_join (., syn_2, by=c('Plant_gen_sp', 'Site_ID'))%>%
+  full_join (., syn_LM1, by=c('Plant_gen_sp', 'Site_ID'))%>%
   full_join (., syn_LM2, by=c('Plant_gen_sp', 'Site_ID'))%>%
+  full_join (., syn_G1, by=c('Plant_gen_sp', 'Site_ID'))%>%
   full_join (., syn_G2, by=c('Plant_gen_sp', 'Site_ID'))%>%
-  full_join (., riqueza, by=c('Plant_gen_sp', 'Site_ID'))
+  full_join (., riqueza, by=c('Plant_gen_sp', 'Site_ID'))%>%
+  rename(log_VR_time=log_VR.x,log_VR_effort=log_VR.y, syncLM_time=syncLM.x, syncLM_effort=syncLM.y, av_sync_time=av_sync.x, av_sync_effort=av_sync.y)
+
 
 head(full2)
-full2$log_VR <- unlist(full2$log_VR)
-full2$syncLM <- unlist(full2$syncLM)
-full2$ av_sync <- unlist(full2$ av_sync)
+full2$log_VR_time <- unlist(full2$log_VR_time)
+full2$log_VR_effort <- unlist(full2$log_VR_effort)
+full2$syncLM_time <- unlist(full2$syncLM_time)
+full2$syncLM_effort <- unlist(full2$syncLM_effort)
+full2$ av_sync_time <- unlist(full2$ av_sync_time)
+full2$ av_sync_effort <- unlist(full2$ av_sync_effort)
 
 #write.csv(full2, "C:/Users/estef/git/stability-and-function/Data/Stability.csv")
 
 
 # correlacion indices de sincronia
 
-syn_cor<-full2 %>% select(log_VR,syncLM,av_sync,S_total)
+syn_cor<-full2 %>% select(log_VR_time,log_VR_effort,syncLM_time,syncLM_effort,av_sync_time,av_sync_effort)
 
 ## Replace Inf and -Inf with NA
 syn_cor[is.na(syn_cor) | syn_cor == "Inf"] <- 0 
@@ -314,7 +345,7 @@ cor(syn_cor)
 #correlation por plant species
 
 # correlacion con nuevos calculos (full2 = sin plant_id)
-b<-full2 %>% select(Plant_gen_sp,cv_1_fruit, cv_1_seed,cv_1_visitation,S_total,S_mean,log_VR,syncLM,av_sync)
+b<-full2 %>% select(Plant_gen_sp,cv_1_fruit, cv_1_seed,cv_1_visitation,S_total,log_VR_time,log_VR_effort,syncLM_time,syncLM_effort,av_sync_time,av_sync_effort)
 
 ## Replace Inf and -Inf with NA
 b[is.na(b) | b == "Inf"] <- NA 
@@ -343,7 +374,7 @@ plots1[[1]] + plots1[[2]] + plots1[[3]] + plots1[[4]]+plots1[[5]]+plots1[[6]]+pl
 
 
 # correlacion synchrony index and richness to different plant species
-correl_syn_richn<-full2 %>% select(Plant_gen_sp,S_total,log_VR,syncLM,av_sync)
+correl_syn_richn<-full2 %>% select(Plant_gen_sp,cv_1_fruit, cv_1_seed,cv_1_visitation,S_total,log_VR_time,log_VR_effort,syncLM_time,syncLM_effort,av_sync_time,av_sync_effort)
 
 ## Replace Inf and -Inf with NA
 correl_syn_richn[is.na(correl_syn_richn) | correl_syn_richn == "Inf"] <- NA 
