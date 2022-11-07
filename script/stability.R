@@ -33,52 +33,62 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
-# replace NAs by 0
-Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
+
+# plant species with only one year
+remo=Pollinator_Plant %>%
+  group_by(Plant_gen_sp,Site_ID) %>%
+  summarise(Unique_Id = n_distinct(Year)) %>%
+  filter(Unique_Id == 1) %>%
+  select(Plant_gen_sp, Site_ID) 
+
+# Data with species in more one year
+Pollinator_Plant= anti_join(Pollinator_Plant, remo)
+
 
 
 # datos sin plant_id (mean de las variables porque hay plantas con 2 indv, otras 3, etc)
-#nos quedamos con sitio - año - plant species
+# nos quedamos con sitio - año - plant species
 pol_plant2=Pollinator_Plant %>%
   group_by(Site_ID,Year, Plant_gen_sp) %>%
   summarise_if(is.numeric, mean)
 
-levels(factor(pol_plant2$Plant_gen_sp)) #12 plant species 
+levels(factor(pol_plant2$Plant_gen_sp)) #11 plant species 
 
 
 pol_plant2$Year <- factor(pol_plant2$Year)
+
 
 # plot fruit proportion and year for each plant species and site 
 plots3 <- pol_plant2 %>%
   group_by(Plant_gen_sp) %>%
   group_map(~ ggplot(.) + aes(x=Year, y=fruit_proportion, col =factor(Site_ID), shape=factor(Site_ID)) + 
-              scale_shape_manual(values = c(15,16,17,18,6,7,8,9,10,11,12,13,14))+ geom_point(size = 3) + ggtitle(.y[[1]]))
+              scale_shape_manual(values = c(15,16,17,18,6,7,8,9,10,11,12,13))+ geom_point(size = 3) + ggtitle(.y[[1]]))
 
 plots3[[1]]+plots3[[2]]+plots3[[3]]+plots3[[4]]
 plots3[[5]]+plots3[[6]]+plots3[[7]]+plots3[[8]] 
-plots3[[9]]+plots3[[10]]+plots3[[11]]+plots3[[12]]
+plots3[[9]]+plots3[[10]]+plots3[[11]]
 
 
 # plot seed number and year for each plant species and site 
 plots3_seed <- pol_plant2 %>%
   group_by(Plant_gen_sp) %>%
   group_map(~ ggplot(.) + aes(x=Year, y=Seeds, col =factor(Site_ID), shape=factor(Site_ID)) + 
-              scale_shape_manual(values = c(15,16,17,18,6,7,8,9,10,11,12,13,14))+ geom_point(size = 3) + ggtitle(.y[[1]]))
+              scale_shape_manual(values = c(15,16,17,18,6,7,8,9,10,11,12,13))+ geom_point(size = 3) + ggtitle(.y[[1]]))
 
 plots3_seed[[1]]+plots3_seed[[2]]+plots3_seed[[3]]+plots3_seed[[4]]
 plots3_seed[[5]]+plots3_seed[[6]]+plots3_seed[[7]]+plots3_seed[[8]] 
-plots3_seed[[9]]+plots3_seed[[10]]+plots3_seed[[11]]+plots3_seed[[12]]
+plots3_seed[[9]]+plots3_seed[[10]]+plots3_seed[[11]]
 
 
-# plot visitation rate/minute and year for each plant species and site 
+# plot visitation rate (minute) and year for each plant species and site 
 plots3_visitation_rate <- pol_plant2 %>%
   group_by(Plant_gen_sp) %>%
-  group_map(~ ggplot(.) + aes(x=Year, y=visitation_rate_minute, col =factor(Site_ID), shape=factor(Site_ID)) + 
-  scale_shape_manual(values = c(15,16,17,18,6,7,8,9,10,11,12,13,14))+ geom_point(size = 3) + ggtitle(.y[[1]]))
+  group_map(~ ggplot(.) + aes(x=Year, y=visitatio_rate, col =factor(Site_ID), shape=factor(Site_ID)) + 
+  scale_shape_manual(values = c(15,16,17,18,6,7,8,9,10,11,12,13))+ geom_point(size = 3) + ggtitle(.y[[1]]))
 
 plots3_visitation_rate[[1]]+plots3_visitation_rate[[2]]+plots3_visitation_rate[[3]]+plots3_visitation_rate[[4]]
 plots3_visitation_rate[[5]]+plots3_visitation_rate[[6]]+plots3_visitation_rate[[7]]+plots3_visitation_rate[[8]] 
-plots3_visitation_rate[[9]]+plots3_visitation_rate[[10]]+plots3_visitation_rate[[11]]+plots3_visitation_rate[[12]]
+plots3_visitation_rate[[9]]+plots3_visitation_rate[[10]]+plots3_visitation_rate[[11]]
 
 
 
@@ -94,6 +104,8 @@ cv_1Fruit2<-pol_plant2 %>%
   ungroup()
 
 
+
+
 # seed number stability for each plant species per site #
 cv_1Seed2<-pol_plant2 %>%
   group_by(Plant_gen_sp,Site_ID) %>%
@@ -106,19 +118,10 @@ cv_1Seed2<-pol_plant2 %>%
 #stability of visitation rate in 1 minute for each plant species per site (all pollinators) #
 cv_1pollinator2<-pol_plant2 %>%
   group_by(Plant_gen_sp,Site_ID) %>%
-  summarise_at(vars(visitation_rate_minute),cv_1 <- function(x, ...) {
+  summarise_at(vars(visitatio_rate),cv_1 <- function(x, ...) {
     ( mean(x, ...)/sd(x, ...) )
   })%>%
   ungroup()
-
-
-
-# comprobando valor muy elevedo de Cistus salviifolius en pino del cuervo
-alvi=pol_plant2 %>%
-  filter(Plant_gen_sp=="Cistus salviifolius") %>%
-  filter(Site_ID=="Pino_del_cuervo")
-mean(alvi$visitation_rate_minute) #0.06507937
-sd(alvi$visitation_rate_minute)  #0.002244783
 
 
 
@@ -126,7 +129,7 @@ sd(alvi$visitation_rate_minute)  #0.002244783
 # join tables (sin plant_id)
 full2=full_join(cv_1Fruit2, cv_1Seed2, by = c('Plant_gen_sp', 'Site_ID'))%>%
   full_join (., cv_1pollinator2, by=c('Plant_gen_sp', 'Site_ID')) %>%
-  rename(cv_1_fruit=fruit_proportion, cv_1_seed=Seeds, cv_1_visitation=visitation_rate_minute)
+  rename(cv_1_fruit=fruit_proportion, cv_1_seed=Seeds, cv_1_visitation=visitatio_rate)
 
 
 # correlacion total
@@ -151,60 +154,45 @@ focal<- read.csv("Data/focal.csv")
 focal<-focal[,-1]
 
 
-focal_0 <- focal[!(focal$Pollinator_gen_sp == "NA NA"),] #eliminar polinizadores NA NA
+focal <- focal[!(focal$Pollinator_gen_sp == "NA NA"),] #eliminar polinizadores NA NA
 
 #Data with species in more than 1 site
-focal_0 = focal_0 %>% filter(!Plant_gen_sp %in% spp_out)
+focal = focal %>% filter(!Plant_gen_sp %in% spp_out)
 
-focal_0$Pollinator_gen_sp <- sub(" ", "_", focal_0$Pollinator_gen_sp )
+focal$Pollinator_gen_sp <- sub(" ", "_", focal$Pollinator_gen_sp )
 
-levels(factor(focal_0$Plant_gen_sp))
+levels(factor(focal$Plant_gen_sp))
 levels(factor(full2$Plant_gen_sp))
 
-focal_0<-subset(focal_0, Plant_gen_sp != 'Ulex australis') #remove ulex
-plant_polli<-data.frame(focal_0[,c(1,2,6,31,32)])
+focal<-subset(focal, Plant_gen_sp != 'Ulex australis') #remove ulex
+focal<-subset(focal, Plant_gen_sp != 'Salvia rosmarinus') #remove S.rosmarinus
+
+plant_polli<-data.frame(focal[,c(1,2,6,31,32)])
 
 
 df.result <- left_join(Pollinator_Plant, plant_polli, c('Plant_gen_sp', 'Site_ID','Year','plant_id'))
 
-df.result1<-data.frame(df.result[,c(1,2,3,4,20)])
-df.result2 <- dcast(df.result, formula = Site_ID + Year +plant_id+Plant_gen_sp ~ Pollinator_gen_sp)
+df.result1<-data.frame(df.result[,c(1,2,3,4,16,17,21)])
+df.result2 <- dcast(df.result, formula = Site_ID + Year + n_round + time_obs + plant_id+Plant_gen_sp ~ Pollinator_gen_sp)
+
+# remove column NA
+df.result2= select(df.result2, -123)
+
+
+# corrected abundance of pollinator by sampling effort (total time of observation)
+# cada individuo de planta ha sido observado 5 o 3 min depende del año
+# y durante diferentes rondas 
+# se divide la abundancia de cada polinizador observado en un individuo de planta
+# en un sitio y año por el tiempo total de observacion de ese individuo (rondas* time)
+df.result2_effort=df.result2 %>%
+  mutate_at(vars(c(7:122)),funs(./(n_round*time_obs)))
+
 
 # sin plant_id
 prueba=df.result2 %>%
   group_by(Site_ID,Year, Plant_gen_sp) %>%
-  summarise_if(is.numeric, sum)  %>%
+  summarise_if(is.numeric, mean)  %>%
   ungroup()
-
-
-# add time of observation 
-prueba=prueba %>%
-  mutate(time_obs= ifelse(Year== "2015"| Year=="2016", 5,3)) %>%
-  relocate(time_obs, .before = Andrena_agilissima)
-
-# add round per year
-round=focal_0 %>%
-  group_by(Year, Plant_gen_sp,Site_ID) %>%
-  summarise(round= n_distinct(Round))
-
-
-prueba=left_join(prueba, round) %>%
-  relocate(round, .before = Plant_gen_sp)
-
-
-# calculate sample effort: different rounds per year and different observation time. 
-# We multiply round by time = effort. 
-prueba= prueba %>%
-  mutate(effort= round*time_obs) %>%
-  relocate(effort, .before = Andrena_agilissima)
-
-# The abundance of each pollinator is divided by observation time
-prueba_time=prueba %>%
-  mutate_at(vars(c(7:130)),funs(./time_obs))
-
-# The abundance of each pollinator is divided by effort 
-prueba_effort=prueba %>%
-  mutate_at(vars(c(7:130)),funs(./effort))
 
 
 
@@ -229,16 +217,11 @@ log_VR <- function(x){
 
 
 # un dato por sp planta, sitio y año (sin plant_id)
-# corrected observation time
-syn_1=prueba_time%>% 
+# corrected synchrony for sampling effort
+syn_1=prueba%>% 
   group_by(Plant_gen_sp,Site_ID)%>% 
-  do(log_VR=log_VR(.[7:130]))
+  do(log_VR=log_VR(.[7:121]))
 
-
-# corrected effort
-syn_2=prueba_effort%>% 
-  group_by(Plant_gen_sp,Site_ID)%>% 
-  do(log_VR=log_VR(.[7:130]))
 
 
 
@@ -252,16 +235,10 @@ syncLM <- function(x){
 
 
 # un dato por sp planta, sitio y año (sin plant_id)
-# corrected observation time
-syn_LM1=prueba_time%>% 
+# corrected synchrony for sampling effort
+syn_LM1=prueba%>% 
   group_by(Plant_gen_sp,Site_ID)%>% 
-  do(syncLM=syncLM(.[7:130]))
-
-
-# corrected effort
-syn_LM2=prueba_effort %>% 
-  group_by(Plant_gen_sp,Site_ID)%>% 
-  do(syncLM=syncLM(.[7:130]))
+  do(syncLM=syncLM(.[7:121]))
 
 
 
@@ -284,54 +261,34 @@ if(w){
 
 
 
-# test <- prueba%>%
-#   filter( Plant_gen_sp == "Asphodelus fistulosus",Site_ID == "Aznalcazar")
-# 
-# test <- prueba%>%
-#   filter( Plant_gen_sp == "Cistus crispus",Site_ID == "Aznalcazar")
-# 
-# test <- prueba%>%
-#   filter( Plant_gen_sp == "Cistus ladanifer",Site_ID == "Bonares")
-# 
-# av_sync(x = test[ ,4:ncol(test)])
 
-
-# corrected observation time
-syn_G1=prueba_time%>%
+# corrected synchrony for sampling effort
+syn_G1=prueba%>%
  group_by(Plant_gen_sp,Site_ID)%>%
- do(av_sync=av_sync(.[7:ncol(prueba_time)]))
+ do(av_sync=av_sync(.[6:ncol(prueba)]))
 
-# corrected effort
-syn_G2=prueba_effort%>%
-  group_by(Plant_gen_sp,Site_ID)%>%
-  do(av_sync=av_sync(.[7:ncol(prueba_effort)]))
+
 
 
 # join tables con nuevos calculos (sin plant_id)
 full2=full_join(full2, syn_1, by = c('Plant_gen_sp', 'Site_ID'))%>%
-  full_join (., syn_2, by=c('Plant_gen_sp', 'Site_ID'))%>%
   full_join (., syn_LM1, by=c('Plant_gen_sp', 'Site_ID'))%>%
-  full_join (., syn_LM2, by=c('Plant_gen_sp', 'Site_ID'))%>%
   full_join (., syn_G1, by=c('Plant_gen_sp', 'Site_ID'))%>%
-  full_join (., syn_G2, by=c('Plant_gen_sp', 'Site_ID'))%>%
-  full_join (., riqueza, by=c('Plant_gen_sp', 'Site_ID'))%>%
-  rename(log_VR_time=log_VR.x,log_VR_effort=log_VR.y, syncLM_time=syncLM.x, syncLM_effort=syncLM.y, av_sync_time=av_sync.x, av_sync_effort=av_sync.y)
+  full_join (., riqueza, by=c('Plant_gen_sp', 'Site_ID'))
 
 
 head(full2)
-full2$log_VR_time <- unlist(full2$log_VR_time)
-full2$log_VR_effort <- unlist(full2$log_VR_effort)
-full2$syncLM_time <- unlist(full2$syncLM_time)
-full2$syncLM_effort <- unlist(full2$syncLM_effort)
-full2$ av_sync_time <- unlist(full2$ av_sync_time)
-full2$ av_sync_effort <- unlist(full2$ av_sync_effort)
+full2$log_VR <- unlist(full2$log_VR)
+full2$syncLM <- unlist(full2$syncLM)
+full2$ av_sync <- unlist(full2$ av_sync)
 
-#write.csv(full2, "C:/Users/estef/git/stability-and-function/Data/Stability.csv")
+
+write.csv(full2, "C:/Users/estef/git/stability-and-function/Data/Stability.csv")
 
 
 # correlacion indices de sincronia
 
-syn_cor<-full2 %>% select(log_VR_time,log_VR_effort,syncLM_time,syncLM_effort,av_sync_time,av_sync_effort)
+syn_cor<-full2 %>% select(log_VR,syncLM,av_sync)
 
 ## Replace Inf and -Inf with NA
 syn_cor[is.na(syn_cor) | syn_cor == "Inf"] <- 0 
