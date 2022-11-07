@@ -500,10 +500,20 @@ focal=focal %>%
   relocate(time_obs, .before = Time)
 
 
-# calculate visitation frequency in 1 minute
-focal=focal%>%
-  mutate(freq_minute= Frequency/time_obs)%>%
-  relocate(freq_minute, .before = Flower_abundance)
+
+focal <- focal %>% mutate(Frequency = ifelse(is.na(Frequency), 0, Frequency))
+
+
+# frequency in 1 minute
+focal_new= focal %>%
+  group_by(Site_ID, Year, Plant_gen_sp, plant_id)%>%
+  mutate(freq_total= sum(Frequency)) %>%
+  mutate(n_round= sum(nlevels(factor(Round)))) %>%
+  select(Site_ID, Year, Plant_gen_sp, plant_id, freq_total,n_round, time_obs) %>%
+  distinct() %>%
+  mutate(freq_min=freq_total/(n_round*time_obs))
+
+
 
 #write.csv(focal, "C:/Users/estef/git/stability-and-function/Data/focal.csv")
 
@@ -511,6 +521,12 @@ focal=focal%>%
 # Flower abundance
 #calcular media de flores por individuo y sp
 flower_abun<-aggregate(Flower_abundance ~ Year+Site_ID+Plant_gen_sp+plant_id, data = focal, FUN = mean)
+
+flower_abun_2= focal %>%
+  group_by(Site_ID, Year, Plant_gen_sp, plant_id) %>%
+  select(Site_ID, Year, Plant_gen_sp, plant_id,Flower_abundance)%>%
+  distinct() %>%
+  mutate(flower_abund = sum(Flower_abundance))
 
 
 # pollinator frequency ##
