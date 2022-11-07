@@ -35,9 +35,6 @@ spp_out <- Pollinator_Plant %>%
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
-# replace NA by 0
-Pollinator_Plant <- mutate_all(Pollinator_Plant, ~replace(., is.na(.), 0))
-
 
 
 #number of plant species per site
@@ -63,7 +60,7 @@ num_ind_plant= Pollinator_Plant %>%
 #year and its interaction for all data 
 #with plant species nested within site as random effect
 
-mod1_to= glmer(cbind(fruit_formado, Fruit_No) ~ richness * Year + (1|Site_ID/Plant_gen_sp),family=binomial,data=Pollinator_Plant)
+mod1_to= glmer(cbind(fruit_formado, Fruit_No) ~ S_total * Year + (1|Site_ID/Plant_gen_sp),family=binomial,data=Pollinator_Plant)
 summary(mod1_to)
 vif(mod1_to)
 
@@ -85,8 +82,8 @@ ggplot(ee, aes(richness,fit, group=Year, color = Year, fill=Year))+
 
 
 
-# and visitation rate/minute, year and its interaction
-mod2_to= glmer(cbind(fruit_formado, Fruit_No) ~ visitation_rate_minute * Year + (1|Site_ID/Plant_gen_sp),family=binomial,data=Pollinator_Plant)
+# and visitation rate (in one minute), year and its interaction
+mod2_to= glmer(cbind(fruit_formado, Fruit_No) ~ visitatio_rate * Year + (1|Site_ID/Plant_gen_sp),family=binomial,data=Pollinator_Plant)
 summary(mod2_to)
 
 car::Anova(mod2_to,Type="III")
@@ -116,7 +113,7 @@ Pollinator_Plant=Pollinator_Plant %>% group_by(Plant_gen_sp)%>%
   ungroup()
 
 #model
-mod3_tot= lmer(seed_sc ~richness * Year + (1|Site_ID/Plant_gen_sp),data=Pollinator_Plant)
+mod3_tot= lmer(seed_sc ~S_total * Year + (1|Site_ID/Plant_gen_sp),data=Pollinator_Plant)
 summary(mod3_tot)
 
 car::Anova(mod3_tot,Type="III")
@@ -134,14 +131,14 @@ ggplot(ee_2, aes(richness,fit, group=Year, color = Year, fill=Year))+
   geom_point(data=Pollinator_Plant, aes(richness, seed_sc))+
   labs(x = "richness",y="seed number")
 
-# and visitation rate/minute, year and its interaction
+# and visitation rate (in one minute), year and its interaction
 #model
-mod4_tot= lmer(seed_sc ~visitation_rate_minute * Year + (1|Site_ID/Plant_gen_sp),data=Pollinator_Plant)
+mod4_tot= lmer(seed_sc ~visitatio_rate * Year + (1|Site_ID/Plant_gen_sp),data=Pollinator_Plant)
 summary(mod4_tot)
 Anova(mod4_tot, type="III")
 
 plot_model(mod4_tot, type = "pred")
-plot_model(mod4_tot, type = "int")
+plot_model(mod4_tot, type = "int", show.data = T)
 
 #getting effects for the two variables
 ee_3 <- as.data.frame(Effect(c("visitation_rate_minute","Year"),mod = mod4_tot))
