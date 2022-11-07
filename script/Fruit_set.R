@@ -522,42 +522,22 @@ focal_new= focal %>%
 #calcular media de flores por individuo y sp
 flower_abun<-aggregate(Flower_abundance ~ Year+Site_ID+Plant_gen_sp+plant_id, data = focal, FUN = mean)
 
-flower_abun_2= focal %>%
-  group_by(Site_ID, Year, Plant_gen_sp, plant_id) %>%
-  select(Site_ID, Year, Plant_gen_sp, plant_id,Flower_abundance)%>%
-  distinct() %>%
-  mutate(flower_abund = sum(Flower_abundance))
-
-
-# pollinator frequency ##
-## pollinator frequency (Total (sum)) per plant individual, species plants, site and year
-Pol_frequency<-aggregate(Frequency ~ Year+Site_ID+Plant_gen_sp+plant_id, data = focal, FUN = sum)
-
-
-# pollinator frequency in 1 minute ##
-## pollinator frequency (Total (sum)) per plant individual, species plants, site and year
-Pol_frequency_minut<-aggregate(freq_minute ~ Year+Site_ID+Plant_gen_sp+plant_id, data = focal, FUN = sum)
 
 
 
 #link flower_abun and Pol_frequency (dejando individuos que tienen flores pero no visitas)
-visitation=left_join(flower_abun, Pol_frequency, by = c("Year","Site_ID", "Plant_gen_sp","plant_id" ))%>%
-  left_join (., Pol_frequency_minut, by=c("Year","Site_ID", "Plant_gen_sp","plant_id" ))
-
-
-sum(is.na(visitation$Frequency)) # 45 observ (plant id) no tienen visitas polinizador
-
-sum(is.na(visitation$freq_minute)) # 45 observ (plant id) no tienen visitas polinizador
+visitation=left_join(flower_abun, focal_new, by = c("Year","Site_ID", "Plant_gen_sp","plant_id" ))
 
 
 visitation<-visitation%>%
    filter(!Flower_abundance==0) # eliminar 4 observaciones con flower abundance=0
 
-# frequency/ flower abundance
-visitation<-visitation %>% mutate(visitatio_rate = Frequency/Flower_abundance)
 
-# visitiation rate in 1 minute (frequency in 1 minute/ flower abundante)
-visitation<-visitation %>% mutate(visitation_rate_minute = freq_minute/Flower_abundance)
+
+# visitation rate= frequency_minute/ flower abundance
+visitation<-visitation %>% mutate(visitatio_rate = freq_min/Flower_abundance)
+
+
 
 
 ## IMPORTANTE: calculada la visitation rate en un minuto para todos los polinizadores juntos
@@ -643,17 +623,24 @@ visitation<-arrange(visitation,Site_ID, Plant_gen_sp)
 
 # calculating richness
 focal_0 <- focal[!(focal$Pollinator_gen_sp == "NA NA"),] #eliminar polinizadores NA NA
+focal_0$Pollinator_gen_sp <- sub(" ", "_", focal_0$Pollinator_gen_sp )
 
-focal_1<-data.frame(focal_0[,c(1,2,6,31,32)])
+
+focal_1<-data.frame(focal_0[,c(1,2,6,30,31)])
 
 focal1 <- dcast(focal_1, formula = Site_ID + Year +Plant_gen_sp+plant_id ~ Pollinator_gen_sp)
 
-focal1$richness<-specnumber(focal1[ , 5:143])
+data_long <- gather(focal1, pollinator, frequ, Andrena_agilissima : Xylocopa_violacea , factor_key=T)
+data_long
 
+riqueza= data_long %>%
+  group_by(Site_ID, Plant_gen_sp, Year, plant_id)  %>%
+  filter(frequ > 0) %>%
+  summarise(S_total= n_distinct(pollinator))
 
-r<-data.frame(focal1[,c(1,2,3,4,144)])
+visitation<-left_join(visitation,riqueza,by=c("Year","Site_ID", "Plant_gen_sp","plant_id"),all.x=F, all.y=T)
 
-visitation<-merge(x=r,y=visitation,by=c("Year","Site_ID", "Plant_gen_sp","plant_id"),all.x=F, all.y=T)
+visitation <- visitation %>% mutate(S_total = ifelse(is.na(S_total), 0, S_total))
 
 
 
@@ -723,11 +710,12 @@ visitation<-arrange(visitation,Site_ID, Plant_gen_sp)
 
 # join visitation and reproductive success
 #solo individuos coincidentes
-total<-merge(x=reprod_success,y=visitation,by=c("Year","Site_ID", "Plant_gen_sp","plant_id"),all.x=F, all.y=F)
-
+total=inner_join(reprod_success,visitation, by=c("Year","Site_ID", "Plant_gen_sp","plant_id"))
 
 # eliminando cuando no hay fruto pero si polinizador 
 total1<-merge(x=reprod_success,y=visitation,by=c("Year","Site_ID", "Plant_gen_sp","plant_id"),all.x=T, all.y=F)
+
+
 
 #order the rows
 total<-arrange(total,Year,Site_ID, Plant_gen_sp)
