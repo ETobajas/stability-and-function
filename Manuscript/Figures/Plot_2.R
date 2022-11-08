@@ -8,16 +8,35 @@ library(patchwork)
 # stability data for five plant species present at least in five sites
 # C.crispu, C. ladanifer, C. salviifolius, H.halimifolium and L. pedunculata
 
-data_plant<- read.csv("Data/Stability_fivespecies.csv")
+# stability data 
+data_plant<- read.csv("Data/Stability.csv")
 data_plant<-data_plant[,-1]
 
 
-# Replace inf with NA
-data_plant[sapply(data_plant, is.infinite)] <- NA
+# eliminar plant species 
+sp_out2=data_plant %>%
+  group_by(Plant_gen_sp) %>%
+  summarise(Unique_Id = n_distinct(Site_ID)) %>%
+  filter(Unique_Id <= 4) %>%
+  select(Plant_gen_sp) %>% pull(Plant_gen_sp)
+
+#Data with species in at least 5 sites
+data_plant = data_plant %>% filter(!Plant_gen_sp %in% sp_out2)
+
+levels(factor(data_plant$Plant_gen_sp))
+
+
+
+## Replace Inf and -Inf with NA
+data_plant[is.na(data_plant) | data_plant == "Inf"] <- NA 
+data_plant[is.na(data_plant) | data_plant == "-Inf"] <- NA 
+
+
 
 # We can express asynchrony as 1 - φ, 
 #where φ is Loreau and de Mazancourt’s (2008)
-data_plant$asynchrony= 1-data_plant$syncLM
+data_plant$asyn_LM= 1-data_plant$syncLM
+
 
 #model fruit stability ~ visitation rate stability
 mod2_sta= lmer(cv_1_fruit ~ cv_1_visitation + (1|Plant_gen_sp)+(1|Site_ID), data = data_plant)
