@@ -34,15 +34,15 @@ spp_out <- Pollinator_Plant %>%
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
 
 
-# plant species with only one year
-remo=Pollinator_Plant %>%
-  group_by(Plant_gen_sp,Site_ID) %>%
-  summarise(Unique_Id = n_distinct(Year)) %>%
-  filter(Unique_Id == 1) %>%
-  select(Plant_gen_sp, Site_ID) 
-
-# Data with species in more one year
-Pollinator_Plant= anti_join(Pollinator_Plant, remo)
+# # plant species with only one year
+# remo=Pollinator_Plant %>%
+#   group_by(Plant_gen_sp,Site_ID) %>%
+#   summarise(Unique_Id = n_distinct(Year)) %>%
+#   filter(Unique_Id == 1) %>%
+#   select(Plant_gen_sp, Site_ID) 
+# 
+# # Data with species in more one year
+# Pollinator_Plant= anti_join(Pollinator_Plant, remo)
 
 
 
@@ -52,10 +52,10 @@ pol_plant2=Pollinator_Plant %>%
   group_by(Site_ID,Year, Plant_gen_sp) %>%
   summarise_if(is.numeric, mean)
 
-levels(factor(pol_plant2$Plant_gen_sp)) #11 plant species 
+levels(factor(pol_plant2$Plant_gen_sp)) #12 plant species 
 
 
-pol_plant2$Year <- factor(pol_plant2$Year)
+pol_plant2$Year <- as.factor(pol_plant2$Year)
 
 
 # plot fruit proportion and year for each plant species and site 
@@ -165,7 +165,6 @@ levels(factor(focal$Plant_gen_sp))
 levels(factor(full2$Plant_gen_sp))
 
 focal<-subset(focal, Plant_gen_sp != 'Ulex australis') #remove ulex
-focal<-subset(focal, Plant_gen_sp != 'Salvia rosmarinus') #remove S.rosmarinus
 
 plant_polli<-data.frame(focal[,c(1,2,6,31,32)])
 
@@ -176,28 +175,36 @@ df.result1<-data.frame(df.result[,c(1,2,3,4,16,17,21)])
 df.result2 <- dcast(df.result, formula = Site_ID + Year + n_round + time_obs + plant_id+Plant_gen_sp ~ Pollinator_gen_sp)
 
 # remove column NA
-df.result2= select(df.result2, -123)
+df.result2= select(df.result2, -131)
 
 
 # corrected abundance of pollinator by sampling effort (total time of observation)
 # cada individuo de planta ha sido observado 5 o 3 min depende del año
 # y durante diferentes rondas 
-# se divide la abundancia de cada polinizador observado en un individuo de planta
-# en un sitio y año por el tiempo total de observacion de ese individuo (rondas* time)
-df.result2_effort=df.result2 %>%
-  mutate_at(vars(c(7:122)),funs(./(n_round*time_obs)))
 
+# para eliminar los individuos, sumamos el tiempo total de observacion de la
+#especie de planta en un sitio y año, y sumamos la abundancia de polinizadores
 
-# sin plant_id
-prueba=df.result2 %>%
-  group_by(Site_ID,Year, Plant_gen_sp) %>%
-  summarise_if(is.numeric, mean)  %>%
+abund_pol=df.result2 %>%
+  mutate(total_time= n_round*time_obs) %>%
+  relocate(total_time, .before = plant_id) %>%
+  select(!c(n_round, time_obs)) %>%
+  group_by(Site_ID, Year, Plant_gen_sp) %>%
+  summarise_if(is.numeric, sum) %>%
   ungroup()
+
+# estandarizamos la abundancia de cada polinizador
+# la abundacia de cada polinizador es dividad por el tiempo total
+# y multiplicado por el tiempo max de observacion 
+# hay una especie que se ha observado un max de 90 min
+abund_pol_stand=abund_pol %>% 
+  mutate_at (vars (c(5:128)), funs((./total_time)*90))
+
 
 
 
 # Richness 
-data_long <- gather(prueba, pollinator, frequ, Andrena_agilissima : Xylocopa_violacea , factor_key=T)
+data_long <- gather(abund_pol, pollinator, frequ, Andrena_agilissima : Xylocopa_violacea , factor_key=T)
 data_long
 
 riqueza= data_long %>%
@@ -218,9 +225,9 @@ log_VR <- function(x){
 
 # un dato por sp planta, sitio y año (sin plant_id)
 # corrected synchrony for sampling effort
-syn_1=prueba%>% 
+syn_1=abund_pol_stand%>% 
   group_by(Plant_gen_sp,Site_ID)%>% 
-  do(log_VR=log_VR(.[7:121]))
+  do(log_VR=log_VR(.[5:128]))
 
 
 
@@ -236,9 +243,9 @@ syncLM <- function(x){
 
 # un dato por sp planta, sitio y año (sin plant_id)
 # corrected synchrony for sampling effort
-syn_LM1=prueba%>% 
+syn_LM1=abund_pol_stand%>% 
   group_by(Plant_gen_sp,Site_ID)%>% 
-  do(syncLM=syncLM(.[7:121]))
+  do(syncLM=syncLM(.[5:128]))
 
 
 
@@ -260,12 +267,12 @@ if(w){
 }
 
 
-
+str(abund_pol_stand)
 
 # corrected synchrony for sampling effort
-syn_G1=prueba%>%
+syn_G1=abund_pol_stand %>%
  group_by(Plant_gen_sp,Site_ID)%>%
- do(av_sync=av_sync(.[6:ncol(prueba)]))
+ do(av_sync=av_sync(.[5:ncol(abund_pol_stand)]))
 
 
 
