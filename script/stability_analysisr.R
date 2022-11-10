@@ -35,6 +35,11 @@ data_plant = data_plant %>% filter(!Plant_gen_sp %in% sp_out2)
 levels(factor(data_plant$Plant_gen_sp))
 
 
+data_plant=data_plant %>%
+  filter(!Plant_gen_sp=="Salvia rosmarinus") %>%
+  filter(!Plant_gen_sp=="Halimium calycinum")%>%
+  filter(!Plant_gen_sp=="Lavandula stoechas")
+
 
 ## Replace Inf and -Inf with NA
 data_plant[is.na(data_plant) | data_plant == "Inf"] <- NA 
@@ -417,34 +422,3 @@ p1.fruit +p2.fruit+p3.fruit+p4.fruit+p5.fruit+
   plot_layout(ncol = 5)& theme(axis.title = element_text(face="bold"))
 
 
-##################################
-# remove two rows (outlier)
-
-data_remo= data_plant %>%
-  filter(!row_number() %in% c(2,20,27))
-
-mod1_sta_remo= lmer (cv_1_visitation ~ S_total + asyn_LM + (1|Site_ID) + (1|Plant_gen_sp), data = data_remo)
-summary(mod1_sta_remo)
-
-plot_model(mod1_sta_remo, type="pred", show.data = T)
-
-
-
-mod1_sta_remo_plant<-data_remo %>%
-  nest_by(Plant_gen_sp) %>%
-  mutate(mod = list(lm(cv_1_visitation ~ S_total + asyn_LM,data))) %>%
-  summarize(tidy(mod))%>%
-  ungroup()
-
-
-
-mod2_sta_remo= lmer(cv_1_fruit ~ cv_1_visitation + (1|Plant_gen_sp)+(1|Site_ID), data = data_remo)
-summary(mod2_sta_remo)
-
-plot_model(mod2_sta_remo, type="pred", show.data = T)
-
-
-mod3_sta_remo= lmer(cv_1_seed ~ cv_1_visitation + (1|Plant_gen_sp)+(1|Site_ID), data = data_remo)
-summary(mod3_sta_remo)
-
-plot_model(mod3_sta_remo, type="pred", show.data = T)
