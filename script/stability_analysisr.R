@@ -322,14 +322,14 @@ dev.off()
 
 # we analysed the stability of visitation rate on stability of fruit proportion
 # per plant species separately
-sta_polli_fruit<-data_plant2 %>%
+sta_polli_fruit<-data_plant %>%
   nest_by(Plant_gen_sp) %>%
   mutate(mod = list(lm(cv_1_fruit~cv_1_visitation,data))) %>%
   summarize(tidy(mod))%>%
   ungroup()
 
 # model plot (cv_1_fruit~cv_1_visitation)
-sta_polli_fruit.2 <- data_plant2 %>%
+sta_polli_fruit.2 <- data_plant %>%
   nest_by(Plant_gen_sp) %>%
   mutate(mod = list(lm(cv_1_fruit~cv_1_visitation,data))) %>%
   mutate(mod1 = list(ggeffects::ggpredict(mod, terms = "cv_1_visitation"))) %>%
@@ -337,41 +337,38 @@ sta_polli_fruit.2 <- data_plant2 %>%
   geom_ribbon(aes(ymin = conf.low, ymax = conf.high),linetype = 3, alpha=0.1, colour = "black")))
 
 
-p1.fruit=sta_polli_fruit.2$plots[[1]] + geom_point(data = data_plant2 %>% filter(Plant_gen_sp == "Cistus crispus"), 
+p1.fruit=sta_polli_fruit.2$plots[[1]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Cistus crispus"), 
   aes(x =  cv_1_visitation, y = cv_1_fruit),color="coral3",fill="coral2", pch=21, size=2)+ 
   labs(x = "",y="Stability of fruit proportion")+
   theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
 
 
 
-p2.fruit=sta_polli_fruit.2$plots[[2]] + geom_point(data = data_plant2 %>% filter(Plant_gen_sp == "Cistus ladanifer"), 
+p2.fruit=sta_polli_fruit.2$plots[[2]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Cistus ladanifer"), 
 aes(x =  cv_1_visitation, y = cv_1_fruit),color="yellow4",fill="yellow4",pch=21, size=2)+ 
 labs(x = "",y=NULL)+  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
 
 
-p3.fruit=sta_polli_fruit.2$plots[[3]] + geom_point(data = data_plant2 %>% filter(Plant_gen_sp == "Cistus salviifolius"), 
+p3.fruit=sta_polli_fruit.2$plots[[3]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Cistus salviifolius"), 
   aes(x =  cv_1_visitation, y = cv_1_fruit),color= "springgreen3",fill="springgreen3",pch=21, size=2)+ 
   labs(x = "Stability of visitation rate",y= NULL)+  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
 
 
-p4.fruit=sta_polli_fruit.2$plots[[4]] + geom_point(data = data_plant2 %>% filter(Plant_gen_sp == "Halimium halimifolium"), 
+p4.fruit=sta_polli_fruit.2$plots[[4]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Halimium halimifolium"), 
 aes(x =  cv_1_visitation, y = cv_1_fruit), color= "cyan3",fill="cyan3", pch=21, size=2)+ 
   labs(x = "",y=NULL)+  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
 
 
-p5.fruit=sta_polli_fruit.2$plots[[5]] + geom_point(data = data_plant2 %>% filter(Plant_gen_sp == "Lavandula pedunculata"), 
+p5.fruit=sta_polli_fruit.2$plots[[5]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Lavandula pedunculata"), 
   aes(x =  cv_1_visitation, y = cv_1_fruit), color="hotpink",fill="hotpink",pch=21, size=2)+ 
   labs(x = "",y=NULL)+  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
 
-p6.fruit=sta_polli_fruit.2$plots[[6]] + geom_point(data = data_plant2 %>% filter(Plant_gen_sp == "Lavandula stoechas"), 
- aes(x =  cv_1_visitation, y = cv_1_fruit), color="hotpink",fill="hotpink",pch=21, size=2)+ 
-  labs(x = "",y=NULL)+  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
 
 
 
 # we analysed the stability of visitation rate on stability of fruit proportion
 # per plant species separately
-sta_polli_seed<-data_plant2 %>%
+sta_polli_seed<-data_plant %>%
   nest_by(Plant_gen_sp) %>%
   mutate(mod = list(lm(cv_1_seed~cv_1_visitation,data))) %>%
   summarize(tidy(mod))%>%
@@ -379,7 +376,7 @@ sta_polli_seed<-data_plant2 %>%
 
 
 # model plot (cv_1_fruit~cv_1_visitation)
-sta_polli_seed.2 <- data_plant2 %>%
+sta_polli_seed.2 <- data_plant %>%
   nest_by(Plant_gen_sp) %>%
   mutate(mod = list(lm(cv_1_seed~cv_1_visitation,data))) %>%
   mutate(mod1 = list(ggeffects::ggpredict(mod, terms = "cv_1_visitation"))) %>%
@@ -387,40 +384,37 @@ sta_polli_seed.2 <- data_plant2 %>%
   geom_ribbon(aes(ymin = conf.low, ymax = conf.high),linetype = 3, alpha=0.1, colour = "black")))
 
 
-p1.seed=sta_polli_seed.2$plots[[1]] + geom_point(data = data_plant2 %>% filter(Plant_gen_sp == "Cistus crispus"), 
+p1.seed=sta_polli_seed.2$plots[[1]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Cistus crispus"), 
 aes(x =  cv_1_visitation, y = cv_1_seed),color="coral3",fill="coral2", pch=21, size=2)+ 
   labs(x = "",y="Stability of seed number")+
   theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
 
 
-p2.seed=sta_polli_seed.2$plots[[2]] + geom_point(data = data_plant2 %>% filter(Plant_gen_sp == "Cistus ladanifer"), 
+p2.seed=sta_polli_seed.2$plots[[2]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Cistus ladanifer"), 
  aes(x =  cv_1_visitation, y = cv_1_seed),color="yellow4",fill="yellow4",pch=21, size=2)+ 
   labs(x = "",y=NULL)+  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
 
 
-p3.seed=sta_polli_seed.2$plots[[3]] + geom_point(data = data_plant2 %>% filter(Plant_gen_sp == "Cistus salviifolius"), 
+p3.seed=sta_polli_seed.2$plots[[3]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Cistus salviifolius"), 
   aes(x =  cv_1_visitation, y = cv_1_seed),color= "springgreen3",fill="springgreen3",pch=21, size=2)+ 
   labs(x = "Stability of visitation rate",y= NULL)+  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
 
 
-p4.seed=sta_polli_seed.2$plots[[4]] + geom_point(data = data_plant2 %>% filter(Plant_gen_sp == "Halimium halimifolium"), 
+p4.seed=sta_polli_seed.2$plots[[4]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Halimium halimifolium"), 
  aes(x =  cv_1_visitation, y = cv_1_seed), color= "cyan3",fill="cyan3", pch=21, size=2)+ 
   labs(x = "",y=NULL)+  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
 
 
-p5.seed=sta_polli_seed.2$plots[[5]] + geom_point(data = data_plant2 %>% filter(Plant_gen_sp == "Lavandula pedunculata"), 
+p5.seed=sta_polli_seed.2$plots[[5]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Lavandula pedunculata"), 
 aes(x =  cv_1_visitation, y = cv_1_seed), color="hotpink",fill="hotpink",pch=21, size=2)+ 
   labs(x = "",y=NULL)+  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
 
 
-p6.seed=sta_polli_seed.2$plots[[6]] + geom_point(data = data_plant2 %>% filter(Plant_gen_sp == "Lavandula stoechas"), 
-  aes(x =  cv_1_visitation, y = cv_1_seed), color="hotpink",fill="hotpink",pch=21, size=2)+ 
-  labs(x = "",y=NULL)+  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
 
 
-p1.fruit +p2.fruit+p3.fruit+p4.fruit+p5.fruit+p6.fruit+
-  p1.seed+p2.seed+p3.seed+p4.seed+ p5.seed + p6.seed+
-  plot_layout(ncol = 6)& theme(axis.title = element_text(face="bold"))
+p1.fruit +p2.fruit+p3.fruit+p4.fruit+p5.fruit+
+  p1.seed+p2.seed+p3.seed+p4.seed+ p5.seed + 
+  plot_layout(ncol = 5)& theme(axis.title = element_text(face="bold"))
 
 
 ##################################
