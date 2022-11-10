@@ -270,17 +270,16 @@ if(w){
 str(abund_pol_stand)
 
 # corrected synchrony for sampling effort
-syn_G1=abund_pol_stand %>%
+syn_G1<-abund_pol_stand %>%
  group_by(Plant_gen_sp,Site_ID)%>%
- do(av_sync=av_sync(.[5:ncol(abund_pol_stand)]))
-
+ do(av_sync=av_sync(.[5:ncol(abund_pol_stand)])) 
 
 
 
 # join tables con nuevos calculos (sin plant_id)
 full2=full_join(full2, syn_1, by = c('Plant_gen_sp', 'Site_ID'))%>%
   full_join (., syn_LM1, by=c('Plant_gen_sp', 'Site_ID'))%>%
-  full_join (., syn_G1, by=c('Plant_gen_sp', 'Site_ID'))%>%
+ # full_join (., syn_G1, by=c('Plant_gen_sp', 'Site_ID'))%>%
   full_join (., riqueza, by=c('Plant_gen_sp', 'Site_ID'))
 
 
