@@ -26,6 +26,12 @@ data_plant = data_plant %>% filter(!Plant_gen_sp %in% sp_out2)
 levels(factor(data_plant$Plant_gen_sp))
 
 
+data_plant=data_plant %>%
+  filter(!Plant_gen_sp=="Salvia rosmarinus") %>%
+  filter(!Plant_gen_sp=="Halimium calycinum")%>%
+  filter(!Plant_gen_sp=="Lavandula stoechas")
+
+
 
 ## Replace Inf and -Inf with NA
 data_plant[is.na(data_plant) | data_plant == "Inf"] <- NA 
@@ -48,11 +54,14 @@ effe3_mod_sta <-data.frame( effect("cv_1_visitation", mod2_sta, se = TRUE))
 #plot model 
 p_mod2=ggplot(effe3_mod_sta, aes(cv_1_visitation, fit)) + geom_line(size=1)+
   geom_ribbon(aes(ymin = lower, ymax = upper),linetype = 3, alpha=0.2, colour = "black")+
-  geom_point(data = data_plant, aes(x =  cv_1_visitation, y = cv_1_fruit, color=Plant_gen_sp), size=3)+
+  geom_point(data = data_plant, aes(x =  cv_1_visitation, y = cv_1_fruit, color=Plant_gen_sp),alpha=0.5, size=3)+
   labs(color='Plant species')+
-  labs(y = "Stability of fruit proportion",x="Visitation rate stability")+
-  theme_classic ()+theme(panel.border = element_rect(colour = "black", fill=NA))+
-  guides(colour=guide_legend(nrow=2,byrow=TRUE))
+  scale_colour_brewer(palette = "Set1")+
+  labs(y = "Stability of fruit proportion",x="Stability of visitation rate")+
+  theme_bw ()+
+  guides(colour=guide_legend(nrow=2,byrow=TRUE))+ theme(legend.text = element_text(face="italic"))
+
+
 
 
 
@@ -68,10 +77,12 @@ effe4_mod_sta <-data.frame( effect("cv_1_visitation", mod3_sta, se = TRUE))
 p_mod3=ggplot(effe4_mod_sta, aes(cv_1_visitation, fit)) + geom_line(size=1)+
   geom_ribbon(aes(ymin = lower, ymax = upper), linetype = 3, alpha=0.2, colour = "black")+
   labs(color='Plant species')+
-  geom_point(data = data_plant, aes(x =  cv_1_visitation, y = cv_1_seed, color=Plant_gen_sp), size=3)+
-  labs(y = "Stability of seed number",x="visitation rate stability")+
-  theme_classic ()+theme(panel.border = element_rect(colour = "black", fill=NA))+
-  guides(colour=guide_legend(nrow=2,byrow=TRUE))
+  geom_point(data = data_plant, aes(x =  cv_1_visitation, y = cv_1_seed, color=Plant_gen_sp), alpha=0.5,size=3)+
+  scale_colour_brewer(palette = "Set1")+
+  labs(y = "Stability of seed number",x="Stability of visitation rate")+
+  theme_bw ()+
+  guides(colour=guide_legend(nrow=2,byrow=TRUE))+ theme(legend.text = element_text(face="italic"))
+
 
 
 #join plots
