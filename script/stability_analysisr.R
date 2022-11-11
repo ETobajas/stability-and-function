@@ -15,6 +15,7 @@ library(qqplotr)
 library(effects)
 library(MuMIn)
 library(sjPlot)
+library(RColorBrewer)
 
 
 # stability data 
@@ -54,7 +55,7 @@ data_plant$asyn_LM= 1-data_plant$syncLM
 
 # correlacion indices de sincronia
 
-syn_cor<-data_plant %>% select(log_VR,syncLM,av_sync)
+syn_cor<-data_plant %>% select(log_VR,syncLM,)
 
 ## Replace Inf and -Inf with NA
 syn_cor[is.na(syn_cor) | syn_cor == "Inf"] <- 0 
@@ -172,12 +173,7 @@ p_cv_visit=p1+p2+
 p_cv_visit+ plot_layout(guides = "collect")
 
 
-# analysis other synchrony index
-mod1_sta_lVR= lmer (cv_1_visitation ~ S_total + log_VR + (1|Site_ID) + (1|Plant_gen_sp), data = data_plant)
-summary(mod1_sta_lVR)
 
-mod1_sta_Gross= lmer (cv_1_visitation ~ S_total + av_sync + (1|Site_ID) + (1|Plant_gen_sp), data = data_plant)
-summary(mod1_sta_Gross)
 
 
 # we analyze whether the stability of fruit set is affect 
@@ -246,31 +242,31 @@ sta_polli_data_plant.2 <- data_plant %>%
 
 
 p1=sta_polli_data_plant.2$plots[[1]] + geom_point(data =data_plant %>% filter(Plant_gen_sp == "Cistus crispus"), 
-  aes(x =  S_total, y = cv_1_visitation),color="coral3",fill="coral2", pch=21, size=2)+ 
+  aes(x =  S_total, y = cv_1_visitation),color="#e41a1c", size=2)+ 
   labs(x = "",y="Stability of visitation rate",subtitle = "Cistus crispus")+scale_x_continuous(limits = c(9, 16))+
  theme_classic ()+theme(panel.border = element_rect(colour = "black", fill=NA))+theme( plot.subtitle = element_text(face = "italic"))
   
 
 p2=sta_polli_data_plant.2$plots[[2]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Cistus ladanifer"), 
- aes(x =  S_total, y = cv_1_visitation),color="yellow4",fill="yellow4",pch=21, size=2)+ 
+ aes(x =  S_total, y = cv_1_visitation),color="#377eb8", size=2)+ 
   labs(x = "",y=NULL,subtitle = "Cistus ladanifer")+scale_x_continuous(limits = c(3, 16))+ 
   theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))+theme( plot.subtitle = element_text(face = "italic"))
  
 
 p3=sta_polli_data_plant.2$plots[[3]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Cistus salviifolius"), 
-  aes(x =  S_total, y = cv_1_visitation),color= "springgreen3",fill="springgreen3",pch=21, size=2)+ 
+  aes(x =  S_total, y = cv_1_visitation),color= "#4daf4a", size=2)+ 
   labs(x = "Richness",y=NULL,subtitle = "Cistus salviifolius")+scale_x_continuous(limits = c(3, 20))+  
   theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))+theme( plot.subtitle = element_text(face = "italic"))
               
 
 p4=sta_polli_data_plant.2$plots[[4]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Halimium halimifolium"), 
-   aes(x =  S_total, y = cv_1_visitation), color= "cyan3",fill="cyan3", pch=21, size=2)+ 
+   aes(x =  S_total, y = cv_1_visitation), color= "#984ea3", size=2)+ 
   labs(x = "",y=NULL,subtitle = "Halimium halimifolium")+ scale_x_continuous(limits = c(4, 14))+ 
   theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))+theme( plot.subtitle = element_text(face = "italic"))
   
 
 p5=sta_polli_data_plant.2$plots[[5]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Lavandula pedunculata"), 
-  aes(x =  S_total, y = cv_1_visitation),color="hotpink",fill="hotpink",pch=21, size=2)+ 
+  aes(x =  S_total, y = cv_1_visitation),color="#ff7f00", size=2)+ 
   labs(x = "",y=NULL,subtitle = "Lavandula pedunculata")+  
   theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))+theme( plot.subtitle = element_text(face = "italic"))
   
@@ -290,39 +286,36 @@ sta_polli_data_plant.3 <- data_plant %>%
 
 
 p1.1=sta_polli_data_plant.3$plots[[1]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Cistus crispus"), 
-   aes(x =  asyn_LM, y = cv_1_visitation),color="coral3",fill="coral2", pch=21, size=2)+ 
+   aes(x =  asyn_LM, y = cv_1_visitation),color="#e41a1c", size=2)+ 
   labs(x = "",y="Stability of visitaion rate")+
   theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
 
 
 p2.1=sta_polli_data_plant.3$plots[[2]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Cistus ladanifer"), 
- aes(x =  asyn_LM, y = cv_1_visitation),color="yellow4",fill="yellow4",pch=21, size=2)+ 
+ aes(x =  asyn_LM, y = cv_1_visitation),color="#377eb8", size=2)+ 
   labs(x = "",y=NULL)+  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
  
 
 
 p3.1=sta_polli_data_plant.3$plots[[3]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Cistus salviifolius"), 
- aes(x =  asyn_LM, y = cv_1_visitation),color= "springgreen3",fill="springgreen3",pch=21, size=2)+ 
+ aes(x =  asyn_LM, y = cv_1_visitation),color= "#4daf4a", size=2)+ 
   labs(x = "Asynchrony of pollinators",y= NULL)+  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
   
 
 p4.1=sta_polli_data_plant.3$plots[[4]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Halimium halimifolium"), 
-  aes(x =  asyn_LM, y = cv_1_visitation), color= "cyan3",fill="cyan3", pch=21, size=2)+ 
+  aes(x =  asyn_LM, y = cv_1_visitation), color= "#984ea3", size=2)+ 
   labs(x = "",y=NULL)+  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
 
    
 
 p5.1=sta_polli_data_plant.3$plots[[5]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Lavandula pedunculata"), 
- aes(x =  asyn_LM, y = cv_1_visitation), color="hotpink",fill="hotpink",pch=21, size=2)+ 
+ aes(x =  asyn_LM, y = cv_1_visitation), color="#ff7f00", size=2)+ 
   labs(x = "",y=NULL)+  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
   
 
 
-
-jpeg('stability.jpg', width = 15, height = 7, units = 'in', res = 1200)
-
 p1 +p2+p3+p4+p5+p1.1+p2.1+p3.1+p4.1+p5.1+plot_layout(ncol = 5)& theme(axis.title = element_text(face="bold"))
-dev.off()
+
 
 
 # we analysed the stability of visitation rate on stability of fruit proportion
@@ -343,7 +336,7 @@ sta_polli_fruit.2 <- data_plant %>%
 
 
 p1.fruit=sta_polli_fruit.2$plots[[1]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Cistus crispus"), 
-  aes(x =  cv_1_visitation, y = cv_1_fruit),color="coral3",fill="coral2", pch=21, size=2)+ 
+  aes(x =  cv_1_visitation, y = cv_1_fruit),color="#e41a1c",fill="coral2", pch=21, size=2)+ 
   labs(x = "",y="Stability of fruit proportion")+
   theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
 
