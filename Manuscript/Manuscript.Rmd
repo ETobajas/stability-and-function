@@ -1,16 +1,23 @@
 ---
 title: "Title"
-output: pdf_document
 date: '2022-10-26'
+output: 
+  pdf_document :
+header-includes:
+ \usepackage{float}
+ \floatplacement{figure}{H}
+ \usepackage{caption}
+ \renewcommand{\caption}{Figure}
+ 
 ---
 
 # Abstract
 
 1. Understanding the mechanisms driving community stability and whether this stability should be related to the stability of ecosystem functions is important for predicting the resilience of communities to changes in biodiversity. While community stability can be influenced by species richness and asynchrony of species,  the relation with the stability of ecosystem functioning provided by this community is less explored, and specially for functions involving several trophic levels such as plant pollination.
 
-2. Using a 5-year dataset across 16 Mediterranean woodland patches, we assessed the effect of the richness and asynchrony of pollinators as drivers of the stability of plant's visitation rate and its relationship between the stability of visitation rate and the stability of the plants reproductive success. [In addition, we analyzed whether the year together with richness and visitation rate affected the proportion of fruits and the number of seeds.](esto pensamos como ponerlo con los results finales) 
+2. Using a 5-year dataset across 13 Mediterranean woodland patches, we assessed the effect of the richness and asynchrony of pollinators as drivers of the stability of plant's visitation rate and its relationship between the stability of visitation rate and the stability of the plants reproductive success. [In addition, we analyzed whether the year together with richness and visitation rate affected the proportion of fruits and the number of seeds.](esto pensamos como ponerlo con los results finales) 
 
-3. The stability of plant's visitation rate is mainly affected by the asynchrony of pollinator species abundances while pollinator richness shows contrasting responses depending on the plant species. As for the stability of the plant reproductive success, we found no relationship between the stability of fruits or seed set and the stability of the visitation rate. This is because for most years, visitation rates are high enough to prevent pollen limitation, but interestingly, in bad[?]() years the effect of pollinator richness on fruit proportion becomes important. 
+3. The stability of plant's visitation rate is mainly affected by the asynchrony of pollinator species abundances while pollinator richness shows contrasting responses depending on the plant species. As for the stability of the plant reproductive success, we found no relationship between the stability of fruits and the stability of the visitation rate, however a negative tendency was observed between stability of seed and the stability of visitation rate. [This is because for most years, visitation rates are high enough to prevent pollen limitation, but interestingly, in bad years the effect of pollinator richness on fruit proportion becomes important.]() 
 
 
 # Material and method
@@ -19,7 +26,7 @@ Our study was conducted in the southwest of the Iberian Peninsula (Huelva and Se
 For each site and year, we calculated the visitation rate of pollinators as the number of visits divided by the number of flowers, pollinator richness, the fruit set as the proportion of fruit, and the seed set as number of seed for each plant individual sampled per site.
 
 ## Stability
-For the study of stability, we used 5 plant species (*Cistus crispus*, *Cistus ladanifer*, *Cistus salviifolius*, *Halimium halimifolium*, and *Lavandula pedunculata*) because of they were recorded in at least 5 sites during the 5 years. The stability of visitation rate was quantified as the inverse of the coefficient of variation (mean/SD) for each plant species in each plot following (REF). To examine the role of richness and synchrony of pollinator species as drivers of stability of visitation rate, we calculate the richness as the total number of pollinator species that visit each plant species in each plot during the five years. For synchrony, we used the Loreau and de Mazancourt index (2008), the weighted form of the synchrony index (Gross et al., 2014; Blüthgen et al., 2016), and the log of variance ratio (log VR) (Schluter, 1984; Hallett et al., 2014; Lepš et al., 2018). All of them were positively correlated within each plant species, therefore, data for synchrony assessed by Loreau and de Mazancourt index are presented and included in our further analyses. This synchrony measurement varies from zero, when fluctuations are perfectly asynchronous, to one, when fluctuations are perfectly synchronous. Finally, we express asynchrony as 1-Loreau and de Mazancourt’s index of synchrony.
+For the study of stability, we used 5 plant species (*Cistus crispus*, *Cistus ladanifer*, *Cistus salviifolius*, *Halimium halimifolium*, and *Lavandula pedunculata*) because of they were recorded in at least 5 sites. The stability of visitation rate was quantified as the inverse of the coefficient of variation (mean/SD) for each plant species in each plot following (Tilman, 1999). To examine the role of richness and synchrony of pollinator species as drivers of stability of visitation rate, we calculate the richness as the total number of pollinator species that visit each plant species in each plot. For synchrony, we used the Loreau and de Mazancourt index (2008), the weighted form of the synchrony index (Gross et al., 2014; Blüthgen et al., 2016), and the log of variance ratio (log VR) (Schluter, 1984; Hallett et al., 2014; Lepš et al., 2018). All of them were positively correlated within each plant species, therefore, data for synchrony assessed by Loreau and de Mazancourt index are presented and included in our further analyses. This synchrony measurement varies from zero, when fluctuations are perfectly asynchronous, to one, when fluctuations are perfectly synchronous. Finally, we express asynchrony as 1-Loreau and de Mazancourt’s index of synchrony.
 We also calculated the stability of fruit proportion and of the seed number for each plant species in each plot.
 
 ## Statistical analysis
@@ -27,19 +34,18 @@ To evaluate the main drivers of visitation rate stability, we employed linear mi
 
 For our aim to study whether the stability of the visitation rate influenced in the stability of the plant reproductive success, we run linear mixed models using as response variables the stability of fruit proportion or stability of seed number and as explanatory variable the visitation rate stability. Site and plant species were included as factor random.
 
-To detect whether the effect of pollinator richness and visitation rate is different across the years, we use all plant species sampled. We analyzed the interaction effect richness and year, and visitation rate and year on fruit proportion using  binomial generalized linear mixed models, and on the number of seeds employing linear mixed model. The number of seeds per fruit was centered and scaled to allow meaningful comparisons across species. For all models, we included plant species identity nested within site and site as random effects because of multiple individuals of the same plant species are measured at each site.
+To detect whether the effect of pollinator richness and visitation rate is different across the years, we use all plant species sampled. We analyzed the interaction effect richness and year, and visitation rate and year on fruit proportion using  binomial generalized linear mixed models, and on the number of seeds employing linear mixed model. The number of seeds per fruit was centered and scaled per plant species to allow meaningful comparisons across species. For all models, we included plant species identity nested within site and site as random effects because of multiple individuals of the same plant species are measured at each site.
 
 
 # Results
 
 ## Stability of visitation rate and its drives: richness and synchrony 
-Stability of visitation rate ranged from 0.71 to 5.63 (mean ± SE: 1.715 ± 0.135), whereas pollinator richness ranged from 2 to 20 (8.128 ± 0.686) and the pollinator asynchrony varied from 0 to 0.98 (0.689 ± 0.036).
-Our results showed that the stability of visitation rate was positively related with de asynchrony (Estimate: 1.236; standard error: 0.658) (Fig 1A), and it was not influenced by the pollinator richness (Estimate: 0.021; standard error: 0.034) (Fig 1B).
+Stability of visitation rate ranged from 0.64 to 9.24 (mean ± SE: 1.928 ± 0.232), whereas pollinator richness ranged from 2 to 20 (8.128 ± 0.686) and the pollinator asynchrony varied from 0 to 0.998 (0.754 ± 0.032).
+Our results showed a significant relationship between stability of visitation rate and asynchrony with greater visitation rate stability when pollinator asynchrony increases (Estimate: 4.851; standard error: 1.368) (Fig 1A), whereas the pollinator richness was marginal and negatively related to stability (Estimate: -0.125; standard error: 0.067) (Fig 1B).
+When we analysed the plant species separately, we observed that all plant species follow the general tendency, except to the *L. pedunculata* that presented a negative tendency between stability of visitation rate and asynchrony, and positive with the richness (Suplementary material-Fig 1).
 
-The results obtained from visitation rate stability for plant species separately showed that the richness effect is different in function of plant species. A negative relation was found in *Cistus crispus* (Estimate: -0.120; std. error: 0.05) and *Cistus salviifolius* (Estimate: -0.079; std. error: 0.03) whereas a positive relation was found in *Cistus ladanifer* (Estimate: 0.069; std. error: 0.04) and *Lavandula pedunculata* (Estimate: 0.302; std. error: 0.13). The asynchrony was only relation with the visitation rate stability in *C. crispu* (Estimate: 1.847; std. error: 0.72), although we observed that the tendency of all plant species was positive, except to the *L. pedunculata* (Supplementary material-Fig 1).
 
-
-```{r, echo=FALSE, warning=FALSE,message=FALSE,fig.height = 10,fig.width=20, out.width="100%"}
+```{r, echo=FALSE, warning=FALSE,message=FALSE,fig.height = 10,fig.width=20, out.width="80%",fig.align='center', fig.cap =" 1.Relationship between stability of visitation rate (calculated as the inverse of the coefficient of variation) and asynchorny of pollinators (Loreau and de Mazancourt’s index) (A) and richness of pollinators (B). Dots represent the different plant species incluided in the analysis."}
 
 library(tidyverse)
 library(lme4)
@@ -47,62 +53,88 @@ library(effects)
 library(patchwork)
 
 
-
-# stability data for five plant species present at least in five sites
+# staility of visitation rate and richness and asynchrony
+# plant species present at least in five sites
 # C.crispu, C. ladanifer, C. salviifolius, H.halimifolium and L. pedunculata
 
-data_plant<- read.csv("../Data/Stability_fivespecies.csv")
+# stability data 
+data_plant<- read.csv("../Data/Stability.csv")
 data_plant<-data_plant[,-1]
 
 
-# Replace inf with NA
-data_plant[sapply(data_plant, is.infinite)] <- NA
+# eliminar plant species 
+sp_out2=data_plant %>%
+  group_by(Plant_gen_sp) %>%
+  summarise(Unique_Id = n_distinct(Site_ID)) %>%
+  filter(Unique_Id <= 4) %>%
+  select(Plant_gen_sp) %>% pull(Plant_gen_sp)
+
+#Data with species in at least 5 sites
+data_plant = data_plant %>% filter(!Plant_gen_sp %in% sp_out2)
+
+
+data_plant=data_plant %>%
+  filter(!Plant_gen_sp=="Salvia rosmarinus") %>%
+  filter(!Plant_gen_sp=="Halimium calycinum")%>%
+  filter(!Plant_gen_sp=="Lavandula stoechas")
+
+
+
+## Replace Inf and -Inf with NA
+data_plant[is.na(data_plant) | data_plant == "Inf"] <- NA 
+data_plant[is.na(data_plant) | data_plant == "-Inf"] <- NA 
+
+
 
 # We can express asynchrony as 1 - φ, 
 #where φ is Loreau and de Mazancourt’s (2008)
-data_plant$asynchrony= 1-data_plant$syncLM
+data_plant$asyn_LM= 1-data_plant$syncLM
 
 
 #model 
-mod1_sta= lmer (cv_1_visitation ~ S_total + asynchrony + (1|Site_ID) + (1|Plant_gen_sp), data = data_plant)
+mod1_sta= lmer (cv_1_visitation ~ S_total + asyn_LM + (1|Site_ID) + (1|Plant_gen_sp), data = data_plant)
 
 
 
 #getting effects for asynchrony
-effe_mod_sta <-data.frame( effect("asynchrony", mod1_sta, se = TRUE))
+effe_mod_sta <-data.frame( effect("asyn_LM", mod1_sta, se = TRUE))
 
 
 #plot model of asynchrony
-p1=ggplot(effe_mod_sta, aes(asynchrony, fit)) + geom_line(size=1)+
-  geom_ribbon(aes(ymin = lower, ymax = upper), linetype = 3,size=1, alpha=0.2, colour = "black")+
-  scale_y_continuous(limits = c(-0.14, 6))+ labs(color='Plant species')+
-  geom_point(data = data_plant, aes(x =  asynchrony, y = cv_1_visitation, color=Plant_gen_sp), size=8)+
-  theme_classic ()+theme(panel.border = element_rect(colour = "black", fill=NA))+
+p1=ggplot(effe_mod_sta, aes(asyn_LM, fit)) + geom_line(size=1)+
+  geom_ribbon(aes(ymin = lower, ymax = upper), linetype = 3,alpha=0.2, colour = "black", size=1)+
+  scale_y_continuous(limits = c(-4, 9.5))+labs(color='Plant species')+
+  geom_point(data = data_plant, aes(x =  asyn_LM, y = cv_1_visitation, color=Plant_gen_sp), alpha=0.7,size=7)+
+  scale_colour_brewer(palette = "Set1")+
+   theme_bw ()+
   labs(x = "Asynchrony of pollinator",y="Stability of visitation rate")+
   guides(colour=guide_legend(nrow=2,byrow=TRUE))+ theme(legend.text = element_text(face="italic"))
-  
+
 
 
 #getting effects for richness
 effe2_mod_sta <-data.frame( effect("S_total", mod1_sta, se = TRUE))
 
 
+
 #plot model of richness
 p2=ggplot(effe2_mod_sta, aes(S_total, fit)) + geom_line(size=1)+
-  geom_ribbon(aes(ymin = lower, ymax = upper), linetype = 3, size=0.8, alpha=0.2, colour = "black")+
-  scale_y_continuous(limits = c(-0.14, 6))+  labs(color='Plant species')+
-  geom_point(data = data_plant, aes(x =  S_total, y = cv_1_visitation, color=Plant_gen_sp), size=8)+
-  theme_classic ()+theme(panel.border = element_rect(colour = "black", fill=NA))+
-  labs(x = "Richness of pollinator",y="")+
+  geom_ribbon(aes(ymin = lower, ymax = upper), linetype = 3, alpha=0.2, colour = "black", size=1)+
+  scale_y_continuous(limits = c(-4, 9.5))+  labs(color='Plant species')+
+  geom_point(data = data_plant, aes(x =  S_total, y = cv_1_visitation, color=Plant_gen_sp), alpha=0.7,size=7)+
+  scale_colour_brewer(palette = "Set1")+
+  theme_bw ()+
+  labs(x = "Richness of pollinator",y="") +
   guides(colour=guide_legend(nrow=2,byrow=TRUE))+ theme(legend.text = element_text(face="italic"))
   
+
 
 
 #join plots
 p_cv_visit=p1+p2+ 
   plot_annotation(tag_levels = "A")& 
   theme(plot.tag.position = c(0, 1),
-        plot.tag = element_text(hjust = -0.3, vjust = 0.5, size=30))& 
+        plot.tag = element_text(hjust = -0.1, size=30))& 
   theme(legend.position = "bottom",legend.background = element_blank(),legend.box.background = element_rect(colour = "black"))&theme(text = element_text(size=30))
 p_cv_visit+ plot_layout(guides = "collect")
 
@@ -112,9 +144,9 @@ p_cv_visit+ plot_layout(guides = "collect")
 ## Stability of visitation rate and stability of the plant reproductive success
 
 Stability of fruit proportion varied from 2.62 to 120.66 (mean ± SE: 19.806 ± 3.615), whereas the stability of seed number ranged 1.28 to 55.86 (7.018 ± 1.441).
-When we analyzed whether the stability of the visitation rate affected the stability of the plant reproductive success, we found no relationship between this and the stability of the fruit proportion (Estimate: 4.692; std. error: 4.545) (Fig 2A), and neither with the stability of the number of seeds (Estimate: 0.859; std. error: 1.825) (Fig 2B).
+When we analyzed whether the stability of the visitation rate affected the stability of the plant reproductive success, we did not find relationship between this and the stability of the fruit proportion (Estimate: -1.547; std. error: 2.611) (Fig 2A), however, the stability of seed number showed negative tendency with the stability of visitation rate (Estimate: -1.887; std. error: 0.959) (Fig 2B).
 
-```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 10,fig.width=20,out.width="100%"}
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 10,fig.width=20,out.width="80%",fig.align='center', fig.cap = " 2. Relationship between stability of plant reproductive succes: fruit propotion (A) and seed number (B) and the stability of visitation rate. Dots represent the different plant species incluided in the analysis."}
 
 #model fruit stability ~ visitation rate stability
 mod2_sta= lmer(cv_1_fruit ~ cv_1_visitation + (1|Plant_gen_sp)+(1|Site_ID), data = data_plant)
@@ -125,12 +157,15 @@ effe3_mod_sta <-data.frame( effect("cv_1_visitation", mod2_sta, se = TRUE))
 
 #plot model 
 p_mod2=ggplot(effe3_mod_sta, aes(cv_1_visitation, fit)) + geom_line(size=1)+
-  geom_ribbon(aes(ymin = lower, ymax = upper),linetype = 3, alpha=0.2, colour = "black")+
-  geom_point(data = data_plant, aes(x =  cv_1_visitation, y = cv_1_fruit, color=Plant_gen_sp), size=8)+
+  geom_ribbon(aes(ymin = lower, ymax = upper),linetype = 3, alpha=0.2, colour = "black",size=1)+
+  geom_point(data = data_plant, aes(x =  cv_1_visitation, y = cv_1_fruit, color=Plant_gen_sp),alpha=0.7, size=7)+
   labs(color='Plant species')+
-  labs(y = "Stability of fruit proportion",x="Visitation rate stability")+
-  theme_classic ()+theme(panel.border = element_rect(colour = "black", fill=NA))+
-  guides(colour=guide_legend(nrow=2,byrow=TRUE))+theme(legend.text = element_text(face="italic"))
+  scale_colour_brewer(palette = "Set1")+
+  labs(y = "Stability of fruit proportion",x="Stability of visitation rate")+
+  theme_bw ()+
+  guides(colour=guide_legend(nrow=2,byrow=TRUE))+ theme(legend.text = element_text(face="italic"))
+
+
 
 
 
@@ -144,21 +179,141 @@ effe4_mod_sta <-data.frame( effect("cv_1_visitation", mod3_sta, se = TRUE))
 
 #plot model 
 p_mod3=ggplot(effe4_mod_sta, aes(cv_1_visitation, fit)) + geom_line(size=1)+
-  geom_ribbon(aes(ymin = lower, ymax = upper), linetype = 3, alpha=0.2, colour = "black")+
+  geom_ribbon(aes(ymin = lower, ymax = upper), linetype = 3, alpha=0.2, colour = "black", size=1)+
   labs(color='Plant species')+
-  geom_point(data = data_plant, aes(x =  cv_1_visitation, y = cv_1_seed, color=Plant_gen_sp), size=8)+
-  labs(y = "Stability of seed number",x="Visitation rate stability")+
-  theme_classic ()+theme(panel.border = element_rect(colour = "black", fill=NA))+
-  guides(colour=guide_legend(nrow=2,byrow=TRUE))+theme(legend.text = element_text(face="italic"))
+  geom_point(data = data_plant, aes(x =  cv_1_visitation, y = cv_1_seed, color=Plant_gen_sp), alpha=0.7,size=7)+
+  scale_colour_brewer(palette = "Set1")+
+  labs(y = "Stability of seed number",x="Stability of visitation rate")+
+  theme_bw ()+
+  guides(colour=guide_legend(nrow=2,byrow=TRUE))+ theme(legend.text = element_text(face="italic"))
+
 
 
 #join plots
 p_plant=p_mod2+p_mod3+ 
   plot_annotation(tag_levels = "A")& 
   theme(plot.tag.position = c(0, 1),
-        plot.tag = element_text(hjust = -0.3, vjust = 0.5,size=30))& 
+        plot.tag = element_text(hjust = -0.8, vjust = 0.5,size=30))& 
   theme(legend.position = "bottom",legend.background = element_blank(),legend.box.background = element_rect(colour = "black"))&theme(text = element_text(size=30))
 p_plant+ plot_layout(guides = "collect")
+
+```
+
+
+## Effect of pollinators across years on the plant reproductive success
+
+When we analysed whether the effect of pollinator richness and visitation rate is different across the years, we found that both variables showed a significant interaction effect with the year on fruit proportion. Although we observed a saturation of the fruit proportion, in year like 2017 is showed that a greater richness and visitation rate increased the fruit proportion (Richness - Estimate: 0.395; std. error: 0.15; Visitation rate - Estimate: 25.238; std. error: 5.67). However in 2018, the relationship between richness and fruit proportion was negative [(Estimate: -0.147; std. error: 0.05)](Los estimate y std error en este caso son en funcion de 2015 ya que el modelo lo pone como intercept. El Anova(car) nos da Pr(>Chisq) y df, ¿incluyo esta información??) (Fig 3).
+
+
+
+```{r,echo=FALSE, warning=FALSE,message=FALSE,fig.height =13,fig.width=30,out.width="100%", fig.align='center',fig.cap=" 3. Interaction effect between richness and year (top row), and visitation rate and year (bottom row) on fruit proportion. For the visualization purpose, we omit in the visitation rate (x-axis) the values outside of the 95\\%."}
+
+Pollinator_Plant<- read.csv("../Data/Pollinator_Plant.csv") #400 observaciones
+Pollinator_Plant<-Pollinator_Plant[,-1]
+Pollinator_Plant$Year= as.factor(Pollinator_Plant$Year)
+Pollinator_Plant$Site_ID= as.factor(Pollinator_Plant$Site_ID)
+Pollinator_Plant$Plant_gen_sp= as.factor(Pollinator_Plant$Plant_gen_sp)
+
+
+# species out
+#plant species that for each year occur only at one site
+spp_out <- Pollinator_Plant %>%
+  group_by(Plant_gen_sp, Year) %>%
+  summarise(Unique_Id = n_distinct(Site_ID)) %>%
+  filter(Unique_Id == 1) %>%
+  select(Plant_gen_sp, Year)
+
+
+Pollinator_Plant= anti_join(Pollinator_Plant, spp_out)
+
+
+
+# model 1
+mod1_to= glmer(cbind(fruit_formado, Fruit_No) ~ S_total * Year + (1|Site_ID/Plant_gen_sp),family=binomial,data=Pollinator_Plant)
+
+#getting effects for the two variables
+ee_mod1 <- as.data.frame(Effect(c("S_total","Year"),mod = mod1_to))
+
+p1=ggplot(ee_mod1, aes(S_total,fit))+
+  geom_line(size=0.8)+
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = .2)+
+  geom_point(data= Pollinator_Plant, aes(x = S_total , y = fruit_proportion),shape=21, fill="grey", size=6)+
+  labs(x = "Pollinator richness",y="Fruit proportion")+
+  facet_wrap(~Year, nrow = 1) + 
+  theme_bw ()+
+  theme(legend.position = "none")
+
+
+
+# model 2
+mod2_to= glmer(cbind(fruit_formado, Fruit_No) ~ visitatio_rate * Year + (1|Site_ID/Plant_gen_sp),family=binomial,data=Pollinator_Plant)
+
+#getting effects for the two variables
+ee_mod2 <- as.data.frame(Effect(c("visitatio_rate","Year"),mod = mod2_to))
+
+p2=ggplot(ee_mod2, aes(visitatio_rate,fit))+
+  geom_line(size=0.8)+  
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = .2)+
+  geom_point(data= Pollinator_Plant, aes(x =visitatio_rate , y = fruit_proportion),shape=21, fill="grey", size=6)+
+  labs(x = "Visitation rate",y="Fruit proportion")+
+  facet_wrap(~Year, nrow = 1) + 
+  coord_cartesian(xlim=c(0, quantile(Pollinator_Plant$visitatio_rate,0.95)))+
+  theme_bw ()+
+  theme(legend.position = "none")
+
+
+p1/p2&theme(text = element_text(size=35))
+
+
+```
+
+
+For the seed number, we not found the interaction effect to pollinator richness, however we found a marginal significant interaction between visitation rate and year. We observed that a higher the visitation rate increased the seed number in 2019 [(Fig 4)](quizas puede ir a material suplementario).
+
+
+```{r,echo=FALSE, warning=FALSE,message=FALSE,fig.height = 13,fig.width=30,out.width="100%", fig.align='center',fig.cap=" 4. Interaction effect between richness and year (top row), and visitation rate and year (bottom row) on seed number. For the visualization purpose, we omit in the visitation rate (x-axis) the values outside of the 95\\%."}
+
+# #scale seed number variable
+Pollinator_Plant=Pollinator_Plant %>% 
+  group_by(Plant_gen_sp) %>%
+  mutate(seed_sc=scale(Seeds, center = T, scale = T))
+
+#model3
+mod3_to= lmer(seed_sc ~S_total * Year + (1|Site_ID/Plant_gen_sp),data=Pollinator_Plant)
+
+#getting effects for the two variables
+ee_mod3 <- as.data.frame(Effect(c("S_total","Year"),mod = mod3_to))
+
+p3=ggplot(ee_mod3, aes(S_total,fit))+
+  geom_line(size=0.8)+ 
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = .2)+
+  geom_point(data= Pollinator_Plant, aes(x = S_total , y = seed_sc),shape=21, fill="grey", size=6)+
+  labs(x = "Pollinator richness",y="Seed number")+
+  ylim(-3,3)+
+  facet_wrap(~Year, nrow = 1) + 
+  theme_bw ()+
+  theme(legend.position = "none")
+
+#model4
+mod4_to= lmer(seed_sc ~ visitatio_rate*Year + (1|Site_ID/Plant_gen_sp),data=Pollinator_Plant)
+
+
+#getting effects for the two variables
+ee_mod4 <- as.data.frame(Effect(c("visitatio_rate","Year"),mod = mod4_to))
+
+#plot
+
+p4 = ggplot(ee_mod4, aes(visitatio_rate,fit))+
+  geom_line(size=0.8)+
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = .2)+
+  geom_point(data= Pollinator_Plant, aes(x =visitatio_rate , y = seed_sc),shape=21, fill="grey",size=6)+
+  labs(x = "Visitation rate",y="Seed number")+
+  facet_wrap(~Year, nrow = 1) + 
+  coord_cartesian(xlim=c(0, quantile(Pollinator_Plant$visitatio_rate,0.95)),ylim = c(-3,3))+
+  theme_bw ()+
+  theme(legend.position="none")
+
+p3/p4 &theme(text = element_text(size=35))
 
 ```
 
@@ -167,45 +322,54 @@ p_plant+ plot_layout(guides = "collect")
 \newpage
 
 # Supplementary material
-```{r, echo=FALSE, warning=FALSE,message=FALSE,fig.height = 15,fig.width=30,out.width="100%"}
+```{r, echo=FALSE, warning=FALSE,message=FALSE,fig.height = 13,fig.width=30,out.width="100%", fig.align='center',fig.cap=" 1. Changes in the stability of visitation rate with the asynchrony (top row) and richness (botton row) are shown for each plant species"}
 # model plot (cv_1_visitation~S_total+asynchrony)
+
+
 # plot for richness
 plot_stabi_plant <- data_plant %>%
   nest_by(Plant_gen_sp) %>%
-  mutate(mod = list(lm(cv_1_visitation~S_total+asynchrony,data))) %>%
+  mutate(mod = list(lm(cv_1_visitation~S_total+asyn_LM,data))) %>%
   mutate(mod1 = list(ggeffects::ggpredict(mod, terms = "S_total"))) %>%
   mutate(plots = list(ggplot(mod1, aes(x, predicted)) + geom_line(size=1) +
   geom_ribbon(aes(ymin = conf.low, ymax = conf.high), linetype = 3, alpha=0.2, colour = "black")))
 
 #Cistus crispus
 p1=plot_stabi_plant$plots[[1]] + geom_point(data =data_plant %>% filter(Plant_gen_sp == "Cistus crispus"), 
-  aes(x =  S_total, y = cv_1_visitation),color="coral3",fill="coral2", pch=21, size=8)+ 
-  labs(x = "",y="Stability of visitation rate",subtitle = "Cistus crispus")+scale_x_continuous(limits = c(9, 16))+
-  theme_classic ()+theme(panel.border = element_rect(colour = "black", fill=NA))+theme( plot.subtitle = element_text(face = "italic"))
+  aes(x =  S_total, y = cv_1_visitation),color="#e41a1c", alpha=0.7,size=7)+ 
+  labs(x = "",y="Stability of visitation rate")+scale_x_continuous(limits = c(9, 16))+
+  scale_y_continuous(limits = c(-5,9.5))+
+  theme_bw ()
+
 
 #Cistus ladanifer
 p2=plot_stabi_plant$plots[[2]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Cistus ladanifer"), 
-  aes(x =  S_total, y = cv_1_visitation),color="yellow4",fill="yellow4",pch=21, size=8)+ 
-  labs(x = "",y=NULL,subtitle = "Cistus ladanifer")+scale_x_continuous(limits = c(3, 16))+ 
-  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))+theme( plot.subtitle = element_text(face = "italic"))
+  aes(x =  S_total, y = cv_1_visitation),color="#377eb8",alpha=0.7, size=7)+ 
+  labs(x = "",y=NULL)+scale_x_continuous(limits = c(3, 16))+ 
+  scale_y_continuous(limits = c(-1.55,4))+
+  theme_bw()
 
 #Cistus salviifolius
 p3=plot_stabi_plant$plots[[3]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Cistus salviifolius"), 
- aes(x =  S_total, y = cv_1_visitation),color= "springgreen3",fill="springgreen3",pch=21, size=8)+ 
-  labs(x = "Richness",y=NULL,subtitle = "Cistus salviifolius")+scale_x_continuous(limits = c(3, 20))+  
-  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))+theme( plot.subtitle = element_text(face = "italic"))
+  aes(x =  S_total, y = cv_1_visitation),color= "#4daf4a",alpha=0.7, size=7)+ 
+  labs(x = "Richness",y=NULL)+scale_x_continuous(limits = c(3, 20))+  
+  scale_y_continuous(limits = c(-3,6))+
+  theme_bw()
+
 
 #Halimium halimifolium
 p4=plot_stabi_plant$plots[[4]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Halimium halimifolium"), 
-  aes(x =  S_total, y = cv_1_visitation), color= "cyan3",fill="cyan3", pch=21, size=8)+ 
-  labs(x = "",y=NULL,subtitle = "Halimium halimifolium")+ scale_x_continuous(limits = c(4, 14))+ 
-  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))+theme( plot.subtitle = element_text(face = "italic"))
+  aes(x =  S_total, y = cv_1_visitation), color= "#984ea3",alpha=0.7, size=7)+   labs(x = "",y=NULL)+ scale_x_continuous(limits = c(4, 14))+ 
+  scale_y_continuous(limits = c(-0.7,3))+
+  theme_bw()
+
 
 #Lavandula pedunculata
 p5=plot_stabi_plant$plots[[5]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Lavandula pedunculata"), 
-  aes(x =  S_total, y = cv_1_visitation),color="hotpink",fill="hotpink",pch=21, size=8)+ 
-  labs(x = "",y=NULL,subtitle = "Lavandula pedunculata")+  
-  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))+theme( plot.subtitle = element_text(face = "italic"))
+  aes(x =  S_total, y = cv_1_visitation),color="#ff7f00",alpha=0.7, size=7)+ 
+  labs(x = "",y=NULL)+  
+  scale_y_continuous(limits = c(-0.7,4.7))+
+  theme_bw()
 
 
 
@@ -213,45 +377,54 @@ p5=plot_stabi_plant$plots[[5]] + geom_point(data = data_plant %>% filter(Plant_g
 # model plot for asynchrony
 plot_stabi_plant_2 <- data_plant %>%
   nest_by(Plant_gen_sp) %>%
-  mutate(mod = list(lm(cv_1_visitation~S_total+asynchrony,data))) %>%
-  mutate(mod1 = list(ggeffects::ggpredict(mod, terms = "asynchrony"))) %>%
+  mutate(mod = list(lm(cv_1_visitation~S_total+asyn_LM,data))) %>%
+  mutate(mod1 = list(ggeffects::ggpredict(mod, terms = "asyn_LM"))) %>%
   mutate(plots = list(ggplot(mod1, aes(x, predicted)) + geom_line(size=1) +
  geom_ribbon(aes(ymin = conf.low, ymax = conf.high),linetype = 3, alpha=0.2, colour = "black")))
 
 
 #Cistus crispus
 p1.1=plot_stabi_plant_2$plots[[1]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Cistus crispus"), 
- aes(x =  asynchrony, y = cv_1_visitation),color="coral3",fill="coral2", pch=21, size=8)+ 
-  labs(x = "",y="Stability of visitaion rate")+
-  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
+  aes(x =  asyn_LM, y = cv_1_visitation),color="#e41a1c",alpha=0.7, size=7)+ 
+  labs(x = "",y="Stability of visitaion rate",subtitle = "Cistus crispus")+
+  scale_y_continuous(limits = c(-5,9.5))+
+   theme_bw()+theme( plot.subtitle = element_text(face = "italic"))
 
 
 #Cistus ladanifer
 p2.1=plot_stabi_plant_2$plots[[2]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Cistus ladanifer"), 
-  aes(x =  asynchrony, y = cv_1_visitation),color="yellow4",fill="yellow4",pch=21, size=8)+ 
-  labs(x = "",y=NULL)+  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
+  aes(x =  asyn_LM, y = cv_1_visitation),color="#377eb8", alpha=0.7,size=7)+ 
+  labs(x = "",y=NULL,subtitle = "Cistus ladanifer")+ 
+  scale_y_continuous(limits = c(-1.55,4))+
+  theme_bw()+theme( plot.subtitle = element_text(face = "italic"))
 
 
 #Cistus salviifolius
 p3.1=plot_stabi_plant_2$plots[[3]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Cistus salviifolius"), 
-   aes(x =  asynchrony, y = cv_1_visitation),color= "springgreen3",fill="springgreen3",pch=21, size=8)+ 
-  labs(x = "Asynchrony of pollinators",y= NULL)+  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
+  aes(x =  asyn_LM, y = cv_1_visitation),color= "#4daf4a",alpha=0.7, size=7)+ 
+  labs(x = "Asynchrony of pollinators",y= NULL,subtitle = "Cistus salviifolius")+ 
+  scale_y_continuous(limits = c(-3,6))+
+  theme_bw()+theme( plot.subtitle = element_text(face = "italic"))
 
 
 #Halimium halimifolium
 p4.1=plot_stabi_plant_2$plots[[4]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Halimium halimifolium"), 
-  aes(x =  asynchrony, y = cv_1_visitation), color= "cyan3",fill="cyan3", pch=21, size=8)+ 
-  labs(x = "",y=NULL)+  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
+  aes(x =  asyn_LM, y = cv_1_visitation), color= "#984ea3", alpha=0.7,size=7)+   labs(x = "",y=NULL,subtitle = "Halimium halimifolium")+ 
+  scale_y_continuous(limits = c(-0.7,3))+
+  theme_bw() +theme( plot.subtitle = element_text(face = "italic"))
 
 
 #Lavandula pedunculata
 p5.1=plot_stabi_plant_2$plots[[5]] + geom_point(data = data_plant %>% filter(Plant_gen_sp == "Lavandula pedunculata"), 
- aes(x =  asynchrony, y = cv_1_visitation), color="hotpink",fill="hotpink",pch=21, size=8)+ 
-  labs(x = "",y=NULL)+  theme_classic()+theme(panel.border = element_rect(colour = "black", fill=NA))
+  aes(x =  asyn_LM, y = cv_1_visitation), color="#ff7f00",alpha=0.7, size=7)+ 
+  labs(x = "",y=NULL,subtitle = "Lavandula pedunculata")+  
+  scale_y_continuous(limits = c(-0.7,4.7))+
+  theme_bw() +theme( plot.subtitle = element_text(face = "italic"))
+
 
 
 #join plot
-p1+p2+p3+p4+p5+p1.1+p2.1+p3.1+p4.1+p5.1+plot_layout(ncol = 5)& theme(axis.title = element_text(face="bold"))&theme(text = element_text(size=30))
+p1.1+p2.1+p3.1+p4.1+p5.1+p1+p2+p3+p4+p5+plot_layout(ncol = 5)& theme(axis.title = element_text(face="bold"))&theme(text = element_text(size=30))
 
 
 ```
