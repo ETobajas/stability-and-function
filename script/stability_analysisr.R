@@ -53,9 +53,9 @@ data_plant[is.na(data_plant) | data_plant == "-Inf"] <- NA
 data_plant$asyn_LM= 1-data_plant$syncLM
 
 
-# correlacion indices de sincronia
+# correlacion asynchrony and richness
 
-syn_cor<-data_plant %>% select(log_VR,syncLM,)
+syn_cor<-data_plant %>% select(asyn_LM,S_total)
 
 ## Replace Inf and -Inf with NA
 syn_cor[is.na(syn_cor) | syn_cor == "Inf"] <- 0 
@@ -132,17 +132,20 @@ ave_seed <- data_plant%>%
 #pollinator abundance is corrected by the sampling effort
 #to calculate the synchrony index
 
-mod1_sta= lmer (cv_1_visitation ~ S_total + asyn_LM + (1|Site_ID) + (1|Plant_gen_sp), data = data_plant)
+mod1_sta= lmer (cv_1_visitation ~ S_total + (1|Site_ID) + (1|Plant_gen_sp), data = data_plant)
+mod1_sta_2= lmer (cv_1_visitation ~ asyn_LM + (1|Site_ID) + (1|Plant_gen_sp), data = data_plant)
 
 
 summary(mod1_sta)
+summary(mod1_sta_2)
+
 r.squaredGLMM(mod1_sta)
 car::vif(mod1_sta)
 
 car::Anova(mod1_sta,Type="III")
 
  
-plot_model(mod1_sta, type="pred", show.data = T)
+plot_model(mod1_sta_2, type="pred", show.data = T)
 plot_model(mod1_sta, type = "re")
 
 #getting effects for asyncLM 
@@ -172,6 +175,22 @@ p_cv_visit=p1+p2+
         plot.tag = element_text(hjust = -3.5, vjust = 1.5, size=15))& theme(legend.position = "bottom",legend.background = element_blank(),legend.box.background = element_rect(colour = "black"))
 p_cv_visit+ plot_layout(guides = "collect")
 
+
+
+# relationship between richness and asynchrony
+mod_rich_asyn= lmer (asyn_LM ~ S_total +  (1|Site_ID) + (1|Plant_gen_sp), data = data_plant)
+summary(mod_rich_asyn)
+plot_model(mod_rich_asyn,type="pred", show.data = T)
+
+#getting effects for richness
+effe_rich_mod_sta <-data.frame( effect("S_total", mod_rich_asyn, se = TRUE))
+#plor model 
+p1.2=ggplot(effe_rich_mod_sta, aes(S_total, fit)) + geom_line(size=1)+
+  geom_ribbon(aes(ymin = lower, ymax = upper), linetype = 3, alpha=0.1, colour = "black")+
+  labs(color='Plant species')+
+  geom_point(data = data_plant, aes(x =  S_total, y = asyn_LM, color=Plant_gen_sp), size=3)+
+  theme_classic ()+theme(panel.border = element_rect(colour = "black", fill=NA))+
+  labs(x = "Richness of pollinator",y="Asynchrony")
 
 
 
@@ -221,7 +240,7 @@ p4=ggplot(effe4_mod_sta, aes(cv_1_visitation, fit)) + geom_line()+
 # stability ~ richness + synchrony per plant species 
 sta_polli_data_plant<-data_plant %>%
   nest_by(Plant_gen_sp) %>%
-  mutate(mod = list(lm(cv_1_visitation~S_total+asyn_LM,data))) %>%
+  mutate(mod = list(lm(cv_1_visitation~S_total,data))) %>%
   summarize(tidy(mod))%>%
   ungroup()
 
@@ -234,7 +253,7 @@ sta_polli_glance<-data_plant %>%
 # model2 plot (cv_1_visitation~total richness)
 sta_polli_data_plant.2 <- data_plant %>%
   nest_by(Plant_gen_sp) %>%
-  mutate(mod = list(lm(cv_1_visitation~S_total+asyn_LM,data))) %>%
+  mutate(mod = list(lm(cv_1_visitation~S_total,data))) %>%
   mutate(mod1 = list(ggeffects::ggpredict(mod, terms = "S_total"))) %>%
   mutate(plots = list(ggplot(mod1, aes(x, predicted)) + geom_line(size=1) +
                         geom_ribbon(aes(ymin = conf.low, ymax = conf.high), linetype = 3, alpha=0.1, colour = "black")))
@@ -277,7 +296,7 @@ p5=sta_polli_data_plant.2$plots[[5]] + geom_point(data = data_plant %>% filter(P
 # model2 plot (cv_1_visitation~syncLM)
 sta_polli_data_plant.3 <- data_plant %>%
   nest_by(Plant_gen_sp) %>%
-  mutate(mod = list(lm(cv_1_visitation~S_total+asyn_LM,data))) %>%
+  mutate(mod = list(lm(cv_1_visitation~asyn_LM,data))) %>%
   mutate(mod1 = list(ggeffects::ggpredict(mod, terms = "asyn_LM"))) %>%
   mutate(plots = list(ggplot(mod1, aes(x, predicted)) + geom_line(size=1) +
    geom_ribbon(aes(ymin = conf.low, ymax = conf.high),linetype = 3, alpha=0.1, colour = "black")))
