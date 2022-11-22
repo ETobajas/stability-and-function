@@ -35,23 +35,25 @@ In the current study, we use a 5-year dataset in Mediterranean woodland patches 
 
 # Material and method
 
-Our study was conducted in the southwest of the Iberian Peninsula (Huelva and Seville - Spain). We selected 13 sites in Mediterranean shrub ecosystems that ranged from sites with little to no disturbances to more modified ones with crops and urban areas nearby. These sites had similarity in plant community composition and some of most abundance plant species provide nectar and pollen that attract flower visitors. Each site was surveyed at least 7 times per year during the flowering season from 2015 to 2019 (from March to June). Within each site, we selected 3-4 individuals belonging to 3-9 plant species (mean  ± standard error: 5.92  ± 0.54 plant species per site). All the floral visitors (from now on referred to as pollinators) that contacted with their flowers  were registered in visits per flower and minute by performing timed focal observations to the selected individuals. Only pollinators that could not be identified in the field were captured, stored, and identified to species level in the laboratory. For each plant individual, we counted the total number of flowers and at the end of the season, we recorded the number of fruit and the seeds per fruit. All plants analyzed are at least partially pollinator dependent.
+Our study was conducted in the southwest of the Iberian Peninsula (Huelva and Sevilla - Spain). We selected 13 sites in Mediterranean shrub ecosystems that ranged from sites with little to no disturbances to more modified ones with crops and urban areas nearby. These sites had similarity in plant community composition and some of most abundance plant species provide nectar and pollen that attract flower visitors. Each site was surveyed at least 7 times per year during the flowering season from 2015 to 2019 (from March to June). Within each site, we selected 3-4 individuals belonging to 3-9 plant species (mean  ± standard error: 5.92  ± 0.54 plant species per site). All the floral visitors (from now on referred to as pollinators) that contacted with their flowers were registered by performing focal observations to the selected individuals during five minutes in 2015 -2016 and three minutes from 2017 to 2019. Only pollinators that could not be identified in the field were captured, stored, and identified to species level in the laboratory. For each plant individual, we counted the total number of flowers and at the end of the season, we recorded the number of fruit and the seeds per fruit. All plants analyzed are at least partially pollinator dependent.
+Due to the focal time observation was different over years, for each plant individual, the effort of sampling was standardized in frequency per minute dividing the total frequency by total observation time (time observation multiplied by number of round observation).
 For each site and year, we calculated the visitation rate of pollinators as the number of visits divided by the number of flowers, pollinator richness, the fruit set as the proportion of fruit, and the seed set as number of seed for each plant individual sampled per site.
 
 ## Stability
 
-For the study of stability, we used 5 plant species (*Cistus crispus*, *Cistus ladanifer*, *Cistus salviifolius*, *Halimium halimifolium*, and *Lavandula pedunculata*) because of they were recorded in at least 5 sites [what about years? in all years?](). The stability of visitation rate was quantified as the inverse of the coefficient of variation (mean/SD) for each plant species in each plot following (Tilman, 1999). To examine the role of richness and synchrony of pollinator species as drivers of stability of visitation rate, we calculate the richness as the total number of pollinator species that visit each plant species in each plot. To calculate synchrony, we used the Loreau and de Mazancourt index (2008), the weighted form of the synchrony index (Gross et al., 2014; Blüthgen et al., 2016), and the log of variance ratio (log VR) (Schluter, 1984; Hallett et al., 2014; Lepš et al., 2018). All of them were positively correlated to each other within each plant species [sup mat?](), therefore, data for synchrony assessed by Loreau and de Mazancourt index are presented and included in our further analyses. This synchrony measurement varies from zero, when fluctuations are perfectly asynchronous, to one, when fluctuations are perfectly synchronous. Finally, we express asynchrony as 1-Loreau and de Mazancourt’s index of synchrony.
+For the study of stability, we used 5 plant species (*Cistus crispus*, *Cistus ladanifer*, *Cistus salviifolius*, *Halimium halimifolium*, and *Lavandula pedunculata*) because of they were recorded in at least 5 sites and a minimum of two years per site. The stability of visitation rate was quantified as the inverse of the coefficient of variation (mean/SD) for each plant species in each plot following (Tilman, 1999). To examine the role of richness and synchrony of pollinator species as drivers of stability of visitation rate, we calculate the richness as the total number of pollinator species that visit each plant species in each plot. To calculate synchrony, we used the Loreau and de Mazancourt index (2008), the weighted form of the synchrony index (Gross et al., 2014; Blüthgen et al., 2016), and the log of variance ratio (log VR) (Schluter, 1984; Hallett et al., 2014; Lepš et al., 2018). All of them were positively correlated to each other within each plant species [sup mat?](), therefore, data for synchrony assessed by Loreau and de Mazancourt index are presented and included in our further analyses. This synchrony measurement varies from zero, when fluctuations are perfectly asynchronous, to one, when fluctuations are perfectly synchronous. Finally, we express asynchrony as 1-Loreau and de Mazancourt’s index of synchrony.
 We also calculated the stability of fruit proportion and of the seed number for each plant species in each plot.
 
 ## Statistical analysis
 
-All the analyses of this study were conducted in R ver. 4.0.2. To evaluate the main drivers of visitation rate stability, first we run correlation test between pollinator asynchrony and richness. As we observed a positive correlation among both variables [indicate r](), linear mixed models were used separately to evaluate the relationships between stability of visitation rate and pollinator richness, and stability of visitation rate and asynchrony of pollinator including site and plant species as random factor. [We also asses the relationship between asynchrony and pollinator richness with linear mixed model.](first you said correlation, now is lm?) For a deeper understanding, we also analyzed the response for each plant species separately.
+Linear mixed models were used to evaluate the relationships between 1) stability of visitation rate and asynchrony of pollinator, 2) stability of visitation rate and pollinator richness, and 3) asynchrony and pollinator richness. In all case, site and plant species were included as random factor.
+For a deeper understanding, we also analyzed the response for each plant species separately.
 
 To study whether the stability of the visitation rate influenced in the stability of the plant reproductive success, we run linear mixed models using as response variables the stability of fruit proportion or stability of seed number and as explanatory variable the visitation rate stability. Site and plant species were included as factor random.
 
 To detect whether the effect of pollinator richness and visitation rate is different across the years, we use all plant species sampled. We analyzed the interaction effect richness and year, and visitation rate and year on fruit proportion using binomial generalized linear mixed models, and on the number of seeds employing linear mixed model. The number of seeds per fruit was centered and scaled per plant species to allow meaningful comparisons across species. For all models, we included plant species identity nested within site and site as random effects because of multiple individuals of the same plant species are measured at each site.
 
-All models check with Dharma... cite packages used for plotting, etc...
+All the analyses of this study were conducted in R software (v. 4.0.2; R Core Team, 2022) and the lme4 (Bates et al., 2015) and ggplot2 (Wickham, 2016) packages. DHARMa package was employed for checking all models (Harting 2017) 
 
 
 # Results
@@ -59,12 +61,13 @@ All models check with Dharma... cite packages used for plotting, etc...
 ## Stability of visitation rate and its drives: richness and synchrony 
 
 Stability of visitation rate ranged from 0.64 to 9.24 (mean ± SE: 1.928 ± 0.232), whereas pollinator richness ranged from 2 to 20 (8.128 ± 0.686) and the pollinator asynchrony varied from 0 to 0.998 (0.754 ± 0.032).
-Our results showed a significant relationship between stability of visitation rate and asynchrony with greater visitation rate stability when pollinator asynchrony increases (Estimate ± standard error: 2.903 ± 1.134) (Fig 1A),
-whereas stability of visitation rate was not influenced by the pollinator richness (-0.001 ± 0.063)[only need to explain what is what the first time]() (Fig 1B). [We also observed a significant and positive relationship between asynchrony and pollinator richness (Estimate: 0.031; standard error: 0.007) (Supplementary material-Fig 1).](decide if this is needed)
+Our results supported the positive tendency between stability of visitation rate and asynchrony with greater visitation rate stability when pollinator asynchrony increases (Estimate ± standard error: 2.903 ± 1.134) (Fig 1A),
+whereas stability of visitation rate was not influenced by the pollinator richness (-0.001 ± 0.063) (Fig 1B). We also observed a positively strong relationship between asynchrony and pollinator richness (0.031 ± 0.007) (Fig 1C).
+
 When we analysed the plant species separately, we found [no significant](are we reporting p-values?) differences but we observed positive tendency in asynchrony for *H. halimifolium* and *L. pedunculata* [and other species has also positive estmate, right?](). In the case of richness, *C. crispus*, *C. ladanifer* and *C. salviifolius* was a negative tendecy wile *H. halimifolium* and *L. pedunculata* was positive (Supplementary material-Fig 2).
 
 
-```{r, echo=FALSE, warning=FALSE,message=FALSE,fig.height = 10,fig.width=20, out.width="80%",fig.align='center', fig.cap =" 1.Relationship between stability of visitation rate (calculated as the inverse of the coefficient of variation) and asynchorny of pollinators (Loreau and de Mazancourt’s index) (A) and richness of pollinators (B). Dots represent the different plant species incluided in the analysis."}
+```{r, echo=FALSE, warning=FALSE,message=FALSE,fig.height = 8,fig.width=20, out.width="100%",fig.align='center', fig.cap =" 1.Relationships between stability of visitation rate (calculated as the inverse of the coefficient of variation) and asynchorny of pollinators (Loreau and de Mazancourt’s index) (A), stability of visitation rate and pollinator richness (B), and asynchorny of pollinators and richness (C).Dots represent the different plant species incluided in the analysis.Significant models are representing with solid line For the visualization purpose, asynchrony values are represented from 0 to 1."}
 
 library(tidyverse)
 library(lme4)
@@ -122,7 +125,7 @@ effe_mod_sta <-data.frame( effect("asyn_LM", mod1_sta, se = TRUE))
 #plot model of asynchrony
 p1=ggplot(effe_mod_sta, aes(asyn_LM, fit)) + geom_line(size=1)+
   geom_ribbon(aes(ymin = lower, ymax = upper), linetype = 3,alpha=0.2, colour = "black", size=1)+
-  scale_y_continuous(limits = c(-4, 9.5))+labs(color='Plant species')+
+  scale_y_continuous(limits = c(-2.5, 9.5))+labs(color='Plant species')+
   geom_point(data = data_plant, aes(x =  asyn_LM, y = cv_1_visitation, color=Plant_gen_sp), alpha=0.7,size=7)+
   scale_colour_brewer(palette = "Set1")+
    theme_bw ()+
@@ -141,24 +144,41 @@ effe2_mod_sta <-data.frame( effect("S_total", mod1.2_sta, se = TRUE))
 
 
 #plot model of richness
-p2=ggplot(effe2_mod_sta, aes(S_total, fit)) + geom_line(size=1)+
-  geom_ribbon(aes(ymin = lower, ymax = upper), linetype = 3, alpha=0.2, colour = "black", size=1)+
-  scale_y_continuous(limits = c(-4, 9.5))+  labs(color='Plant species')+
+p2=ggplot(effe2_mod_sta, aes(S_total, fit)) + geom_line(size=1,linetype = "dashed")+
+  geom_ribbon(aes(ymin = lower, ymax = upper), linetype = 3, alpha=0.1, colour = "black", size=1)+
+  scale_y_continuous(limits = c(-2.5, 9.5))+  labs(color='Plant species')+
   geom_point(data = data_plant, aes(x =  S_total, y = cv_1_visitation, color=Plant_gen_sp), alpha=0.7,size=7)+
   scale_colour_brewer(palette = "Set1")+
   theme_bw ()+
-  labs(x = "Richness of pollinator",y="") +
+  labs(x = "Richness of pollinator",y="Stability of visitation rate") +
+  guides(colour=guide_legend(nrow=2,byrow=TRUE))+ theme(legend.text = element_text(face="italic"))
+  
+
+# relationship between richness and asynchrony
+mod_rich_asyn= lmer (asyn_LM ~ S_total +  (1|Site_ID) + (1|Plant_gen_sp), data = data_plant)
+
+#getting effects for richness
+effe_rich_mod_sta <-data.frame( effect("S_total", mod_rich_asyn, se = TRUE))
+#plot model 
+p1.2=ggplot(effe_rich_mod_sta, aes(S_total, fit)) + geom_line(size=1)+
+  geom_ribbon(aes(ymin = lower, ymax = upper), linetype = 3, alpha=0.2, colour = "black", size=1)+
+  labs(color='Plant species')+
+  coord_cartesian(ylim=c(0,1))+
+  geom_point(data = data_plant, aes(x =  S_total, y = asyn_LM, color=Plant_gen_sp), alpha=0.7,size=7)+
+  scale_colour_brewer(palette = "Set1")+
+  theme_bw ()+
+  labs(x = "Richness of pollinator",y="Asynchrony of pollinator")+
   guides(colour=guide_legend(nrow=2,byrow=TRUE))+ theme(legend.text = element_text(face="italic"))
   
 
 
 
 #join plots
-p_cv_visit=p1+p2+ 
+p_cv_visit=p1+p2+ p1.2+
   plot_annotation(tag_levels = "A")& 
   theme(plot.tag.position = c(0, 1),
-        plot.tag = element_text(hjust = -0.1, size=30))& 
-  theme(legend.position = "bottom",legend.background = element_blank(),legend.box.background = element_rect(colour = "black"))&theme(text = element_text(size=30))
+        plot.tag = element_text(hjust = -0.1,vjust=0.5, size=25))& 
+  theme(legend.position = "bottom",legend.background = element_blank(),legend.box.background = element_rect(colour = "black"))&theme(text = element_text(size=25))
 p_cv_visit+ plot_layout(guides = "collect")
 
 ```
@@ -344,32 +364,8 @@ p3/p4 &theme(text = element_text(size=35))
 
 # Supplementary material
 
-```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 10,fig.width=20,out.width="80%",fig.align='center',fig.cap=" 1. Relationship between asynchrony and pollinator richness. Dots represent the different plant species incluided in the analysis"}
 
-# relationship between richness and asynchrony
-mod_rich_asyn= lmer (asyn_LM ~ S_total +  (1|Site_ID) + (1|Plant_gen_sp), data = data_plant)
-
-
-
-#getting effects for richness
-effe_rich_mod_sta <-data.frame( effect("S_total", mod_rich_asyn, se = TRUE))
-
-
-#plot model 
-p1.2=ggplot(effe_rich_mod_sta, aes(S_total, fit)) + geom_line(size=1)+
-  geom_ribbon(aes(ymin = lower, ymax = upper), linetype = 3, alpha=0.2, colour = "black")+
-  labs(color='Plant species')+
-  scale_colour_brewer(palette = "Set1")+
-  geom_point(data = data_plant, aes(x =  S_total, y = asyn_LM, color=Plant_gen_sp), alpha=0.7,size=7)+
-  theme_classic ()+theme(panel.border = element_rect(colour = "black", fill=NA))+
-  labs(x = "Richness of pollinator",y="Asynchrony")+ theme(legend.text = element_text(face="italic"))
-
-
-p1.2&theme(text = element_text(size=30))
-```
-
-
-```{r, echo=FALSE, warning=FALSE,message=FALSE,fig.height = 13,fig.width=30,out.width="100%", fig.align='center',fig.cap=" 2. Changes in the stability of visitation rate with the asynchrony (top row) and richness (botton row) are shown for each plant species"}
+```{r, echo=FALSE, warning=FALSE,message=FALSE,fig.height = 13,fig.width=30,out.width="100%", fig.align='center',fig.cap=" 1. Changes in the stability of visitation rate with the asynchrony (top row) and richness (botton row) are shown for each plant species"}
 # model plot (cv_1_visitation~S_total+asynchrony)
 
 
