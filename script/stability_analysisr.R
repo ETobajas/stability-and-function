@@ -125,6 +125,8 @@ ave_seed <- data_plant%>%
 
 
 
+
+
 # we analyze whether the stability of visitation rate is affect 
 #by total richness and asynchrony (L & M index) 
 #incorporating site and plant species as random effects 
@@ -191,6 +193,50 @@ p1.2=ggplot(effe_rich_mod_sta, aes(S_total, fit)) + geom_line(size=1)+
   geom_point(data = data_plant, aes(x =  S_total, y = asyn_LM, color=Plant_gen_sp), size=3)+
   theme_classic ()+theme(panel.border = element_rect(colour = "black", fill=NA))+
   labs(x = "Richness of pollinator",y="Asynchrony")
+
+
+#########################################3
+# out c.crispus el pozo = valor de estabilidad en tasa de visita muy alto
+# ver si cambia el modelo
+
+data_sin_out=data_plant %>%
+  filter(!(Site_ID=="El_pozo" & Plant_gen_sp=="Cistus crispus")) 
+
+
+#model richness
+mod_sta_out= lmer (cv_1_visitation ~ S_total + (1|Site_ID) + (1|Plant_gen_sp), data = data_sin_out)
+summary(mod_sta_out)
+
+#getting effects for richness
+effe2_mod_sta_out <-data.frame( effect("S_total", mod_sta_out, se = TRUE))
+#plor model 
+ggplot(effe2_mod_sta_out, aes(S_total, fit)) + geom_line(size=1)+
+  geom_ribbon(aes(ymin = lower, ymax = upper), linetype = 3, alpha=0.1, colour = "black")+
+  labs(color='Plant species')+
+  geom_point(data = data_sin_out, aes(x =  S_total, y = cv_1_visitation, color=Plant_gen_sp), size=3)+
+  theme_classic ()+theme(panel.border = element_rect(colour = "black", fill=NA))+
+  labs(x = "Richness of pollinator",y="Satability of visitaion rate")
+
+
+
+
+# model asynchrony
+mod1_sta_2out= lmer (cv_1_visitation ~ asyn_LM + (1|Site_ID) + (1|Plant_gen_sp), data = data_sin_out)
+summary(mod1_sta_2out)
+
+#getting effects for asyncLM 
+effe_mod_sta2_out <-data.frame( effect("asyn_LM", mod1_sta_2out, se = TRUE))
+#plot model 
+ggplot(effe_mod_sta2_out, aes(asyn_LM, fit)) + geom_line(size=1)+
+  geom_ribbon(aes(ymin = lower, ymax = upper), linetype = 3,alpha=0.1, colour = "black")+
+  labs(color='Plant species')+
+  geom_point(data = data_sin_out, aes(x =  asyn_LM, y = cv_1_visitation, color=Plant_gen_sp), size=3)+
+  theme_classic ()+theme(panel.border = element_rect(colour = "black", fill=NA))+
+  labs(x = "Asynchrony of pollinator",y="Stability of visitation rate")
+
+
+
+##################################################
 
 
 
