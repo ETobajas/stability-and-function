@@ -46,7 +46,7 @@ data_plant$asyn_LM= 1-data_plant$syncLM
 # plot for richness
 plot_stabi_plant <- data_plant %>%
   nest_by(Plant_gen_sp) %>%
-  mutate(mod = list(lm(cv_1_visitation~S_total+asyn_LM,data))) %>%
+  mutate(mod = list(lm(cv_1_visitation~S_total,data))) %>%
   mutate(mod1 = list(ggeffects::ggpredict(mod, terms = "S_total"))) %>%
   mutate(plots = list(ggplot(mod1, aes(x, predicted)) + geom_line(size=1) +
  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), linetype = 3, alpha=0.2, colour = "black")))
@@ -95,7 +95,7 @@ p5=plot_stabi_plant$plots[[5]] + geom_point(data = data_plant %>% filter(Plant_g
 # model plot for asynchrony
 plot_stabi_plant_2 <- data_plant %>%
   nest_by(Plant_gen_sp) %>%
-  mutate(mod = list(lm(cv_1_visitation~S_total+asyn_LM,data))) %>%
+  mutate(mod = list(lm(cv_1_visitation~asyn_LM,data))) %>%
   mutate(mod1 = list(ggeffects::ggpredict(mod, terms = "asyn_LM"))) %>%
   mutate(plots = list(ggplot(mod1, aes(x, predicted)) + geom_line(size=1) +
   geom_ribbon(aes(ymin = conf.low, ymax = conf.high),linetype = 3, alpha=0.2, colour = "black")))
