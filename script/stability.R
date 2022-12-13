@@ -17,6 +17,7 @@ library(ggpubr)
 #install.packages("qqplotr")
 library(qqplotr)
 
+
 Pollinator_Plant<- read.csv("Data/Pollinator_Plant.csv") 
 str(Pollinator_Plant)
 Pollinator_Plant<-Pollinator_Plant[,-1]
@@ -27,22 +28,11 @@ spp_out <- Pollinator_Plant %>%
   group_by(Plant_gen_sp) %>%
   summarise(Unique_Id = n_distinct(Site_ID)) %>%
   filter(Unique_Id == 1) %>%
-  select(Plant_gen_sp) %>% pull(Plant_gen_sp)
+  dplyr::select(Plant_gen_sp) %>% pull(Plant_gen_sp)
 
 
 #Data with species in more than 1 site
 Pollinator_Plant = Pollinator_Plant %>% filter(!Plant_gen_sp %in% spp_out)
-
-
-# # plant species with only one year
-# remo=Pollinator_Plant %>%
-#   group_by(Plant_gen_sp,Site_ID) %>%
-#   summarise(Unique_Id = n_distinct(Year)) %>%
-#   filter(Unique_Id == 1) %>%
-#   select(Plant_gen_sp, Site_ID) 
-# 
-# # Data with species in more one year
-# Pollinator_Plant= anti_join(Pollinator_Plant, remo)
 
 
 
@@ -203,6 +193,7 @@ abund_pol_stand=abund_pol %>%
 
 
 
+
 # Richness 
 data_long <- gather(abund_pol, pollinator, frequ, Andrena_agilissima : Xylocopa_violacea , factor_key=T)
 data_long
@@ -225,9 +216,12 @@ log_VR <- function(x){
 
 # un dato por sp planta, sitio y año (sin plant_id)
 # corrected synchrony for sampling effort
+abund_pol_stand=abund_pol_stand  %>% 
+  select(!c(total_time))
+
 syn_1=abund_pol_stand%>% 
   group_by(Plant_gen_sp,Site_ID)%>% 
-  do(log_VR=log_VR(.[5:128]))
+  do(log_VR=log_VR(.[4:127]))
 
 
 
@@ -245,7 +239,7 @@ syncLM <- function(x){
 # corrected synchrony for sampling effort
 syn_LM1=abund_pol_stand%>% 
   group_by(Plant_gen_sp,Site_ID)%>% 
-  do(syncLM=syncLM(.[5:128]))
+  do(syncLM=syncLM(.[4:127]))
 
 
 
@@ -266,28 +260,34 @@ if(w){
  out
 }
 
-
-str(abund_pol_stand)
+# remove rows with all pollinator species is zero
+abund_pol_stand = abund_pol_stand %>%
+  filter(!(!rowSums(`[`(.,4:127))))
 
 # corrected synchrony for sampling effort
 syn_G1<-abund_pol_stand %>%
  group_by(Plant_gen_sp,Site_ID)%>%
- do(av_sync=av_sync(.[5:ncol(abund_pol_stand)])) 
+ do(av_sync=av_sync(.[4:ncol(abund_pol_stand)])) 
+
+
 
 
 
 # join tables con nuevos calculos (sin plant_id)
 full2=full_join(full2, syn_1, by = c('Plant_gen_sp', 'Site_ID'))%>%
   full_join (., syn_LM1, by=c('Plant_gen_sp', 'Site_ID'))%>%
- # full_join (., syn_G1, by=c('Plant_gen_sp', 'Site_ID'))%>%
+  full_join (., syn_G1, by=c('Plant_gen_sp', 'Site_ID'))%>%
   full_join (., riqueza, by=c('Plant_gen_sp', 'Site_ID'))
 
 
 head(full2)
-full2$log_VR <- unlist(full2$log_VR)
-full2$syncLM <- unlist(full2$syncLM)
-full2$ av_sync <- unlist(full2$ av_sync)
+# full2$log_VR <- unlist(full2$log_VR)
+# full2$syncLM <- unlist(full2$syncLM)
+# full2$ av_sync <- unlist(full2$ av_sync)
 
+
+full2 <- sapply(full2, function(x) ifelse(x == "NULL", NA, x))
+str(full2)
 
 write.csv(full2, "C:/Users/estef/git/stability-and-function/Data/Stability.csv")
 
@@ -308,7 +308,7 @@ cor(syn_cor)
 #correlation por plant species
 
 # correlacion con nuevos calculos (full2 = sin plant_id)
-b<-full2 %>% select(Plant_gen_sp,cv_1_fruit, cv_1_seed,cv_1_visitation,S_total,log_VR_time,log_VR_effort,syncLM_time,syncLM_effort,av_sync_time,av_sync_effort)
+b<-full2 %>% select(Plant_gen_sp,cv_1_fruit, cv_1_seed,cv_1_visitation,log_VR,syncLM,av_sync, S_total)
 
 ## Replace Inf and -Inf with NA
 b[is.na(b) | b == "Inf"] <- NA 
