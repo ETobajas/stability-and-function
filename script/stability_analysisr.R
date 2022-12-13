@@ -28,7 +28,7 @@ sp_out2=data_plant %>%
   group_by(Plant_gen_sp) %>%
   summarise(Unique_Id = n_distinct(Site_ID)) %>%
   filter(Unique_Id <= 4) %>%
-  select(Plant_gen_sp) %>% pull(Plant_gen_sp)
+  dplyr::select(Plant_gen_sp) %>% pull(Plant_gen_sp)
 
 #Data with species in at least 5 sites
 data_plant = data_plant %>% filter(!Plant_gen_sp %in% sp_out2)
@@ -48,34 +48,16 @@ data_plant[is.na(data_plant) | data_plant == "-Inf"] <- NA
 
 
 
-# We can express asynchrony as 1 - φ, 
-#where φ is Loreau and de Mazancourt’s (2008)
-data_plant$asyn_LM= 1-data_plant$syncLM
-
-
-# correlacion asynchrony and richness
-
-syn_cor<-data_plant %>% select(asyn_LM,S_total)
-
-## Replace Inf and -Inf with NA
-syn_cor[is.na(syn_cor) | syn_cor == "Inf"] <- 0 
-syn_cor[is.na(syn_cor) | syn_cor == "-Inf"] <- 0 
-
+# correlacion indices de sincronia
+syn_cor<-data_plant %>% select(log_VR,syncLM,av_sync)
 syn_cor <- mutate_all(syn_cor, ~replace(., is.na(.), 0))
-
 cor(syn_cor)
 
-# correlacion synchrony index and richness to different plant species
-correl_syn_richn<-data_plant %>% select(Plant_gen_sp,cv_1_fruit, cv_1_seed,cv_1_visitation,S_total,log_VR,syncLM,av_sync)
+# correlacion por plant species
+syn_cor_pla<-data_plant %>% select(Plant_gen_sp,log_VR,syncLM,av_sync)
+syn_cor_pla <- mutate_all(syn_cor_pla, ~replace(., is.na(.), 0))
 
-## Replace Inf and -Inf with NA
-correl_syn_richn[is.na(correl_syn_richn) | correl_syn_richn == "Inf"] <- NA 
-correl_syn_richn[is.na(correl_syn_richn) | correl_syn_richn == "-Inf"] <- NA 
-
-correl_syn_richn <- mutate_all(correl_syn_richn, ~replace(., is.na(.), 0))
-
-# tabla correlacion 
-b_cor <- correl_syn_richn %>%
+b_cor <- syn_cor_pla %>%
   group_by(Plant_gen_sp) %>%
   do(cormat = cor(select(., -matches("Plant_gen_sp")))) 
 
@@ -99,6 +81,12 @@ corre<-data2 %>%
   remove_rownames() %>%
   mutate(species = replace(species, duplicated(species), ""))
 
+
+
+
+# We can express asynchrony as 1 - φ, 
+#where φ is Loreau and de Mazancourt’s (2008)
+data_plant$asyn_LM= 1-data_plant$syncLM
 
 
 # average and std.error
@@ -180,7 +168,7 @@ p_cv_visit+ plot_layout(guides = "collect")
 
 
 # relationship between richness and asynchrony
-mod_rich_asyn= lmer (asyn_LM ~ S_total +  (1|Site_ID) + (1|Plant_gen_sp), data = data_plant)
+mod_rich_asyn= lmer (asyn_LM ~ S_total +  (1|Site_ID) + (1|Plant_gen_sp), weight=asyn_LM,data = data_plant)
 summary(mod_rich_asyn)
 plot_model(mod_rich_asyn,type="pred", show.data = T)
 
