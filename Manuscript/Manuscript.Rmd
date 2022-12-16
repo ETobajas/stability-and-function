@@ -201,7 +201,7 @@ p_cv_visit+ plot_layout(guides = "collect")
 ## Stability of visitation rate and stability of the plant reproductive success
 
 Stability of fruit proportion varied from 2.62 to 120.66 (mean ± SE: 19.806 ± 3.615), whereas the stability of seed number ranged 1.28 to 55.86 (7.018 ± 1.441).
-When we analyzed whether the stability of the visitation rate affected the stability of the plant reproductive success, we did not find a relationship between this and the stability of the fruit proportion (Estimate: -1.547; std. error: 2.611) (Fig 2A), however, the stability of seed number showed negative tendency with the stability of visitation rate (Estimate: -1.887; std. error: 0.959) (Fig 2B).
+When we analyzed whether the stability of the visitation rate affected the stability of the plant reproductive success, we did not find a relationship between this and the stability of the fruit proportion (Estimate: -1.547; std. error: 2.611) (Fig 2A). However, the stability of seed number showed negative tendency with the stability of visitation rate (Estimate: -1.887; std. error: 0.959) (Fig 2B).
 
 ```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 10,fig.width=20,out.width="80%",fig.align='center', fig.cap = " 2. Relationship between stability of plant reproductive succes: fruit propotion (A) and seed number (B) and the stability of visitation rate. Dots represent the different plant species incluided in the analysis.Significant models are representing with solid line."}
 
@@ -326,6 +326,9 @@ p1/p2&theme(text = element_text(size=35))
 ```
 
 
+# Discussion
+
+The results obtained indicate that the stability of visitation rate will increase with higher asynchrony of pollinators and that greater species richness might increase stability of visitation rate indirectly, via enhanced species asynchrony. Contrary to expectations, we found no relationship between the stability of visitor rate and the stability of plant reproductive success. However, we observed that the effect of visitation rate and richness on the fruit propotions is different depending on the year.
 
 
 \newpage
@@ -487,6 +490,8 @@ p4 = ggplot(ee_mod4, aes(visitatio_rate,fit))+
 p3/p4 &theme(text = element_text(size=35))
 
 ```
+
+
 
 
 
