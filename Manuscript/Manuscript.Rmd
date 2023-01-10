@@ -30,7 +30,7 @@ Global environmental changes and the biodiversity loss have highlighted the inte
 Temporal stability is defined as the capacity of an ecosystem to dampen environmental perturbations over time while retaining ecological functions of interest [@Ives2007; @Pimm1984]. Among main driving of stability are the diversity and species asynchrony. A higher number of species might provide a wider range of responses to environmental changes, which would result in a higher stability [@McCann2000; @Tilman2006; @Hector2010; @Xu2021], although non-significant relationships between diversity and stability have also been observed [@Hooper2005; @VanderPlas2019]. The stability is also influenced by the degree of asynchrony between species. In this sense, higher levels of asynchrony in species fluctuation stabilize the community [@Ruijven2007; @Bluthgen2016; @Craven2018]. It has been also shown that stability can associate more strongly with the degree of asynchrony across species than with species richness [@Bluthgen2016; @Valencia2020]. While community temporal stability should be related to the stability of ecosystem functions and services, there is limited evidence linking both processes on multitrophic systems.
 
 Since the reproductive success of most plant species highly depends on pollination by animal [@Ollerton2011], the stability of pollinator communities may increase the stability of plant reproductive success. A greater diversity of pollinators has been shown to increase the plant reproductive success as a result of complementary service provision arising from variation across of pollinator effectiveness, including space and time [@Hoehn2008; @Frund2010; @Albrecht2012; @Bluthgen2011; @Frund2013]. Pollinator species may exhibit different ranges of temporal activity [@Pisanty2016; @Rader2016] and consequently may provide pollination services at different times of the season. 
-On the other hand, few studies link the visitation rate directly with plant reproductive. In some case, sites with more visitation show higher plant reproductive and in another they do not find relationship (Hegland and Totland 2012, Lundgren et al 2013; Kaiser‐Bunbury et al., 2017). Likewise, in more visited sites, it has been observed lower pollen limitation of fruit set and seed production [(Cosacov et al., 2008; Gómez et al., 2010; Williams & Winfree, 2013)](). The occurrence and magnitude of pollen limitation can varies among years for individual populations (Burd 1994, Ashman et al. 2004), primarily because of variation in pollinator service (Aizen and Harder 2007).   
+On the other hand, few studies link the visitation rate directly with plant reproductive. In some case, sites with more visitation show higher plant reproductive and in another they do not find relationship (Hegland and Totland 2012, Lundgren et al 2013; Kaiser‐Bunbury et al., 2017). Likewise, in more visited sites, it has been observed lower pollen limitation of fruit set and seed production (Cosacov et al., 2008; Gómez et al., 2010; Williams & Winfree, 2013). The occurrence and magnitude of pollen limitation can varies among years for individual populations (Burd 1994, Ashman et al. 2004), primarily because of variation in pollinator service (Aizen and Harder 2007).   
 
 
 [gap](I think something about temporal variation and pollen limitation)
@@ -41,7 +41,7 @@ In the current study, we use a 5-year dataset in Mediterranean woodland patches 
 
 # Material and method
 
-Our study was conducted in the southwest of the Iberian Peninsula (Huelva and Sevilla - Spain). We selected 13 sites in Mediterranean shrub ecosystems that ranged from sites with little to no disturbances to more modified ones with crops and urban areas nearby. These sites had similarity in plant community composition and some of most abundance plant species provide nectar and pollen that attract flower visitors. Each site was surveyed at least 7 times per year during the flowering season from 2015 to 2019 (from March to June). Within each site, we selected 3-4 individuals belonging to 3-9 plant species (mean  ± standard error: 5.92  ± 0.54 plant species per site). All the floral visitors (from now on referred to as pollinators) that contacted with their flowers were registered by performing focal observations to the selected individuals during five minutes in 2015-2016 and three minutes from 2017 to 2019. Only pollinators that could not be identified in the field were captured, stored, and identified to species level in the laboratory. For each plant individual, we counted the total number of flowers and at the end of the season, we recorded the number of fruit and the seeds per fruit. All plants analyzed are at least partially pollinator dependent.
+Our study was conducted in the southwest of the Iberian Peninsula (Huelva and Sevilla - Spain). We selected 13 sites in Mediterranean shrub ecosystems that ranged from sites with little to no disturbances to more modified ones with crops and urban areas nearby. These sites had similarity in plant community composition and some of most abundance plant species provide nectar and pollen that attract flower visitors. Each site was surveyed at least 7 times per year during the flowering season from 2015 to 2019 (from March to June). Within each site, we selected 3-4 individuals belonging to 3-9 plant species (mean  ± standard error: 5.92  ± 0.54 plant species per site). All the floral visitors (from now on referred to as pollinators) that contacted with their flowers were registered by performing focal observations to the selected individuals during five minutes in 2015-2016 and three minutes from 2017 to 2019. Only pollinators that could not be identified in the field were captured, stored, and identified to species level in the laboratory. For each plant individual, we counted the total number of flowers  in each surveyed and at the end of the season, we recorded the number of fruit and the seeds per fruit. All plants analyzed are at least partially pollinator dependent.
 Due to the focal time observation was different over years, for each plant individual, the effort of sampling was standardized in number of visits per minute dividing the total visits observed by total observation time (time observation multiplied by number of survey per year).
 For each site and year, we calculated the visitation rate of pollinators as the number of visits divided by the number of flowers, pollinator richness, the fruit set as the proportion of fruit, and the seed set as number of seed per fruit for each plant individual sampled per site.
 
@@ -52,10 +52,10 @@ For the study of stability, we used 5 plant species (*Cistus crispus*, *Cistus l
 
 $$
 \begingroup\Large
-\phi =\frac{\sigma_{x_T}^2}{(\sum\sigma_{x_T})^2}
+\phi =\frac{\sigma_{x_T}^2}{(\sum_{i=1}^S\sigma_{x_i})^2}
 \endgroup
 $$
-where ${\sigma_{x_T}^2}$ represents the temporal variance of the community times series and ${(\sum\sigma_{x_T})^2}$ represents the sum of the temporal standard deviation of the time series across all species. This synchrony measurement varies from zero, when fluctuations are perfectly asynchronous, to one, when fluctuations are perfectly synchronous. Finally, we express asynchrony as $1-\phi$.
+where ${\sigma_{x_T}^2}$ is the variance of the community abundance of each plot and ${\sigma_{x_i}}$ is the standard deviation of species i abundance in a community with S species. This synchrony measurement varies from zero, when fluctuations are perfectly asynchronous, to one, when fluctuations are perfectly synchronous [@Loreau2008]. Finally, we express asynchrony as $1-\phi$.
 We also calculated the stability of fruit proportion and of the seed number for each plant species in each plot.
 
 ## Statistical analysis
@@ -75,11 +75,10 @@ All the analyses of this study were conducted in R software (v. 4.0.2; R Core Te
 ## Stability of visitation rate and its drives: richness and synchrony 
 
 Stability of visitation rate ranged from 0.64 to 9.24 (mean ± SE: 1.928 ± 0.232), whereas pollinator richness ranged from 2 to 20 (8.128 ± 0.686) and the pollinator asynchrony varied from 0 to 0.998 (0.754 ± 0.032).
-Our results showed a positive tendency between stability of visitation rate and asynchrony with greater visitation rate stability when pollinator asynchrony increases (Estimate ± standard error: 2.903 ± 1.134) (Fig 1A),
-whereas stability of visitation rate was not influenced by the pollinator richness (-0.001 ± 0.063) (Fig 1B). We also found a positively strong relationship between asynchrony and pollinator richness (0.020 ± 0.005) (Fig 1C). 
+Our results showed a positive tendency between stability of visitation rate and asynchrony of pollinator species abundances with greater visitation rate stability when pollinator asynchrony increases (Estimate ± standard error: 2.903 ± 1.134) (Fig 1A), whereas stability of visitation rate was not influenced by the pollinator richness (-0.001 ± 0.063) (Fig 1B). We also found a positively strong relationship between asynchrony and pollinator richness (0.020 ± 0.005) (Fig 1C). 
 We observed one data with high leverage of visitation rate stability (*C.crispus*) however when we removed this point the tendencies are the same.
 
-When we analysed the plant species separately, we observed positive tendency in asynchrony for *C. crispus*, *H. halimifoliun* and *L. pedunculata* and milder tendency in *C. salviifolious* being the slightly negative tendency in *C.ladanifer*. In the case of richness, *C. crispus*, *C. ladanifer* and *C. salviifolius* showed a negative tendency wile *H. halimifolium* and *L. pedunculata* was positive (Supplementary material-Fig 1).
+When we analysed the plant species separately, we observed positive tendency in asynchrony of pollinators for *C. crispus*, *H. halimifoliun* and *L. pedunculata* and milder tendency in *C. salviifolious* being the slightly negative tendency in *C.ladanifer*. In the case of pollinator richness, *C. crispus*, *C. ladanifer* and *C. salviifolius* showed a negative tendency wile *H. halimifolium* and *L. pedunculata* was positive (Supplementary material-Fig 1).
 
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,fig.height = 8,fig.width=20, out.width="100%",fig.align='center', fig.cap =" 1.Relationships between stability of visitation rate (calculated as the inverse of the coefficient of variation) and asynchorny of pollinators (Loreau and de Mazancourt’s index) (A), stability of visitation rate and pollinator richness (B), and asynchorny of pollinators and richness (C).Dots represent the different plant species incluided in the analysis.Significant models are representing with solid line."}
@@ -261,7 +260,7 @@ p_plant+ plot_layout(guides = "collect")
 
 When we analysed whether the effect of pollinator richness and visitation rate is different across the years, we found that both variables showed a significant interaction effect with the year on fruit proportion [(richness:year p = <0.0001; visitation rate:year p = <0.0001)](tengo que poner Anova tipo III??? y algun dato mas como df??). Although we observed a saturation of the fruit proportion, in year like 2017 is showed that a greater richness and visitation rate increased the fruit proportion. We also observed a positive tendency between richness and fruit proportion in 2019. However in 2018, the relationship between richness and fruit proportion was negative (Fig 3). 
 
-For the seed number, we not found the interaction effect to pollinator richness (p = 0.628), however we found a marginal significant interaction between visitation rate and year (p = 0.058). We observed that a higher the visitation rate increased the seed number in 2019 (Supplementary material-Fig 2).
+For the seed number, we not found the interaction effect to pollinator richness (p = 0.628), however we found a marginal significant interaction between visitation rate and year (p = 0.058). We observed that a higher visitation rate increased the seed number in 2019 (Supplementary material-Fig 2).
 
 
 ```{r,echo=FALSE, warning=FALSE,message=FALSE,fig.height =13,fig.width=30,out.width="100%", fig.align='center',fig.cap=" 3. Interaction effect between richness and year (top row), and visitation rate and year (bottom row) on fruit proportion. For the visualization purpose, we omit in the visitation rate (x-axis) the values outside of the 95\\%."}
@@ -328,7 +327,19 @@ p1/p2&theme(text = element_text(size=35))
 
 # Discussion
 
-The results obtained indicate that the stability of visitation rate will increase with higher asynchrony of pollinators and that greater species richness might increase stability of visitation rate indirectly, via enhanced species asynchrony. Contrary to expectations, we found no relationship between the stability of visitor rate and the stability of plant reproductive success. However, we observed that the effect of visitation rate and richness on the fruit propotions is different depending on the year.
+The results obtained indicate that the stability of visitation rate will increase with higher asynchrony of pollinators species abundances and that greater species richness might increase stability of visitation rate indirectly, via enhanced species asynchrony. Contrary to expectations, we found no relationship between the stability of visitor rate and the stability of plant reproductive success. However, we observed that the effect of visitation rate and richness on the fruit proportions is different depending on the year.
+
+While drivers of temporal stability have been well study in plant community [@Ruijven2007; @Gross2014; @Craven2018; @Leps2018; @Sasaki2019; @Valencia2020; @Kigel2021], relative few studies have evaluated how the drivers can affect the stability in pollinator communities [@Ebeling2008; @Senapathi2021; @Lazaro2022]. 
+An outcome of our analysis is that asynchrony of species abundances is a key driver of visitation rate stability. This stability–asynchrony relationship has been found by different theoretical and empirical studies(de Mazancourt et al., 2013; Blüthgen et al., 2016; Lepš et al., 2018; Sasaki et al., 2019; Valencia et al, 2020, Kigel et al 2021). Lázaro et al.(2022) also found the synchrony like an important driver of stability for for plants, pollinators and their interactions. [The fact that species asynchrony increases the temporal stability of the visitation rate may be because a decrease in the abundance of one pollinator species is compensated by an increase of the abundance of another.](escribir mejor la frase)
+On the other hand, species richness is considered one of the strongest drivers of community stability (Tilman et al., 2006; de Mazancourt et al., 2013; Hallett et al., 2014), although Valencia et al.(2020) have reported that this relation is not nearly as strong. In the pollinator studies have been observed a positive relationship between richness and stability (Ebeling et al 2008; Senapathi et al 2021), however, our results show that the richness was positively associated with asynchrony, which might positively affect the stability of visitation rate.[This most likely reflects niche variation among species that affect their relative performance over time in a temporally variable environment (Yachi & Loreau,1999; Gross et al., 2014; Craven et al 2018).](??)
+
+
+Despite the stability is crucial to the sustainability of ecosystem functions, relatively few studies have evaluated the stability of the pollinator visits frequency on pollination services (Garibaldi et al. 2011, Lázaro and Alomar 2019, Hünicken et al 2021, Bishop et al 2022).The majority of these studies were focused on crops, however, to our knowledge, how the stability of pollinator community affect to the reproductive success of the wild plant community remaining largely unknown.
+In pollinator-dependent crops have been observed a greater yield stability with the pollinator diversity and the stability of visitation rate (Garibaldi et al. 2011, Hünicken et al 2021), however in our study system (wild plants), we did not find this relationship or even observed a negative relationship between seed number stability and visitation rate stability. 
+
+
+
+
 
 
 \newpage
@@ -490,7 +501,6 @@ p4 = ggplot(ee_mod4, aes(visitatio_rate,fit))+
 p3/p4 &theme(text = element_text(size=35))
 
 ```
-
 
 
 
