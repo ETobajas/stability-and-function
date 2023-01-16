@@ -1,19 +1,16 @@
 ---
 title: "Title"
 date: '2022-10-26'
-output: 
-  pdf_document :
-    latex_engine : xelatex
-header-includes:
- \usepackage{float}
- \floatplacement{figure}{H}
- \usepackage{caption}
- \renewcommand{\caption}{Figure}
- 
+output:
+  pdf_document:
+    latex_engine: xelatex
+  word_document: default
+header-includes: \usepackage{float} \floatplacement{figure}{H} \usepackage{caption}
+  \renewcommand{\caption}{Figure}
 bibliography: library.bib
 csl: journalofecol.csl
-editor_options: 
-  markdown: 
+editor_options:
+  markdown:
     wrap: sentence
 ---
 
@@ -27,9 +24,8 @@ editor_options:
     In addition, we analyzed whether the effects of species richness and visitation rate on plant reproduction success were consistent among years.
 
 3.  The stability of plant's visitation rate is driven by the asynchrony of pollinator species abundances but not by the pollinator richness.
-    [Likewise, we found a strong positive relationship between richness and asynchrony of pollinators.](Yo%20esto%20no%20lo%20meteria%20aquí,%20por%20que%20no%20aporta%20mucho,%20no?%20Y%20es%20complejo%20de%20explicar.)
     In contrast, the stability of the plant reproductive success is not related to the stability of the visitation rate.
-    A year by year analysis revels that plants are unlikely to be limited by pollinator abundances except in specific years with [extreme low levels of pollinator activity](esto%20es%20así?%20Molaria).
+    A year by year analysis revels that plants are unlikely to be limited by pollinator abundances except in specific years with [extreme low levels of pollinator activity](esto es así Molaria).
 
 4.  CONCLUSION
 
@@ -47,19 +43,168 @@ However, a more direct stabilizing mechanisms the degree of asynchrony in specie
 In this sense, higher levels of asynchrony stabilize the community [@Ruijven2007; @Bluthgen2016; @Craven2018].
 In fact, stability is often more strongly associated with the degree of asynchrony across species than with species richness [@Bluthgen2016; @Valencia2020].
 While community temporal stability should be related to the stability of ecosystem functions and services provided by such community, there is limited evidence linking both processes on multitrophic systems.
-[comment](aqui%20hecho%20a%20faltar%20la%20alternativa,%20solo%20la%20asyncronia%20entre%20las%20especies%20más%20abundantes%20es%20lo%20que%20cuenta)
+[comment](aqui hecho a faltar la alternativa, solo la asyncronia entre las especies más abundantes es lo que cuenta)
 
 Since the reproductive success of most plant species highly depends on pollination by animals [@Ollerton2011], the stability of pollinator communities may increase the stability of plant reproductive success.
 A greater diversity of pollinators has been shown to increase plant reproductive success as a result of complementary in service provision arising from variation of pollinator effectiveness across space and time [@Hoehn2008; @Frund2010; @Albrecht2012; @Bluthgen2011; @Frund2013].
 For example, pollinator species may exhibit different ranges of temporal activity [@Pisanty2016; @Rader2016] and consequently may provide pollination services at different times of the day or of the season.
-[However, there are not that many studies linking explicitly pollinator visitation rates directly with plant reproductive outputs](de%20esto%20estas%20segura?).
-While some studies report that sites with higher visitation rates show higher plant reproductive outputs (REFS), other studies do not find such relationship (Hegland and Totland 2012, Lundgren et al 2013; Kaiser‐Bunbury et al., 2017).
+While some studies report that sites with higher visitation rates show higher plant reproductive outputs [@Garibaldi2013; @Kaiser-Bunbury2017], other studies do not find such relationship [@Hegland2012; @Lundgren2013].
 Interestingly, studies looking at pollen limitation show that sites with higher visitation rates show no pollen limitation, indicating than above a certain threshold, changes in visitation rates are no longer relevant (Fig. 1; Cosacov et al., 2008; Gómez et al., 2010; Williams & Winfree, 2013).
 However, the occurrence and magnitude of pollen limitation can vary among years for individual populations (Burd 1994, Ashman et al. 2004), primarily because of variation in pollinator service (Aizen and Harder 2007).
 
-[gap](I%20think%20something%20about%20temporal%20variation%20and%20pollen%20limitation)
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 8,fig.width=10,out.width="60%",fig.align='center'}
+library(ggplot2)
+library(patchwork)
 
-Here, we use a 5-year dataset collected across X Mediterranean woodland patches to study the role of pollinator richness and asynchrony as drivers of stability of its visitation rates to X plant speices.
+
+#First dataset RED
+s1 <- seq(from=0, to=100, by=0.5)
+l1 = log(s1, base = 6)
+d1 = data.frame(l1, s1)
+
+
+#Second dataset BLUE
+s2 <- seq(from=0, to=100, by=0.5)
+l2 = log(s2, base = 8)
+d2 = data.frame(l2, s2)
+
+#Third dataset GREEN
+s3 <- seq(from=0, to=100, by=0.5)
+l3 = log(s3, base = 12)
+d3 = data.frame(l3, s3)
+
+
+
+to=ggplot(d1, aes(s1, l1)) +
+  geom_line(color = "#e41a1c", linewidth=1.3) +
+  geom_line(data =  d2, aes(s2,l2), color = "#377eb8",linewidth=1.3) +
+  geom_line(data =  d3, aes(s3,l3), color = "#4daf4a",linewidth=1.3) +
+  ylab("Reproductive success")+
+  labs(x = "") +
+  theme_classic()+
+  theme(axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())+
+  scale_x_continuous(breaks=seq(from= 0, to= 100, by = 20), labels=c("V1","V2","V3", "V4","V5","V6"))+
+  theme(text = element_text(size=18,face="bold"))+
+  theme(axis.ticks.x=element_blank())+
+  annotate("rect", xmin = c(0, 60), xmax = c(20,80), ymin = c(0.4, 1.35), 
+           ymax = c(1.75, 2.7), linetype = 1, fill="gray88", alpha=0.3, colour = "black") +
+  annotate("text", x = c(98, 98,98), y = c(2.67, 2.31,1.95), label = c("R3", "R2", "R1"), size=5)+
+  annotate("text", x = c(1.25, 61.3), y = c(1.62,2.58), label = c("A", "B"), size=6)+
+  theme(axis.line.x = element_line(arrow = arrow()))+
+  theme(axis.line.y = element_line(arrow = arrow()))
+
+
+
+##################################
+x <- seq(0, 41, by = 0.1)
+y1 <- sin(x)
+y1.2 <- cos(x+4.3)
+
+da1 <- data.frame( x, y1)
+da1.2 <- data.frame( x, y1.2)
+
+R_1=ggplot(da1, aes(x, y1))+
+  geom_line( size=1) +
+  geom_line(data =  da1.2, aes(x, y1.2), color = "#e41a1c",size=1)+
+  theme_classic() +
+  xlab("Time") +
+  theme(axis.text.x=element_blank(),
+        axis.ticks.x=element_blank()) + 
+  scale_y_continuous(breaks=seq(from= -1, to= 1, by = 2), labels=c("R1","R3"))+
+  theme(text = element_text(size=15, face="bold"))+
+  theme(axis.title.y = element_blank()) +
+  annotate("text", x = 44, y = 0.4, label = "Rep", size=4,color="#e41a1c")+
+  annotate("text", x = 43, y = 0, label = "R", size=4)+ 
+  theme(aspect.ratio=0.5)
+
+
+
+###################################
+
+x2 <- seq(0, 41, by = 0.1)
+y2 <- sin(x2)
+y3 = sin(x2/2.5)
+
+da2 <- data.frame(x2, y2)
+da2.1 = data.frame(x2,y3)
+
+v_1=ggplot(da2, aes(x2, y2))+
+  geom_line( size=1) +
+  geom_line(data =  da2.1, aes(x2,y3), color = "#e41a1c",size=1)+
+  theme_classic() +
+  xlab("Time")+
+  theme(axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())+ 
+  scale_y_continuous(breaks=seq(from= -1, to= 1, by = 2), labels=c("V1","V2"))+
+  theme(text = element_text(size=15, face="bold"))+
+  theme(axis.title.y = element_blank())+
+  annotate("text", x = 44, y = -0.5, label = "Rep", size=4, color="#e41a1c")+
+  annotate("text", x = 42.5, y = 0, label = "V", size=4) + 
+  theme(aspect.ratio=0.5)
+
+
+po1=v_1/R_1
+
+
+######################
+x3 <- seq(0, 57, by = 0.1)
+y3 <- sin(x3)
+y3.1 <- cos(x3+4.3)
+
+da3 <- data.frame(x3, y3)
+da3.1 <- data.frame(x3, y3.1)
+
+v_2=ggplot(da3, aes(x3, y3))+
+  geom_line( size=1) +
+  geom_line(data =  da3.1, aes(x3,y3.1), color = "#e41a1c",size=1)+
+  theme_classic() +
+  xlab("Time") +
+  theme(axis.text.x=element_blank(),
+        axis.ticks.x=element_blank()) + 
+  scale_y_continuous(breaks=seq(from= -1, to= 1, by = 2), labels=c("V4","V5"))+
+  theme(text = element_text(size=15, face="bold"))+
+  theme(axis.title.y = element_blank()) +
+  annotate("text", x = 61, y = 0, label = "Rep", size=4,color="#e41a1c")+
+  annotate("text", x = 59, y = 0.3, label = "V", size=4)+ 
+  theme(aspect.ratio=0.5)
+
+
+
+
+########################################
+x4 <- seq(0, 57, by = 0.1)
+y4 <- sin(x4)
+y5 = sin(x4/2.5)
+
+
+da4 <- data.frame(x4, y4)
+da5 = data.frame(x4,y5)
+
+R_2=ggplot(da4, aes(x4, y4))+
+  geom_line( size=1) +
+  geom_line(data =  da5, aes(x4,y5), color = "#e41a1c",size=1)+
+  theme_classic() +
+  xlab("Time")+
+  theme(axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())+ 
+  scale_y_continuous(breaks=seq(from= -1, to= 1, by = 2), labels=c("R1","R3"))+
+  theme(text = element_text(size=15, face="bold"))+
+  theme(axis.title.y = element_blank())+
+  annotate("text", x = 61, y = -0.6, label = "Rep", size=4, color="#e41a1c")+
+  annotate("text", x = 59, y = 0.4, label = "R", size=4)+ 
+  theme(aspect.ratio=0.5)
+
+
+po2=v_2/R_2
+
+
+to/ (po1 |po2)
+```
+
+
+
+Here, we use a 5-year dataset collected across X Mediterranean woodland patches to study the role of pollinator richness and asynchrony as drivers of stability of its visitation rates to X plant species.
 Further, we evaluate whether more stable pollinator communities foster a more stabale plant reproductive success along years, measuring both the stability of fruit and seed set.
 We expect that the stability of visitation rates will increase with higher richness and asynchrony of pollinators.
 In addition, a greater stability of plant reproductive success is expected with higher stability of visitation rate.
@@ -69,12 +214,12 @@ However, given the lack of a clear relationship between pollinator and plant rep
 
 Our study was conducted in the southwest of the Iberian Peninsula (Huelva and Sevilla - Spain).
 We selected 13 sites in Mediterranean shrub ecosystems that ranged from sites with little to no disturbances to more modified ones with crops and urban areas nearby.
-These sites are similar in the plant community composition and the most abundant plant species are known to be attractive to flower visitors and to depend on pollinators to maximize its reproduction (e.g. dominated by X, y and Z).
+These sites are similar in the plant community composition and the most abundant plant species are known to be attractive to flower visitors and to depend on pollinators to maximize its reproduction [(e.g. dominated by X, y and Z).]()
 Each site was surveyed at least 7 times per year during the flowering season from 2015 to 2019 (from March to June).
 Within each site, we selected 3-4 individuals belonging to 3-9 plant species (mean ± standard error: 5.92 ± 0.54 plant species per site).
 We performed focal observations where all the floral visitors (from now on referred to as pollinators) that contacted with their flowers were registered.
 Only pollinators that could not be identified in the field were captured, stored, and identified to species level in the laboratory.
-For each plant individual, we counted the total number of flowers observed in each survey and at the end of the season, we recorded the number of fruits developed and the number of seeds per fruit in a subsample of X fruits.
+For each plant individual, we counted the total number of flowers observed in each survey and at the end of the season, we recorded the number of fruits developed and the number of seeds per fruit in a subsample of [X fruits.]()
 Focal observations had a duration of five minutes per individual in 2015-2016 and three minutes from 2017 to 2019.
 Hence, for each plant individual, the sampling effort was standardized in number of visits per flower per minute.
 To that end, we divided the total visits observed by the number of flowers observed and by the total observation time (time observation multiplied by number of survey per year).
@@ -83,11 +228,10 @@ number of seed per fruit for each plant individual sampled per site.
 
 ## Stability
 
-We analyze five plant species (*Cistus crispus*, *Cistus ladanifer*, *Cistus salviifolius*, *Halimium halimifolium*, and *Lavandula pedunculata*) that were recorded in at least 5 sites in a minimum of two years per site (show mean sites / years per plant).
+We analyze five plant species (*Cistus crispus*, *Cistus ladanifer*, *Cistus salviifolius*, *Halimium halimifolium*, and *Lavandula pedunculata*) that were recorded in at least 5 sites in a minimum of two years per site [(show mean sites / years per plant).]()
 The stability of pollinator visitation rates was quantified as the inverse of the coefficient of variation (mean/SD) for each plant species in each plot following Tilman, 1999.
 To examine the role of richness and synchrony of pollinator species as drivers of stability of visitation rate, we calculate the richness as the total number of pollinator species that visit each plant species in each plot.
-[The synchrony index for each plant species in the plot was calculated following Loreau and de Mazancourt (2008), as:](al%20final%20he%20puesto%20que%20utilizamos%20este%20solo%20porque%20al%20corregir%20el%20esfuerzo%20de%20muestreo%20este%20y%20el%20de%20Gross%20ya%20no%20estan%20correlacionados.%20He%20analizado%20el%20de%20Gross%20y%20no%20hay%20relacion%20con%20la%20estabilidad%20de%20las%20visitas.%20Muchos%20trabajos%20que%20solo%20utilizan%20un%20indice%20no%20dicen%20que%20hayan%20probado%20otros%20como%20es%20el%20trabajo%20de%20Lazaro,%20y%20he%20visto%20que%20muchos%20ponen%20la%20ecuacion,%20si%20no%20te%20parece%20bien%20asi%20vuelvo%20a%20poner%20los%20tres%20y%20explico%20lo%20de%20la%20correlacion)
-
+The synchrony index for each plant species in the plot was calculated following Loreau and de Mazancourt (2008), as:
 $$
 \begingroup\Large
 \phi =\frac{\sigma_{x_T}^2}{(\sum_{i=1}^S\sigma_{x_i})^2}
@@ -393,10 +537,9 @@ This stability--asynchrony relationship has been found by different theoretical 
 For example, Lázaro et al.(2022) also found that plants or pollinators?
 temporal or spatial?
 asynchrony is an important driver of stability for for plants, pollinators and their interactions.
-[The fact that species asynchrony increases the temporal stability of the visitation rate is likely because a decrease in the abundance of one pollinator species is compensated by an increase of the abundance of another.](escribir%20mejor%20la%20frase) 
+[The fact that species asynchrony increases the temporal stability of the visitation rate is likely because a decrease in the abundance of one pollinator species is compensated by an increase of the abundance of another.](escribir%20mejor%20la%20frase)
 [mirate los appaers de Winfree sobre esto que lo explica muy bien y explica mecanismos] On the other hand, species richness is considered one of the strongest drivers of community stability [in plants?]
-(Tilman et al., 2006; de Mazancourt et al., 2013; Hallett et al., 2014), although Valencia et al.(2020) have reported that this relation is not nearly as strong [where?]
-.
+(Tilman et al., 2006; de Mazancourt et al., 2013; Hallett et al., 2014), although Valencia et al.(2020) have reported that this relation is not nearly as strong [where?].
 Pollinator studies have observed a positive relationship between richness and stability of what?
 in crops??
 (Ebeling et al 2008; Senapathi et al 2021), however, our results show that richness was positively associated with asynchrony, which might positively affect the stability of visitation rate, but indirectly.
