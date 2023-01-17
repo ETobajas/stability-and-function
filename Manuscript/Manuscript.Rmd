@@ -204,8 +204,8 @@ to/ (po1 |po2)
 
 
 
-Here, we use a 5-year dataset collected across X Mediterranean woodland patches to study the role of pollinator richness and asynchrony as drivers of stability of its visitation rates to X plant species.
-Further, we evaluate whether more stable pollinator communities foster a more stabale plant reproductive success along years, measuring both the stability of fruit and seed set.
+Here, we use a 5-year dataset collected across 13 Mediterranean woodland patches to study the role of pollinator richness and asynchrony as drivers of stability of its visitation rates to 5 plant species.
+Further, we evaluate whether more stable pollinator communities foster a more stable plant reproductive success along years, measuring both the stability of fruit and seed set.
 We expect that the stability of visitation rates will increase with higher richness and asynchrony of pollinators.
 In addition, a greater stability of plant reproductive success is expected with higher stability of visitation rate.
 However, given the lack of a clear relationship between pollinator and plant reproductive output stability, we further analyzed the variability on the yearly effect of pollinator richness and visitation rate on the reproductive success of the plants.
@@ -214,17 +214,16 @@ However, given the lack of a clear relationship between pollinator and plant rep
 
 Our study was conducted in the southwest of the Iberian Peninsula (Huelva and Sevilla - Spain).
 We selected 13 sites in Mediterranean shrub ecosystems that ranged from sites with little to no disturbances to more modified ones with crops and urban areas nearby.
-These sites are similar in the plant community composition and the most abundant plant species are known to be attractive to flower visitors and to depend on pollinators to maximize its reproduction [(e.g. dominated by X, y and Z).]()
+These sites are similar in the plant community composition and the most abundant plant species are known to be attractive to flower visitors and to depend on pollinators to maximize its reproduction (e.g. dominated by *Cistus crispus*, *Cistus ladanifer*, *Cistus salviifolius*, *Halimium halimifolium*, and *Lavandula pedunculata*).
 Each site was surveyed at least 7 times per year during the flowering season from 2015 to 2019 (from March to June).
 Within each site, we selected 3-4 individuals belonging to 3-9 plant species (mean ± standard error: 5.92 ± 0.54 plant species per site).
 We performed focal observations where all the floral visitors (from now on referred to as pollinators) that contacted with their flowers were registered.
 Only pollinators that could not be identified in the field were captured, stored, and identified to species level in the laboratory.
-For each plant individual, we counted the total number of flowers observed in each survey and at the end of the season, we recorded the number of fruits developed and the number of seeds per fruit in a subsample of [X fruits.]()
+For each plant individual, we counted the total number of flowers observed in each survey and at the end of the season, we recorded the number of fruits developed and the number of seeds per fruit in a subsample of [3 fruits.](en algunos casos solo habia contado para dos frutos pero la mayoria son 3)
 Focal observations had a duration of five minutes per individual in 2015-2016 and three minutes from 2017 to 2019.
 Hence, for each plant individual, the sampling effort was standardized in number of visits per flower per minute.
 To that end, we divided the total visits observed by the number of flowers observed and by the total observation time (time observation multiplied by number of survey per year).
-Pollinator richness is calculated as the number of different species observed, fruit set as the proportion of fruits developed, and the seed set as the mean?
-number of seed per fruit for each plant individual sampled per site.
+Pollinator richness is calculated as the number of different species observed, fruit set as the proportion of fruits developed, and the seed set as the mean number of seeds per fruit for each plant individual sampled per site.
 
 ## Stability
 
@@ -251,8 +250,8 @@ For a deeper understanding, we also analyzed the response for each plant species
 To study whether the stability of the visitation rate influenced in the stability of the plant reproductive success, we run linear mixed models using as response variables the stability of fruit proportion or the stability of seed number and as explanatory variable the visitation rate stability.
 Site and plant species were included as factor random.
 
-To detect whether the effect of pollinator richness and visitation rate is different across the years, we use all X plant species sampled.
-We analyzed the interactive effect between richness and year, and between visitation rate and year on fruit proportion using binomial generalized linear mixed model, and on the number of seeds employing linear mixed model.
+To detect whether the effect of pollinator richness and visitation rate is different across the years, we use all 12 plant species sampled.
+We analyzed the interactive effect between richness and year, and between visitation rate and year on fruit proportion using binomial generalized linear mixed model, and on the number of seeds employing linear mixed model. *P* values were obtained using the type III Anova (package: car)
 The number of seeds per fruit was centered and scaled per plant species to allow meaningful comparisons across species.
 For all models, we included plant species identity nested within site and site as random effects because of multiple individuals of the same plant species are measured at each site.
 
@@ -264,15 +263,15 @@ DHARMa package was employed for checking all models (Harting 2017)
 ## Stability of visitation rate and its drivers: richness and asynchrony
 
 Stability of visitation rates ranged from 0.64 to 9.24 (mean ± SE: 1.928 ± 0.232), whereas pollinator richness ranged from 2 to 20 species (8.128 ± 0.686) and the pollinator asynchrony varied from 0 to 0.998 (0.754 ± 0.032).
-There is a strong positive relationship between stability of visitation rates and asynchrony of pollinator species abundances with greater visitation rate stability when pollinator asynchrony increases (Estimate ± standard error: 2.903 ± 1.134) (Fig 1A), whereas stability of visitation rate was not influenced by the pollinator richness (-0.001 ± 0.063) (Fig 1B).
-We also found a positive relationship between asynchrony and pollinator richness (0.020 ± 0.005) (Fig 1C).
-However, note that despite one data point has a high leverage on this last analysis?
-(*C.crispus*), when we removed this point the tendencie remain unchanged.
+There is a strong positive relationship between stability of visitation rates and asynchrony of pollinator species abundances with greater visitation rate stability when pollinator asynchrony increases (Estimate ± standard error: 2.903 ± 1.134) (Fig 2A), whereas stability of visitation rate was not influenced by the pollinator richness (-0.001 ± 0.063) (Fig 2B).
+We also found a positive relationship between asynchrony and pollinator richness (0.020 ± 0.005) (Fig 2C).
+However, note that despite one data point has a high leverage on the stability analysis
+(*C.crispus*), when we removed this point the tendencies remain unchanged.
 
 When we analysed each plant species separately, we observed positive relationship between asynchrony of pollinators and visitation rate for *C. crispus*, *H. halimifoliun* and *L. pedunculata*, weak relationship for *C. salviifolious* and a weak negative relationship for *C.ladanifer*.
-For the relationship with pollinator richness, *C. crispus*, *C. ladanifer* and *C. salviifolius* showed a negative relationships wile *H. halimifolium* and *L. pedunculata* showed positiverelationships, explaining the overall lack of relationship across all five plants (Supplementary material-Fig 1).
+For the relationship with pollinator richness, *C. crispus*, *C. ladanifer* and *C. salviifolius* showed a negative relationships wile *H. halimifolium* and *L. pedunculata* showed positive relationships, explaining the overall lack of relationship across all five plants (Supplementary material-Fig 1).
 
-```{r, echo=FALSE, warning=FALSE,message=FALSE,fig.height = 8,fig.width=20, out.width="100%",fig.align='center', fig.cap =" 1.Relationships between stability of visitation rate (calculated as the inverse of the coefficient of variation) and asynchorny of pollinators (Loreau and de Mazancourt’s index) (A), stability of visitation rate and pollinator richness (B), and asynchorny of pollinators and richness (C).Dots represent the different plant species incluided in the analysis.Significant models are representing with solid line."}
+```{r, echo=FALSE, warning=FALSE,message=FALSE,fig.height = 8,fig.width=20, out.width="100%",fig.align='center', fig.cap =" 2.Relationships between stability of visitation rate (calculated as the inverse of the coefficient of variation) and asynchorny of pollinators (Loreau and de Mazancourt’s index) (A), stability of visitation rate and pollinator richness (B), and asynchorny of pollinators and richness (C).Dots represent the different plant species incluided in the analysis.Significant models are representing with solid line."}
 
 library(tidyverse)
 library(lme4)
@@ -389,11 +388,11 @@ p_cv_visit+ plot_layout(guides = "collect")
 
 ## Stability of visitation rate and stability of the plant reproductive success
 
-Stability of fruit set [llamale siempre igual, yo propongo fruit y seed number] varied from 2.62 to 120.66 (mean ± SE: 19.806 ± 3.615), whereas the stability of seed number ranged 1.28 to 55.86 (7.018 ± 1.441).
-When we analyzed whether the stability of the pollinator's visitation rate affected the stability of the plant reproductive success, we did not find a clear relationship when analyzing the fruit set (Estimate: -1.547; std. error: 2.611) (Fig 2A).
-However, contrary to expected, the stability of seed number did show a negative relationship with the stability of pollinator's visitation rate (Estimate: -1.887; std. error: 0.959) (Fig 2B).
+Stability of fruit proportion varied from 2.62 to 120.66 (mean ± SE: 19.806 ± 3.615), whereas the stability of seed number ranged 1.28 to 55.86 (7.018 ± 1.441).
+When we analyzed whether the stability of the pollinator's visitation rate affected the stability of the plant reproductive success, we did not find a clear relationship when analyzing the fruit proportion (Estimate: -1.547; std. error: 2.611) (Fig 3A).
+However, contrary to expected, the stability of seed number did show a negative relationship with the stability of pollinator's visitation rate (Estimate: -1.887; std. error: 0.959) (Fig 3B).Although this tendency is influenced by a high value in the stability of seed number of *H. halimifolium* since when we removed this point the relationship disappears. 
 
-```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 10,fig.width=20,out.width="80%",fig.align='center', fig.cap = " 2. Relationship between stability of plant reproductive succes: fruit propotion (A) and seed number (B) and the stability of visitation rate. Dots represent the different plant species incluided in the analysis.Significant models are representing with solid line."}
+```{r,echo=FALSE, warning=FALSE,message=FALSE, fig.height = 10,fig.width=20,out.width="80%",fig.align='center', fig.cap = " 3. Relationship between stability of plant reproductive succes: fruit propotion (A) and seed number (B) and the stability of visitation rate. Dots represent the different plant species incluided in the analysis.Significant models are representing with solid line."}
 
 #model fruit stability ~ visitation rate stability
 mod2_sta= lmer(cv_1_fruit ~ cv_1_visitation + (1|Plant_gen_sp)+(1|Site_ID), data = data_plant)
@@ -448,7 +447,7 @@ p_plant+ plot_layout(guides = "collect")
 
 ## Effect of pollinators across years on plant reproductive success
 
-When we analysed whether the effect of pollinator richness and visitation rate on fruit proportion is different across the years, we found that both variables showed a significant interaction with year [(richness:year p = \<0.0001; visitation rate:year p = \<0.0001)](tengo%20que%20poner%20Anova%20tipo%20III???%20y%20algun%20dato%20mas%20como%20df??).[Aqui me pones p-values?]
+When we analysed whether the effect of pollinator richness and visitation rate on fruit proportion is different across the years, we found that both variables showed a significant interaction with year (richness interaction with year: $\chi 2$ =  28.976, df = 4, *p* = \<0.0001; visitation rate interaction with year: $\chi 2$ =  40.691, df = 4, *p* = \<0.0001)
 Although we observed a general saturation of the proportion of fruits developed with most species consistently over 80% of fruit set, in years like 2017 we showed that a greater richness and visitation rate increased the fruit proportion.
 We also observed a positive relationship between richness and fruit proportion in 2019.
 However in 2018, the relationship between richness and fruit proportion was negative (Fig 3).
