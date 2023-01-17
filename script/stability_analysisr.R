@@ -16,6 +16,7 @@ library(effects)
 library(MuMIn)
 library(sjPlot)
 library(RColorBrewer)
+library(Hmisc)
 
 
 # stability data 
@@ -52,6 +53,9 @@ data_plant[is.na(data_plant) | data_plant == "-Inf"] <- NA
 syn_cor<-data_plant %>% select(log_VR,syncLM,av_sync)
 syn_cor <- mutate_all(syn_cor, ~replace(., is.na(.), 0))
 cor(syn_cor)
+cor_1 <- rcorr(as.matrix(syn_cor))
+cor_1
+
 
 # correlacion por plant species
 syn_cor_pla<-data_plant %>% select(Plant_gen_sp,log_VR,syncLM,av_sync)
@@ -130,7 +134,6 @@ summary(mod1_sta)
 summary(mod1_sta_2)
 
 r.squaredGLMM(mod1_sta)
-car::vif(mod1_sta)
 
 car::Anova(mod1_sta,Type="III")
 
@@ -247,7 +250,27 @@ p3=ggplot(effe3_mod_sta, aes(cv_1_visitation, fit)) + geom_line()+
   geom_point(data = data_plant, aes(x =  cv_1_visitation, y = cv_1_fruit, color=Plant_gen_sp), size=3)+
   labs(y = "fruit set stability",x="visitation rate stability")
  
+#########################################3
+# out c.salviifolius la cunya = valor de estabilidad en fruit proportion muy alto
+# ver si cambia el modelo
 
+data_slavi_out=data_plant %>%
+  filter(!(Site_ID=="La_cunya" & Plant_gen_sp=="Cistus salviifolius")) 
+
+mod2_sta_out= lmer(cv_1_fruit ~ cv_1_visitation + (1|Plant_gen_sp)+(1|Site_ID), data = data_slavi_out)
+summary(mod2_sta_out)
+
+#getting effects 
+effe_mod_sta_out <-data.frame( effect("cv_1_visitation", mod2_sta_out, se = TRUE))
+#plot model 
+p4_out=ggplot(effe_mod_sta_out, aes(cv_1_visitation, fit)) + geom_line()+
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = .2)+
+  geom_point(data = data_slavi_out, aes(x =  cv_1_visitation, y = cv_1_fruit, color=Plant_gen_sp), size=3)+
+  labs(y = "fruit set stability",x="visitation rate stability")
+
+
+
+#########################################3
 
 # we analyze whether the stability of seed set is affect 
 #by stability of visitation rate
@@ -267,6 +290,28 @@ p4=ggplot(effe4_mod_sta, aes(cv_1_visitation, fit)) + geom_line()+
   geom_point(data = data_plant, aes(x =  cv_1_visitation, y = cv_1_seed, color=Plant_gen_sp), size=3)+
   labs(y = "seed set stability",x="visitation rate stability")
 
+
+#########################################3
+# out H.halimifolium el pozo = valor de estabilidad en numero de semilla muy alto
+# ver si cambia el modelo
+
+data_hali_out=data_plant %>%
+  filter(!(Site_ID=="El_pozo" & Plant_gen_sp=="Halimium halimifolium")) 
+
+mod3_sta_out= lmer(cv_1_seed ~ cv_1_visitation + (1|Plant_gen_sp)+(1|Site_ID), data = data_hali_out)
+summary(mod3_sta_out)
+
+#getting effects 
+effe_mod_sta_out <-data.frame( effect("cv_1_visitation", mod3_sta_out, se = TRUE))
+#plot model 
+p4_out=ggplot(effe_mod_sta_out, aes(cv_1_visitation, fit)) + geom_line()+
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = .2)+
+  geom_point(data = data_hali_out, aes(x =  cv_1_visitation, y = cv_1_seed, color=Plant_gen_sp), size=3)+
+  labs(y = "seed set stability",x="visitation rate stability")
+
+
+
+#########################################3
 
 
 # we analysed the effect of richness and synchrony on stability of visitation rate
