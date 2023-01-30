@@ -16,7 +16,7 @@ library(effects)
 library(MuMIn)
 library(sjPlot)
 library(RColorBrewer)
-library(Hmisc)
+
 
 
 # stability data 
@@ -134,8 +134,9 @@ summary(mod1_sta)
 summary(mod1_sta_2)
 
 r.squaredGLMM(mod1_sta)
+r.squaredGLMM(mod1_sta_2)
 
-car::Anova(mod1_sta,Type="III")
+car::Anova(mod1_sta,type="III")
 
  
 plot_model(mod1_sta_2, type="pred", show.data = T)
@@ -173,6 +174,7 @@ p_cv_visit+ plot_layout(guides = "collect")
 # relationship between richness and asynchrony
 mod_rich_asyn= lmer (asyn_LM ~ S_total +  (1|Site_ID) + (1|Plant_gen_sp), weight=asyn_LM,data = data_plant)
 summary(mod_rich_asyn)
+r.squaredGLMM(mod_rich_asyn)
 plot_model(mod_rich_asyn,type="pred", show.data = T)
 
 #getting effects for richness
@@ -197,6 +199,7 @@ data_sin_out=data_plant %>%
 #model richness
 mod_sta_out= lmer (cv_1_visitation ~ S_total + (1|Site_ID) + (1|Plant_gen_sp), data = data_sin_out)
 summary(mod_sta_out)
+r.squaredGLMM(mod_sta_out)
 
 #getting effects for richness
 effe2_mod_sta_out <-data.frame( effect("S_total", mod_sta_out, se = TRUE))
@@ -214,6 +217,7 @@ ggplot(effe2_mod_sta_out, aes(S_total, fit)) + geom_line(size=1)+
 # model asynchrony
 mod1_sta_2out= lmer (cv_1_visitation ~ asyn_LM + (1|Site_ID) + (1|Plant_gen_sp), data = data_sin_out)
 summary(mod1_sta_2out)
+r.squaredGLMM(mod1_sta_2out)
 
 #getting effects for asyncLM 
 effe_mod_sta2_out <-data.frame( effect("asyn_LM", mod1_sta_2out, se = TRUE))
@@ -238,6 +242,7 @@ ggplot(effe_mod_sta2_out, aes(asyn_LM, fit)) + geom_line(size=1)+
 
 mod2_sta= lmer(cv_1_fruit ~ cv_1_visitation + (1|Plant_gen_sp)+(1|Site_ID), data = data_plant)
 summary(mod2_sta)
+r.squaredGLMM(mod2_sta)
 
 plot_model(mod2_sta, type="pred",  show.data = T)
 plot_model(mod2_sta, type = "re")
@@ -278,6 +283,8 @@ p4_out=ggplot(effe_mod_sta_out, aes(cv_1_visitation, fit)) + geom_line()+
 
 mod3_sta= lmer(cv_1_seed ~ cv_1_visitation + (1|Plant_gen_sp)+(1|Site_ID), data = data_plant)
 summary(mod3_sta)
+r.squaredGLMM(mod3_sta)
+
 
 plot_model(mod3_sta, type="pred",  show.data = T)
 plot_model(mod3_sta, type = "re")
