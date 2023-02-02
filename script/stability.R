@@ -157,7 +157,7 @@ levels(factor(full2$Plant_gen_sp))
 focal<-subset(focal, Plant_gen_sp != 'Ulex australis') #remove ulex
 
 plant_polli<-data.frame(focal[,c(1,2,6,31,32)])
-
+plant_polli$Year <- as.factor(plant_polli$Year)
 
 df.result <- left_join(Pollinator_Plant, plant_polli, c('Plant_gen_sp', 'Site_ID','Year','plant_id'))
 
@@ -165,7 +165,7 @@ df.result1<-data.frame(df.result[,c(1,2,3,4,16,17,21)])
 df.result2 <- dcast(df.result, formula = Site_ID + Year + n_round + time_obs + plant_id+Plant_gen_sp ~ Pollinator_gen_sp)
 
 # remove column NA
-df.result2= select(df.result2, -131)
+df.result2= dplyr::select(df.result2, -123)
 
 
 # corrected abundance of pollinator by sampling effort (total time of observation)
@@ -178,7 +178,7 @@ df.result2= select(df.result2, -131)
 abund_pol=df.result2 %>%
   mutate(total_time= n_round*time_obs) %>%
   relocate(total_time, .before = plant_id) %>%
-  select(!c(n_round, time_obs)) %>%
+  dplyr::select(!c(n_round, time_obs)) %>%
   group_by(Site_ID, Year, Plant_gen_sp) %>%
   summarise_if(is.numeric, sum) %>%
   ungroup()
@@ -188,7 +188,7 @@ abund_pol=df.result2 %>%
 # y multiplicado por el tiempo max de observacion 
 # hay una especie que se ha observado un max de 90 min
 abund_pol_stand=abund_pol %>% 
-  mutate_at (vars (c(5:128)), funs((./total_time)*90))
+  mutate_at (vars (c(5:120)), funs((./total_time)*90))
 
 
 
