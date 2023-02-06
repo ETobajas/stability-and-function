@@ -137,6 +137,7 @@ summary(mod4_to)
 car::Anova(mod4_to, type="III")
 
 plot_model(mod4_to, type = "int", show.data = F)
+plot_model(mod4_to, type="pred")
 
 
 #getting effects for the two variables
