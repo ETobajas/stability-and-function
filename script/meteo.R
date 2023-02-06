@@ -59,6 +59,25 @@ met %>%
   facet_grid(new_year~.)
 
 
+# plot precipitacion acumulada mensual por años 
+met %>%
+  group_by(mes, new_year) %>%
+  summarise(acum_precip = sum(Hu10Precip, na.rm = TRUE)) %>%
+  mutate(mes = factor(mes,c("09","10","11","12","01","02","03", "04", "05"))) %>%
+  ggplot(aes(x=mes,
+             y = acum_precip,group = 1)) +
+  geom_point()+
+  geom_line()+
+  facet_grid(new_year~.)
+
+
+met %>%
+  group_by(new_year) %>%
+  summarise(acum_precip = sum(Hu10Precip, na.rm = TRUE)) %>%
+  ggplot(aes(x=new_year,
+             y = acum_precip,group = 1)) +
+  geom_point()+
+  geom_line()
 
 #box plot radiacion 
 ggplot(data = met, aes(x = new_year, y =  Hu10Rad)) + 
