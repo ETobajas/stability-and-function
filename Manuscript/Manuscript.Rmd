@@ -534,9 +534,13 @@ Pollinator studies, carried out in crop systems, have observed a positive relati
 
 
 Despite the stability is crucial to the sustainability of ecosystem functions, relatively few studies have evaluated the stability of the pollinator visits frequency on pollination services, and those who did used agricultural systems
-(Garibaldi et al. 2011, Lázaro and Alomar 2019, Hünicken et al 2021, Bishop et al 2022).The majority of these studies were focused on crops, however, to our knowledge, how the stability of pollinator community affect to the reproductive success of the wild plant community remaining largely unknown.
+(Garibaldi et al. 2011, Lázaro and Alomar 2019, Hünicken et al 2021, Bishop et al 2022).To the best of our knowledge, how the stability of pollinator community affect to the reproductive success of the wild plant community remaining largely unknown.
 In pollinator-dependent crops have been observed a greater yield stability with the pollinator diversity and the stability of visitation rate (Garibaldi et al. 2011, Hünicken et al 2021), however in our study system (wild plants), we did not find this relationship.
 
+We observed that in specific years a higher visitation rate or richness of pollinators increases the proportion of fruits, even if there is a saturation of the proportion of fruits in most of the plant species.
+As the number of pollinator visits received by a plant increases from zero, the reproductive success of the plant is expected to rise initially but then to level off or possibly decline (Young 1988, Young and Young 1992). Bees can remove 70–80% of the pollen that is presented in a flower and a flower's pollen can be exhausted after only a few visits. Therefore, its reproductive success may not continue to increase with increased visitation, but instead may saturate quickly because of pollen depletion (Thomson 2001).
+
+NOTA: the plants studied are totally or partially self-incompatible plant species that depend on pollinators to maximize their reproduction (Magrach et al 2022)
 
 
 \newpage
