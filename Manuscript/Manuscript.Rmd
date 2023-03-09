@@ -225,7 +225,7 @@ Pollinator richness is calculated as the number of pollinator species observed v
 
 ## Stability
 
-We analyze five plant species (*Cistus crispus*, *Cistus ladanifer*, *Cistus salviifolius*, *Halimium halimifolium*, and *Lavandula pedunculata*) that were recorded in at least 5 sites in a minimum of two years per site [(show mean sites / years per plant).]()
+We analyze five plant species (*Cistus crispus*, *Cistus ladanifer*, *Cistus salviifolius*, *Halimium halimifolium*, and *Lavandula pedunculata*) that were recorded in at least 5 sites in a minimum of two years per site.
 The stability of pollinator visitation rates was quantified as the inverse of the coefficient of variation (mean/SD) for each plant species in each plot following Tilman, 1999.
 To examine the role of richness and synchrony of pollinator species abundances as drivers of stability of visitation rate, we calculate the richness as the total number of pollinator species that visit each plant species in each plot.
 The synchrony index for each plant species in the plot was calculated following Loreau and de Mazancourt (2008), as:
@@ -264,7 +264,7 @@ We also found a positive relationship between asynchrony and pollinator richness
 Furthermore, we observed one data point has a high leverage on the stability analysis (*C.crispus*, Fig 2A-B), when we remove this point, although the relationship is not significant, the tendency is still positive (0.968 ± 0.745; *p* = 0.215).
 
 When we analysed each plant species separately, we observed positive relationship between asynchrony of pollinators and stability of visitation rate for *C. crispus*, *H. halimifoliun* and *L. pedunculata*, weak relationship for *C. salviifolious* and a weak negative relationship for *C.ladanifer*.
-For the relationship with pollinator richness, *C. crispus*, *C. ladanifer* and *C. salviifolius* showed a negative relationships wile *H. halimifolium* and *L. pedunculata* showed positive relationships, explaining the overall lack of relationship across all five plants (Supplementary material-Fig 1).
+For the relationship with pollinator richness, *C. crispus*, *C. ladanifer* and *C. salviifolius* showed a negative relationships while *H. halimifolium* and *L. pedunculata* showed positive relationships, explaining the overall lack of relationship across all five plants (Supplementary material-Fig 1).
 
 ```{r, echo=FALSE, warning=FALSE,message=FALSE,fig.height = 8,fig.width=20, out.width="100%",fig.align='center', fig.cap =" 2.Relationships between stability of visitation rate (calculated as the inverse of the coefficient of variation) and asynchorny of pollinators (Loreau and de Mazancourt’s index) (A), stability of visitation rate and pollinator richness (B), and asynchorny of pollinators and richness (C).Dots represent the different plant species incluided in the analysis.Significant models are representing with solid line."}
 
@@ -534,11 +534,17 @@ Pollinator studies, carried out in crop systems, have observed a positive relati
 
 
 Despite the stability is crucial to the sustainability of ecosystem functions, relatively few studies have evaluated the stability of the pollinator visits frequency on pollination services, and those who did used agricultural systems
-(Garibaldi et al. 2011, Lázaro and Alomar 2019, Hünicken et al 2021, Bishop et al 2022).To the best of our knowledge, how the stability of pollinator community affect to the reproductive success of the wild plant community remaining largely unknown.
-In pollinator-dependent crops have been observed a greater yield stability with the pollinator diversity and the stability of visitation rate (Garibaldi et al. 2011, Hünicken et al 2021), however in our study system (wild plants), we did not find this relationship.
+(Garibaldi et al. 2011, 2013, Lázaro and Alomar 2019, Hünicken et al 2021, Bishop et al 2022).To the best of our knowledge, how the stability of pollinator community affect to the reproductive success of the wild plant community remaining largely unknown.
+In pollinator-dependent crops have been observed a greater yield stability with the pollinator diversity and the stability of visitation rate (Garibaldi et al. 2011, 2013, Hünicken et al 2021), however in our study system (wild plants), we did not find this relationship.
 
 We observed that in specific years a higher visitation rate or richness of pollinators increases the proportion of fruits, even if there is a saturation of the proportion of fruits in most of the plant species.
-As the number of pollinator visits received by a plant increases from zero, the reproductive success of the plant is expected to rise initially but then to level off or possibly decline (Young 1988, Young and Young 1992). Bees can remove 70–80% of the pollen that is presented in a flower and a flower's pollen can be exhausted after only a few visits. Therefore, its reproductive success may not continue to increase with increased visitation, but instead may saturate quickly because of pollen depletion (Thomson 2001).
+As the number of pollinator visits received by a plant increases from zero, the reproductive success of the plant is expected to rise initially but then to level off or possibly decline (Young 1988, Young and Young 1992). Bees can remove 70–80% of the pollen that is presented in a flower and a flower's pollen can be exhausted after only a few visits. Therefore, its reproductive success may not continue to increase with increased visitation, but instead may saturate quickly because of pollen depletion (Thomson 2001).Even so, in certain years, the pollinator activity (visitation rate and richness) increases the fruit proportion.
+
+One possible explanation for this is that there was greater floral diversity and abundance in the plots these years, although this has not been directly measured in the plots. These factors can mediate pollination through impacts on pollinator densities (Steffan-Dewenter and Westphal 2008; Williams et al. 2015), foraging dynamics (Kunin and Iwasa 1996; Kunin 1993), visitation rates (Van Nuland et al. 2013, Veddeler et al. 2006), and pollen deposition (Lortie and Aarssen 1999; Evans et al. 2017).When high-resource patches recruit more foragers to a site, increase visits per plant (concentration effect)(Kunin and Iwasa 1996; Totland and Matthews 1996), which has implications for plant reproductive success (Blaauw and Isaacs 2014; Cohen et al 2021). Furthermore, some plant species increase pollinator visits to the coflowering plant, which subsequently contributes to the reproductive success of neighbouring individuals (Schemske 1981; Moeller 2004; Ghazoul 2006).
+
+Another possible explanation to this might be difference in abiotic factors between years??
+
+
 
 NOTA: the plants studied are totally or partially self-incompatible plant species that depend on pollinators to maximize their reproduction (Magrach et al 2022)
 
