@@ -57,10 +57,11 @@ effe_mod_sta <-data.frame( effect("asyn_LM", mod1_sta, se = TRUE))
 #plot model of asynchrony
 p1=ggplot(effe_mod_sta, aes(asyn_LM, fit)) + geom_line(size=1)+
   geom_ribbon(aes(ymin = lower, ymax = upper), linetype = 3,alpha=0.2, colour = "black")+
-  scale_y_continuous(limits = c(-2.5, 9.5))+labs(color='Plant species')+
+  labs(color='Plant species')+
+  coord_cartesian(ylim=c(-0.5,9.5))+
   geom_point(data = data_plant, aes(x =  asyn_LM, y = cv_1_visitation, color=Plant_gen_sp), alpha=0.5,size=3)+
   scale_colour_brewer(palette = "Set1")+
-   theme_bw ()+
+  theme_bw ()+
   labs(x = "Asynchrony of pollinator",y="Stability of visitation rate")+
   guides(colour=guide_legend(nrow=2,byrow=TRUE))+ theme(legend.text = element_text(face="italic"))
 
@@ -76,7 +77,7 @@ effe2_mod_sta <-data.frame( effect("S_total", mod1.2_sta, se = TRUE))
 #plot model of richness
 p2=ggplot(effe2_mod_sta, aes(S_total, fit)) + geom_line(size=1,linetype = "dashed")+
   geom_ribbon(aes(ymin = lower, ymax = upper), linetype = 3, alpha=0.1, colour = "black")+
-  scale_y_continuous(limits = c(-2.5, 9.5))+  labs(color='Plant species')+
+  scale_y_continuous(limits = c(-0.5, 9.5))+  labs(color='Plant species')+
   geom_point(data = data_plant, aes(x =  S_total, y = cv_1_visitation, color=Plant_gen_sp), alpha=0.5,size=3)+
   scale_colour_brewer(palette = "Set1")+
   theme_bw ()+
