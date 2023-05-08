@@ -45,7 +45,7 @@ data_plant$asyn_LM= 1-data_plant$syncLM
 
 
 #model fruit stability ~ visitation rate stability
-mod2_sta= lmer(cv_1_fruit ~ cv_1_visitation + (1|Plant_gen_sp)+(1|Site_ID), data = data_plant)
+mod2_sta= lmer(cv_1_fruit ~ cv_1_visitation + (1|Plant_gen_sp)+(1|Site_ID),data = data_plant)
 
 #getting effects 
 effe3_mod_sta <-data.frame( effect("cv_1_visitation", mod2_sta, se = TRUE))
@@ -56,6 +56,7 @@ p_mod2=ggplot(effe3_mod_sta, aes(cv_1_visitation, fit)) + geom_line(size=1)+
   geom_ribbon(aes(ymin = lower, ymax = upper),linetype = 3, alpha=0.2, colour = "black")+
   geom_point(data = data_plant, aes(x =  cv_1_visitation, y = cv_1_fruit, color=Plant_gen_sp),alpha=0.5, size=3)+
   labs(color='Plant species')+
+  coord_cartesian(ylim=c(-10,120))+
   scale_colour_brewer(palette = "Set1")+
   labs(y = "Stability of fruit proportion",x="Stability of visitation rate")+
   theme_bw ()+
@@ -77,6 +78,7 @@ effe4_mod_sta <-data.frame( effect("cv_1_visitation", mod3_sta, se = TRUE))
 p_mod3=ggplot(effe4_mod_sta, aes(cv_1_visitation, fit)) + geom_line(size=1)+
   geom_ribbon(aes(ymin = lower, ymax = upper), linetype = 3, alpha=0.2, colour = "black")+
   labs(color='Plant species')+
+  coord_cartesian(ylim=c(-10,60))+
   geom_point(data = data_plant, aes(x =  cv_1_visitation, y = cv_1_seed, color=Plant_gen_sp), alpha=0.5,size=3)+
   scale_colour_brewer(palette = "Set1")+
   labs(y = "Stability of seed number",x="Stability of visitation rate")+
