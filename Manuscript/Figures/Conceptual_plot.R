@@ -1,5 +1,6 @@
 
 library(ggplot2)
+library(tidyverse)
 library(patchwork)
 
 
@@ -31,12 +32,12 @@ to=ggplot(d1, aes(s1, l1)) +
   theme(axis.text.y=element_blank(),
         axis.ticks.y=element_blank())+
   scale_x_continuous(breaks=seq(from= 0, to= 100, by = 20), labels=c("V1","V2","V3", "V4","V5","V6"))+
-  theme(text = element_text(size=15,face="bold"))+
+  theme(text = element_text(size=18,face="bold"))+
   theme(axis.ticks.x=element_blank())+
   annotate("rect", xmin = c(0, 60), xmax = c(20,80), ymin = c(0.4, 1.35), 
            ymax = c(1.75, 2.7), linetype = 1, fill="gray88", alpha=0.3, colour = "black") +
-  annotate("text", x = c(98, 98,98), y = c(2.67, 2.31,1.95), label = c("R3", "R2", "R1"), size=4)+
-  annotate("text", x = c(1.25, 61.3), y = c(1.66,2.62), label = c("A", "B"), size=6)+
+  annotate("text", x = c(98, 98,98), y = c(2.67, 2.31,1.95), label = c("R3", "R2", "R1"), size=5)+
+  annotate("text", x = c(1.25, 61.3), y = c(1.62,2.58), label = c("A", "B"), size=6)+
   theme(axis.line.x = element_line(arrow = arrow()))+
   theme(axis.line.y = element_line(arrow = arrow()))
 
@@ -58,10 +59,10 @@ R_1=ggplot(da1, aes(x, y1))+
   theme(axis.text.x=element_blank(),
         axis.ticks.x=element_blank()) + 
   scale_y_continuous(breaks=seq(from= -1, to= 1, by = 2), labels=c("R1","R3"))+
-  theme(text = element_text(size=10, face="bold"))+
+  theme(text = element_text(size=15, face="bold"))+
   theme(axis.title.y = element_blank()) +
-  annotate("text", x = 42, y = 0.4, label = "Rep", size=3,color="#e41a1c")+
-  annotate("text", x = 42, y = 0, label = "R", size=4)+ 
+  annotate("text", x = 44, y = 0.4, label = "Rep", size=4,color="#e41a1c")+
+  annotate("text", x = 43, y = 0, label = "R", size=4)+ 
   theme(aspect.ratio=0.5)
 
 
@@ -83,15 +84,15 @@ v_1=ggplot(da2, aes(x2, y2))+
   theme(axis.text.x=element_blank(),
         axis.ticks.x=element_blank())+ 
   scale_y_continuous(breaks=seq(from= -1, to= 1, by = 2), labels=c("V1","V2"))+
-  theme(text = element_text(size=10, face="bold"))+
+  theme(text = element_text(size=15, face="bold"))+
   theme(axis.title.y = element_blank())+
-  annotate("text", x = 42, y = -0.5, label = "Rep", size=3, color="#e41a1c")+
-  annotate("text", x = 41.5, y = 0, label = "V", size=4) + 
+  annotate("text", x = 44, y = -0.5, label = "Rep", size=4, color="#e41a1c")+
+  annotate("text", x = 42.5, y = 0, label = "V", size=4) + 
   theme(aspect.ratio=0.5)
 
 
+po1=v_1/R_1
 
-po1=R_1/v_1& theme(plot.background = element_rect(color = "black", size = 1))
 
 ######################
 x3 <- seq(0, 57, by = 0.1)
@@ -109,10 +110,10 @@ v_2=ggplot(da3, aes(x3, y3))+
   theme(axis.text.x=element_blank(),
         axis.ticks.x=element_blank()) + 
   scale_y_continuous(breaks=seq(from= -1, to= 1, by = 2), labels=c("V4","V5"))+
-  theme(text = element_text(size=10, face="bold"))+
+  theme(text = element_text(size=15, face="bold"))+
   theme(axis.title.y = element_blank()) +
-  annotate("text", x = 58.5, y = 0, label = "Rep", size=3,color="#e41a1c")+
-  annotate("text", x = 58, y = 0.3, label = "V", size=4)+ 
+  annotate("text", x = 61, y = 0, label = "Rep", size=4,color="#e41a1c")+
+  annotate("text", x = 59, y = 0.3, label = "V", size=4)+ 
   theme(aspect.ratio=0.5)
 
 
@@ -135,15 +136,17 @@ R_2=ggplot(da4, aes(x4, y4))+
   theme(axis.text.x=element_blank(),
         axis.ticks.x=element_blank())+ 
   scale_y_continuous(breaks=seq(from= -1, to= 1, by = 2), labels=c("R1","R3"))+
-  theme(text = element_text(size=10, face="bold"))+
+  theme(text = element_text(size=15, face="bold"))+
   theme(axis.title.y = element_blank())+
-  annotate("text", x = 58.5, y = -0.6, label = "Rep", size=3, color="#e41a1c")+
-  annotate("text", x = 58, y = 0.4, label = "R", size=4)+ 
+  annotate("text", x = 61, y = -0.6, label = "Rep", size=4, color="#e41a1c")+
+  annotate("text", x = 59, y = 0.4, label = "R", size=4)+ 
   theme(aspect.ratio=0.5)
 
 
-po2=v_2/R_2& theme(plot.background = element_rect(color = "black", size = 1))
+po2=v_2/R_2
 
+
+to/ (po1 |po2)
 ########################################
 
 design <- "
