@@ -3,9 +3,9 @@ title: "The temporal stability in flower visitation rates is driven by the async
 author: "Estefanía Tobajas^1, Virginia Domínguez-García^2, Francisco P. Molina^2, Ignasi Bartomeus^2"
 date: '2022-10-26'
 output:
-  word_document: default
   pdf_document:
     latex_engine: xelatex
+  word_document: default
 header-includes: \usepackage{float} \floatplacement{figure}{H} \usepackage{caption}
   \renewcommand{\caption}{Figure}
 bibliography: library.bib
