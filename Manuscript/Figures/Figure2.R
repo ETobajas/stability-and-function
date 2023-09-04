@@ -46,12 +46,12 @@ data_plant$asyn_LM= 1-data_plant$syncLM
 
 
 #model 
-mod1_sta= lmer (cv_1_visitation ~  asyn_LM + (1|Site_ID) + (1|Plant_gen_sp), data = data_plant)
+glm.nb2_sta= glmer.nb (cv_1_visitation ~ asyn_LM + (1|Site_ID) + (1|Plant_gen_sp), data = data_plant)
 
 
 
 #getting effects for asynchrony
-effe_mod_sta <-data.frame( effect("asyn_LM", mod1_sta, se = TRUE))
+effe_mod_sta <-data.frame( effect("asyn_LM", glm.nb2_sta, se = TRUE))
 
 
 #plot model of asynchrony
@@ -68,11 +68,11 @@ p1=ggplot(effe_mod_sta, aes(asyn_LM, fit)) + geom_line(size=1)+
 
 
 #model richness
-mod1.2_sta= lmer (cv_1_visitation ~ S_total + (1|Site_ID) + (1|Plant_gen_sp), data = data_plant)
+glm.nb1_sta= glmer.nb (cv_1_visitation ~ S_total + (1|Site_ID) + (1|Plant_gen_sp), data = data_plant)
 
 
 #getting effects for richness
-effe2_mod_sta <-data.frame( effect("S_total", mod1.2_sta, se = TRUE))
+effe2_mod_sta <-data.frame( effect("S_total", glm.nb1_sta, se = TRUE))
 
 #plot model of richness
 p2=ggplot(effe2_mod_sta, aes(S_total, fit)) + geom_line(size=1,linetype = "dashed")+
