@@ -82,11 +82,41 @@ p1=ggplot(effe_mod_sta, aes(asyn_LM, fit)) + geom_line(size=1)+
   labs(x = "Asynchrony of pollinator",y="Stability of visitation rate")
 
 
+#########################################3
+# out c.crispus el pozo = valor de estabilidad en tasa de visita muy alto
+# ver si cambia el modelo
+
+data_sin_out=data_plant %>%
+  filter(!(Site_ID=="El_pozo" & Plant_gen_sp=="Cistus crispus")) 
+
+
+glm.nb1_out= glmer.nb (cv_1_visitation ~ S_total + (1|Site_ID) + (1|Plant_gen_sp), data = data_sin_out)
+summary(glm.nb1_out)
+
+glm.nb2_out= glmer.nb (cv_1_visitation ~ asyn_LM + (1|Site_ID) + (1|Plant_gen_sp), data = data_sin_out)
+summary(glm.nb2_out)
+
+
+#getting effects for asyncLM 
+effe_mod_nb2_out <-data.frame( effect("asyn_LM", glm.nb2_out, se = TRUE))
+#plot model 
+ggplot(effe_mod_nb2_out, aes(asyn_LM, fit)) + geom_line(size=1)+
+  geom_ribbon(aes(ymin = lower, ymax = upper), linetype = 3,alpha=0.1, colour = "black")+
+  labs(color='Plant species')+
+  geom_point(data = data_sin_out, aes(x =  asyn_LM, y = cv_1_visitation, color=Plant_gen_sp), size=3)+
+  theme_classic ()+theme(panel.border = element_rect(colour = "black", fill=NA))+
+  labs(x = "Asynchrony of pollinator",y="Stability of visitation rate")
 
 
 
 
-glm_bi= glmer (asyn_LM ~ S_total +  (1|Site_ID) + (1|Plant_gen_sp), data = data_plant, family=binomial)
+##################
+glm_bi= glm(asyn_LM ~ S_total  , data = data_plant, family=binomial)
+summary(glm_bi)
+simulationOutput <- simulateResiduals(fittedModel = glm_bi, plot = F)
+plot(simulationOutput)
+ranef(glm_bi)
+
 
 mod_rich= lmer (asyn_LM ~ S_total +  (1|Site_ID),data = data_plant)
 ranef(mod_rich)
